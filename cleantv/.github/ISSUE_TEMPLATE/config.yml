@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Troubleshooting
+    url: https://github.com/humblemuzzu/dumbtv/blob/main/docs/TROUBLESHOOTING.md
+    about: The common problems and their fixes, sorted by what you see on the TV
+  - name: Step-by-step guide
+    url: https://dumbtv.org/start
+    about: Turn on ADB, find the TV's address, install adb and run CleanTV
+  - name: Ask for help setting it up
+    url: https://dumbtv.org/help
+    about: Tell us which TV you have and we will reply by email

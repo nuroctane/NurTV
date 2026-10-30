@@ -1,0 +1,10 @@
+report/
+*.log
+.DS_Store
+*.cleantv
+cleantv.conf
+launcher/build/
+launcher/*.keystore
+video/
+__pycache__/
+*.pyc

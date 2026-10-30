@@ -1,0 +1,408 @@
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+index 1dda3c1..1b7c9a3 100644
+--- a/app/build.gradle.kts
++++ b/app/build.gradle.kts
+@@ -48,6 +48,9 @@ android {
+     }
+ 
+     buildTypes {
++        debug {
++            applicationIdSuffix = ".household"
++        }
+         release {
+             isMinifyEnabled = true
+             isShrinkResources = true
+diff --git a/app/src/main/assets/household-addons.json b/app/src/main/assets/household-addons.json
+new file mode 100644
+index 0000000..b3af814
+--- /dev/null
++++ b/app/src/main/assets/household-addons.json
+@@ -0,0 +1,293 @@
++[
++  {
++    "url": "https://torrentio.strem.fun/manifest.json",
++    "manifest": {
++      "id": "com.stremio.torrentio.addon",
++      "version": "0.0.15",
++      "name": "Torrentio",
++      "description": "Provides torrent streams from scraped torrent providers. Currently supports YTS(+), EZTV(+), RARBG(+), 1337x(+), EXT(+), ThePirateBay(+), KickassTorrents(+), TorrentGalaxy(+), MagnetDL(+), HorribleSubs(+), NyaaSi(+), TokyoTosho(+), AniDex(+), nekoBT(+), Rutor(+), Rutracker(+), Comando(+), BluDV(+), MicoLeaoDublado(+), Torrent9(+), ilCorSaRoNeRo(+), MejorTorrent(+), Wolfmax4k(+), Cinecalidad(+), BestTorrents(+). To configure providers, RealDebrid/Premiumize/AllDebrid/DebridLink/EasyDebrid/Offcloud/TorBox/Put.io/HighWay support and other settings visit https://torrentio.strem.fun",
++      "catalogs": [],
++      "resources": [
++        {
++          "name": "stream",
++          "types": [
++            "movie",
++            "series",
++            "anime"
++          ],
++          "idPrefixes": [
++            "tt",
++            "kitsu"
++          ]
++        }
++      ],
++      "types": [
++        "movie",
++        "series",
++        "anime",
++        "other"
++      ],
++      "background": "https://torrentio.strem.fun/images/background_v1.jpg",
++      "logo": "https://torrentio.strem.fun/images/logo_v1.png",
++      "behaviorHints": {
++        "configurable": true,
++        "configurationRequired": false
++      }
++    }
++  },
++  {
++    "url": "https://comet.elfhosted.com/manifest.json",
++    "manifest": {
++      "id": "comet.elfhosted.com",
++      "description": "Stremio's fastest torrent/debrid search add-on.",
++      "version": "2.0.0",
++      "catalogs": [],
++      "resources": [
++        {
++          "name": "stream",
++          "types": [
++            "movie",
++            "series"
++          ],
++          "idPrefixes": [
++            "tt",
++            "kitsu"
++          ]
++        }
++      ],
++      "types": [
++        "movie",
++        "series",
++        "anime",
++        "other"
++      ],
++      "logo": "https://raw.githubusercontent.com/g0ldyy/comet/refs/heads/main/comet/assets/icon.png",
++      "background": "https://raw.githubusercontent.com/g0ldyy/comet/refs/heads/main/comet/assets/background.png",
++      "behaviorHints": {
++        "configurable": true,
++        "configurationRequired": false
++      },
++      "name": "Comet | ElfHosted"
++    }
++  },
++  {
++    "url": "https://opensubtitles-v3.strem.io/manifest.json",
++    "manifest": {
++      "id": "org.stremio.opensubtitlesv3",
++      "version": "1.0.0",
++      "name": "OpenSubtitles v3",
++      "description": "OpenSubtitles v3 Addon for Stremio",
++      "catalogs": [],
++      "resources": [
++        "subtitles"
++      ],
++      "types": [
++        "movie",
++        "series"
++      ],
++      "idPrefixes": [
++        "tt"
++      ],
++      "logo": "http://www.strem.io/images/addons/opensubtitles-logo.png"
++    }
++  },
++  {
++    "url": "https://mediafusion.elfhosted.com/manifest.json",
++    "manifest": {
++      "behaviorHints": {
++        "configurable": true,
++        "configurationRequired": false
++      },
++      "catalogs": [],
++      "contactEmail": "abuse@elfhosted.com",
++      "description": "MediaFusion — universal torrent & debrid streaming addon for Stremio",
++      "id": "stremio.addons.mediafusion|elfhosted",
++      "logo": "https://raw.githubusercontent.com/mhdzumair/MediaFusion/main/resources/images/mediafusion_logo.png",
++      "name": "MediaFusion | ElfHosted",
++      "resources": [
++        "catalog",
++        {
++          "idPrefixes": [
++            "tt",
++            "tmdb:",
++            "tvdb:",
++            "mal:",
++            "mf",
++            "dl"
++          ],
++          "name": "stream",
++          "types": [
++            "movie",
++            "series",
++            "tv",
++            "events"
++          ]
++        },
++        {
++          "idPrefixes": [
++            "mf",
++            "dl"
++          ],
++          "name": "meta",
++          "types": [
++            "movie",
++            "series",
++            "tv",
++            "events"
++          ]
++        }
++      ],
++      "types": [
++        "movie",
++        "series",
++        "tv",
++        "events"
++      ],
++      "version": "6.2.0"
++    }
++  },
++  {
++    "url": "https://free.flixnest.app/manifest.json",
++    "manifest": {
++      "behaviorHints": {
++        "configurable": true,
++        "configurationRequired": false
++      },
++      "catalogs": [
++        {
++          "extra": [
++            {
++              "isRequired": false,
++              "name": "genre",
++              "options": [
++                "soccer",
++                "basketball",
++                "baseball",
++                "american-football",
++                "ice-hockey",
++                "tennis",
++                "motorsport",
++                "formula-1",
++                "mma",
++                "boxing",
++                "wrestling",
++                "rugby-union",
++                "rugby-league",
++                "cricket",
++                "golf",
++                "volleyball",
++                "handball",
++                "cycling",
++                "athletics",
++                "darts",
++                "snooker",
++                "aussie-rules",
++                "gaelic-football",
++                "hurling",
++                "netball",
++                "badminton",
++                "table-tennis",
++                "swimming",
++                "diving",
++                "gymnastics",
++                "skiing",
++                "biathlon",
++                "skating",
++                "futsal",
++                "beach-soccer",
++                "water-polo",
++                "lacrosse",
++                "field-hockey",
++                "horse-racing",
++                "triathlon",
++                "esports",
++                "chess",
++                "sports-tv"
++              ]
++            },
++            {
++              "isRequired": false,
++              "name": "search"
++            },
++            {
++              "isRequired": false,
++              "name": "skip"
++            }
++          ],
++          "id": "essential-live-events",
++          "name": "Events",
++          "type": "tv"
++        },
++        {
++          "extra": [
++            {
++              "isRequired": false,
++              "name": "skip"
++            },
++            {
++              "isRequired": false,
++              "name": "search"
++            }
++          ],
++          "id": "dlstreams-live",
++          "name": "DLStreams - Top Channels",
++          "type": "tv"
++        }
++      ],
++      "description": "Free Flix-Streams addon with HDHub, HDHub4u, Dailymotion, and DLStreams Live TV/Sports.",
++      "id": "org.flixstreams.free",
++      "idPrefixes": [
++        "tt",
++        "tmdb",
++        "essential",
++        "dlstreams"
++      ],
++      "logo": "https://free.flixnest.app/static/favicon.svg",
++      "name": "Flix-Streams Free",
++      "resources": [
++        "stream",
++        "catalog",
++        "meta"
++      ],
++      "types": [
++        "movie",
++        "series",
++        "tv"
++      ],
++      "version": "1.0.0"
++    }
++  },
++  {
++    "url": "https://hdhub.thevolecitor.qzz.io/manifest.json",
++    "manifest": {
++      "id": "com.stremio.HdHub",
++      "version": "1.0.7",
++      "name": "HdHub",
++      "description": "Watch movies and series from HdHub.",
++      "resources": [
++        "stream",
++        "catalog"
++      ],
++      "types": [
++        "movie",
++        "series",
++        "HdHub"
++      ],
++      "idPrefixes": [
++        "tt",
++        "tmdb:",
++        "kitsu:"
++      ],
++      "catalogs": [],
++      "behaviorHints": {
++        "configurable": true
++      },
++      "stremioAddonsConfig": {
++        "issuer": "https://stremio-addons.net",
++        "signature": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..pRjXITzp0VTRiydLSk2Svg.heGdaIAaYKzvtMyRt-BoHjuOSjeaohT_ex2n652SFyMAGR8ZYNFawFBK5PwW5tzLhresK1uCbCmQ6NHxGnus4UdT1q5akDzW5TKP1tQgs3l6Vq2VelHXpG8j_F44n_0B.W4Hup7qve9NfY5pNR9WvbA"
++      },
++      "logo": "https://hdhub.thevolecitor.qzz.io/logo.png",
++      "background": "https://hdhub.thevolecitor.qzz.io/logo.png"
++    }
++  }
++]
+\ No newline at end of file
+diff --git a/app/src/main/java/com/lumera/app/data/profile/ProfileConfigurationManager.kt b/app/src/main/java/com/lumera/app/data/profile/ProfileConfigurationManager.kt
+index f296d50..6384d4d 100644
+--- a/app/src/main/java/com/lumera/app/data/profile/ProfileConfigurationManager.kt
++++ b/app/src/main/java/com/lumera/app/data/profile/ProfileConfigurationManager.kt
+@@ -3,6 +3,7 @@ package com.lumera.app.data.profile
+ import android.content.Context
+ import android.content.SharedPreferences
+ import com.google.gson.Gson
++import com.google.gson.JsonParser
+ import com.lumera.app.data.auth.StremioAuthManager
+ import com.lumera.app.data.local.AddonDao
+ import com.lumera.app.data.model.AddonEntity
+@@ -11,6 +12,7 @@ import com.lumera.app.data.model.HubRowEntity
+ import com.lumera.app.data.model.HubRowItemEntity
+ import com.lumera.app.data.model.WatchHistoryEntity
+ import com.lumera.app.data.model.stremio.CatalogManifest
++import com.lumera.app.data.model.stremio.Manifest
+ import com.lumera.app.data.repository.AddonRepository
+ import dagger.hilt.android.qualifiers.ApplicationContext
+ import kotlinx.coroutines.flow.firstOrNull
+@@ -214,9 +216,42 @@ class ProfileConfigurationManager @Inject constructor(
+             )
+         }
+ 
++        // Seed only profiles created from scratch; existing profiles and removals are untouched.
++        // These snapshots contain public manifests, not accounts or credentials.
++        val seededAddons = mutableListOf(addonEntity)
++        val seededConfigs = configs.toMutableList()
++        val entries = context.assets.open("household-addons.json").bufferedReader().use {
++            JsonParser.parseReader(it).asJsonArray
++        }
++        entries.forEach { entry ->
++            val item = entry.asJsonObject
++            val url = item.get("url").asString.removeSuffix("/manifest.json")
++            val seed = gson.fromJson(item.get("manifest"), Manifest::class.java)
++            fun supports(name: String) = seed.resources.orEmpty().any { resource ->
++                (resource.isJsonPrimitive && resource.asString == name) ||
++                    (resource.isJsonObject && resource.asJsonObject.get("name")?.asString == name)
++            }
++            seededAddons.add(AddonEntity(
++                transportUrl = url, id = seed.id, name = seed.name, version = seed.version,
++                description = seed.description, iconUrl = seed.logo, isTrusted = false,
++                isEnabled = true, catalogsJson = gson.toJson(seed.catalogs.orEmpty()),
++                supportsMeta = supports("meta"), supportsStream = supports("stream"),
++                typesJson = gson.toJson(seed.types.orEmpty()),
++                idPrefixesJson = gson.toJson(seed.idPrefixes.orEmpty())
++            ))
++            seed.catalogs.orEmpty().forEach { catalog ->
++                seededConfigs.add(CatalogConfigEntity(
++                    uniqueId = "$url/${catalog.type}/${catalog.id}", transportUrl = url,
++                    addonName = seed.name, catalogType = catalog.type, catalogId = catalog.id,
++                    catalogName = catalog.name, customTitle = null, showInHome = true,
++                    showInMovies = catalog.type == "movie", showInSeries = catalog.type == "series",
++                    homeOrder = 999, moviesOrder = 999, seriesOrder = 999
++                ))
++            }
++        }
+         return ProfileRuntimeSnapshot(
+-            addons = listOf(addonEntity),
+-            catalogConfigs = configs,
++            addons = seededAddons,
++            catalogConfigs = seededConfigs,
+             hubRows = emptyList(),
+             hubRowItems = emptyList(),
+             watchHistory = emptyList()
+diff --git a/app/src/main/java/com/lumera/app/data/update/AppUpdateManager.kt b/app/src/main/java/com/lumera/app/data/update/AppUpdateManager.kt
+index 68d4910..58aced6 100644
+--- a/app/src/main/java/com/lumera/app/data/update/AppUpdateManager.kt
++++ b/app/src/main/java/com/lumera/app/data/update/AppUpdateManager.kt
+@@ -70,6 +70,10 @@ class AppUpdateManager @Inject constructor(
+     private var lastReleaseBody: String? = null
+ 
+     suspend fun checkForUpdate() {
++        if (BuildConfig.DEBUG) {
++            _state.value = UpdateState.UpToDate
++            return
++        }
+         _state.value = UpdateState.Checking
+         try {
+             val release = withContext(Dispatchers.IO) { fetchLatestRelease() }
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+index 4e1a5e3..aedca23 100644
+--- a/app/src/main/res/values/strings.xml
++++ b/app/src/main/res/values/strings.xml
+@@ -1,6 +1,6 @@
+ <resources>
+-    <string name="app_name">Lumera</string>
++    <string name="app_name">Lumera Household</string>
+ 
+     <!-- ACRA crash reporting -->
+     <string name="acra_toast_text">A crash report has been sent to help us fix this issue.</string>
+-</resources>
+\ No newline at end of file
++</resources>

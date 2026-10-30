@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="__PKG__"
+    android:versionCode="__VCODE__"
+    android:versionName="__VNAME__">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature android:name="android.software.leanback" android:required="false" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+
+    <application
+        android:label="__LABEL__"
+        android:icon="@drawable/icon"
+        android:banner="@drawable/banner"
+        android:allowBackup="false"
+        android:usesCleartextTraffic="__HTTP__"
+        android:hardwareAccelerated="true"
+        android:supportsRtl="true">
+
+        <activity
+            android:name="tv.webwrap.Main"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+
+            <meta-data android:name="tv.webwrap.url" android:value="__URL__" />
+            <meta-data android:name="tv.webwrap.stripSandbox" android:value="__STRIP__" />
+            <meta-data android:name="tv.webwrap.hideChat" android:value="__HIDECHAT__" />
+            <meta-data android:name="tv.webwrap.legacyHttp" android:value="__HTTPFLAG__" />
+            <meta-data android:name="tv.webwrap.thirdPartyCookies" android:value="__COOKIES__" />
+            <meta-data android:name="tv.webwrap.navigationHosts" android:value="__HOSTS__" />
+            <meta-data android:name="tv.webwrap.diagnostics" android:value="__DIAG__" />
+            <meta-data android:name="tv.webwrap.build" android:value="__BUILD__" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

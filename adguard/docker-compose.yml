@@ -1,0 +1,15 @@
+# AdGuard Home for the TV + PS5.
+# Port 80 is avoided on purpose (Windows sometimes holds it); admin UI on 8080.
+services:
+  adguardhome:
+    image: adguard/adguardhome:latest
+    container_name: adguardhome
+    restart: unless-stopped
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "3000:3000/tcp"   # first-run wizard
+      - "8080:80/tcp"     # admin UI after setup
+    volumes:
+      - ./work:/opt/adguardhome/work
+      - ./conf:/opt/adguardhome/conf

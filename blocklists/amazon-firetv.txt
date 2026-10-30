@@ -1,0 +1,55 @@
+! Title: Amazon Fire TV — ads, ACR, telemetry
+! Pinned locally on purpose: a dead subscription fails silently in AdGuard Home
+! (it keeps serving the last good fetch), so a network outage must never
+! silently un-block the TV. This is the LAN-layer list; CleanTV's on-device
+! personalDNSfilter (~400 hosts) is the primary layer.
+! Reviewed 2026-10-25 for TCL_65Q650F / Fire OS 7.7.1.7
+!
+! ============================================================
+! DO NOT BLOCK — Prime Video, Appstore, playback, updates-by-choice
+! Blocking any of these breaks streaming, purchases or app installs.
+! ============================================================
+!   *.aiv-cdn.net  *.aiv-delivery.net   Prime Video CDN (4K/HDR dies)
+!   *.media-amazon.com  *.ssl-images-amazon.com
+!   atv-ps.amazon.com   atv-ext.amazon.com   Appstore / entitlement
+!   api.amazon.com  mshop.amazon.com  completion.amazon.com
+!   todo-ta-g7g.amazon.com   Kindle/content sync
+!
+! ============================================================
+! AMAZON AD NETWORK
+! ============================================================
+||amazon-adsystem.com^
+||aax-us-east.amazon-adsystem.com^
+||aax-us-west.amazon-adsystem.com^
+||aax-eu.amazon-adsystem.com^
+||mads.amazon.com^
+||mads-eu.amazon.com^
+||mads.amazon-adsystem.com^
+
+! ============================================================
+! FIRE TV DEVICE TELEMETRY / METRICS UPLOAD
+! ============================================================
+||device-metrics-us.amazon.com^
+||device-metrics-us-2.amazon.com^
+||arcus-uswest.amazon.com^
+||arcus-us-east.amazon.com^
+||unagi.amazon.com^
+||unagi-na.amazon.com^
+||unagi-eu.amazon.com^
+||fls-na.amazon.com^
+||fls-eu.amazon.com^
+||dcm-us.amazon.com^
+
+! ============================================================
+! ACR / CONTENT FINGERPRINTING (what's on screen, sent to Amazon)
+! ============================================================
+||adsmeasurement.com^
+||roku.adsmeasurement.com^
+! (roku.* retained only if a Roku device ever shares this network; harmless)
+
+! ============================================================
+! FIRE TV UI PROMOTION ENDPOINTS
+! ============================================================
+||mas-ext.amazon.com^
+||msb-v0.amazon.com^
+||avod-metadata.amazon.com^

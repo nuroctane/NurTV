@@ -1,0 +1,137 @@
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+index 75a9698..70674fd 100644
+--- a/app/build.gradle.kts
++++ b/app/build.gradle.kts
+@@ -152,7 +152,7 @@ android {
+         }
+         debug {
+             isDebuggable = true
+-            applicationIdSuffix = ".debug"
++            applicationIdSuffix = ".household"
+             proguardFiles(
+                 getDefaultProguardFile("proguard-android-optimize.txt"),
+                 "proguard-rules.pro"
+diff --git a/app/src/debug/res/values/strings.xml b/app/src/debug/res/values/strings.xml
+index 665dcf3..02ef7af 100644
+--- a/app/src/debug/res/values/strings.xml
++++ b/app/src/debug/res/values/strings.xml
+@@ -1,3 +1,3 @@
+ <resources>
+-    <string name="app_name">CloudStream Debug</string>
++    <string name="app_name">CloudStream Household</string>
+ </resources>
+\ No newline at end of file
+diff --git a/app/src/main/assets/household-repos.json b/app/src/main/assets/household-repos.json
+new file mode 100644
+index 0000000..356ddac
+--- /dev/null
++++ b/app/src/main/assets/household-repos.json
+@@ -0,0 +1,14 @@
++{
++  "_comment": "Seeded once into a fresh install. Public repository URLs only; no accounts or tokens.",
++  "languages": ["en"],
++  "repositories": [
++    {
++      "name": "Cloudstream providers repository",
++      "url": "https://raw.githubusercontent.com/recloudstream/extensions/master/repo.json"
++    },
++    {
++      "name": "Phisher Repo",
++      "url": "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/repo.json"
++    }
++  ]
++}
+diff --git a/app/src/main/java/com/lagradost/cloudstream3/MainActivity.kt b/app/src/main/java/com/lagradost/cloudstream3/MainActivity.kt
+index 7db3328..bfac353 100644
+--- a/app/src/main/java/com/lagradost/cloudstream3/MainActivity.kt
++++ b/app/src/main/java/com/lagradost/cloudstream3/MainActivity.kt
+@@ -87,6 +87,7 @@ import com.lagradost.cloudstream3.mvvm.observe
+ import com.lagradost.cloudstream3.mvvm.observeNullable
+ import com.lagradost.cloudstream3.network.initClient
+ import com.lagradost.cloudstream3.plugins.PluginManager
++import com.lagradost.cloudstream3.plugins.HouseholdSetup
+ import com.lagradost.cloudstream3.plugins.PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins
+ import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
+ import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
+@@ -1356,6 +1357,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
+                 }
+ 
+                 ioSafe {
++                    val householdSeeded = HouseholdSetup.seedOnce(this@MainActivity)
+                     if (settingsManager.getBoolean(
+                             getString(R.string.auto_update_plugins_key),
+                             true
+@@ -1380,6 +1382,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
+                             this@MainActivity,
+                             autoDownloadPlugin
+                         )
++                    } else if (householdSeeded) {
++                        HouseholdSetup.downloadSeededPlugins(this@MainActivity)
+                     }
+                 }
+ 
+diff --git a/app/src/main/java/com/lagradost/cloudstream3/plugins/HouseholdSetup.kt b/app/src/main/java/com/lagradost/cloudstream3/plugins/HouseholdSetup.kt
+new file mode 100644
+index 0000000..0b19ba2
+--- /dev/null
++++ b/app/src/main/java/com/lagradost/cloudstream3/plugins/HouseholdSetup.kt
+@@ -0,0 +1,59 @@
++package com.lagradost.cloudstream3.plugins
++
++import android.app.Activity
++import androidx.preference.PreferenceManager
++import com.lagradost.cloudstream3.AutoDownloadMode
++import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
++import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
++import com.lagradost.cloudstream3.R
++import com.lagradost.cloudstream3.mvvm.logError
++import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
++import org.json.JSONObject
++
++/**
++ * Household build: adds the repositories in assets/household-repos.json once,
++ * then downloads their plugins for the listed languages once. Later removals
++ * are kept because nothing here runs again after the first seed.
++ */
++object HouseholdSetup {
++    private const val SEEDED_KEY = "HOUSEHOLD_REPOS_SEEDED"
++    private const val ASSET = "household-repos.json"
++
++    /** Returns true when this call seeded the repositories. */
++    suspend fun seedOnce(activity: Activity): Boolean {
++        if (getKey(SEEDED_KEY, false) == true) return false
++        try {
++            val json = JSONObject(activity.assets.open(ASSET).bufferedReader().use { it.readText() })
++
++            val repos = json.getJSONArray("repositories")
++            for (i in 0 until repos.length()) {
++                val repo = repos.getJSONObject(i)
++                RepositoryManager.addRepository(
++                    RepositoryData(repo.getString("name"), repo.getString("url"))
++                )
++            }
++
++            val languages = json.optJSONArray("languages")
++            if (languages != null && languages.length() > 0) {
++                val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
++                val langKey = activity.getString(R.string.provider_lang_key)
++                if (!prefs.contains(langKey)) {
++                    val set = (0 until languages.length()).map { languages.getString(it) }.toSet()
++                    prefs.edit().putStringSet(langKey, set).apply()
++                }
++            }
++        } catch (t: Throwable) {
++            logError(t)
++            return false
++        }
++        setKey(SEEDED_KEY, true)
++        return true
++    }
++
++    suspend fun downloadSeededPlugins(activity: Activity) {
++        PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_downloadNotExistingPluginsAndLoad(
++            activity,
++            AutoDownloadMode.FilterByLang
++        )
++    }
++}

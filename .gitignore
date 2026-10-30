@@ -1,0 +1,25 @@
+# Local device state and private signing material never belong in published work.
+/backups/
+/private/
+**/*.keystore
+**/*.jks
+**/*.idsig
+/apps/webwrap/build/
+/apps/webwrap/out/
+**/__pycache__/
+**/*.pyc
+
+# Agent scratch and test caches.
+/.nur/
+/.pytest_cache/
+
+# Upstream clones; our changes are in provision/patches/.
+/provision/custom-*/
+
+# Third-party APKs: too big for git (arvio is 140 MB) and pinned by sha256 in
+# provision/golden-state.json + sources.json. They travel in the D:\BACKUP archive.
+*.apk
+!/apps/cleantv-home.apk
+
+# Old screenshots.
+/apps/.*.png

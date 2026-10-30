@@ -1,0 +1,119 @@
+name: Device report
+description: Submit what happened on your TV so it can be added to the catalog
+title: "[device] "
+labels: ["device-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        You do not need git for this. Answer what you know; partial answers are useful.
+        **Do not include IP addresses, MAC addresses, serial numbers, Wi-Fi names or account emails.**
+
+  - type: input
+    id: brand
+    attributes:
+      label: Brand
+      placeholder: Amazon, Samsung, LG, Sony, TCL, Hisense…
+    validations:
+      required: true
+
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      description: The name it is sold under, and the model number from `adb shell getprop ro.product.model`
+      placeholder: Fire TV Stick 4K Max (AFTKM)
+    validations:
+      required: true
+
+  - type: input
+    id: models
+    attributes:
+      label: Other model numbers this applies to
+      description: Sizes or regional versions of the same TV, if you know them
+    validations:
+      required: false
+
+  - type: input
+    id: os
+    attributes:
+      label: OS and build
+      description: "`adb shell getprop ro.build.display.id`"
+      placeholder: Fire OS 7.7.1.7 (PS7717)
+    validations:
+      required: true
+
+  - type: textarea
+    id: developer_mode
+    attributes:
+      label: How did you enable developer mode and ADB?
+      description: The exact menu path, including how many times to click what
+      placeholder: Settings > My Fire TV > About > click the device name 7 times > Developer Options > ADB debugging ON
+    validations:
+      required: true
+
+  - type: input
+    id: ip_location
+    attributes:
+      label: Where does the TV show its IP address?
+      placeholder: Settings > About > Network
+    validations:
+      required: true
+
+  - type: textarea
+    id: prompts
+    attributes:
+      label: Which dialogs blocked automation, and what dismissed them?
+      description: One per line, as `name | fix`. This is the most useful field.
+      placeholder: |
+        Allow USB debugging | human pressed Allow on the TV
+        VPN connection request | adb shell appops set dnsfilter.android ACTIVATE_VPN allow
+    validations:
+      required: false
+
+  - type: textarea
+    id: quirks
+    attributes:
+      label: Anything surprising the next person should know?
+      placeholder: |
+        launcher shows a blank screen for ~15 s after boot
+        package X reports disabled but keeps running
+    validations:
+      required: false
+
+  - type: dropdown
+    id: status
+    attributes:
+      label: How far did you get?
+      options:
+        - Everything worked, verify.sh exited 0
+        - Partly worked
+        - Just explored, nothing changed
+    validations:
+      required: true
+
+  - type: input
+    id: summary
+    attributes:
+      label: One-line summary
+      placeholder: Full pass worked; CleanTV home took over HOME; filter blocks updates
+    validations:
+      required: false
+
+  - type: input
+    id: github
+    attributes:
+      label: Credit
+      description: The GitHub username to credit in the catalog. Leave it empty to stay anonymous.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Confirm
+      options:
+        - label: No IP address, MAC address, serial number, Wi-Fi name or account email is included
+          required: true
+        - label: I am fine with this being published under CC BY-SA 4.0
+          required: true

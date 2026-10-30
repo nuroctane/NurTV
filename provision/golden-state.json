@@ -1,0 +1,435 @@
+{
+  "_comment": "Captured by scripts/capture-tv.sh \u2014 this is what the TV actually has. Do not hand-edit; re-run capture after changing anything on the TV.",
+  "captured_at": "2026-10-30_015242",
+  "device": {
+    "device": "hazel",
+    "model": "AFTMD001",
+    "sdk": 28,
+    "fire_os": "Fire OS 7.7.1.7 (PS7717/5741)",
+    "build": "PS7717.5741N.0036408028416",
+    "abi": "armeabi-v7a"
+  },
+  "guard": {
+    "ro.product.device": "hazel",
+    "ro.product.model": "AFTMD001",
+    "ro.build.version.sdk": "28"
+  },
+  "config": {
+    "home_conf": "apps/home.conf",
+    "art": "apps/art",
+    "wallpaper": "apps/wallpapers/dark-waves.jpg",
+    "cleantv_conf": "cleantv/cleantv.conf"
+  },
+  "packages": [
+    {
+      "package": "tv.cleantv.home",
+      "versionName": "1.4",
+      "versionCode": 6,
+      "install": "install",
+      "apk": [
+        "apps/cleantv-home.apk"
+      ],
+      "sha256": [
+        "eb7d364bd57b20539f4444f55e8e8e9ea3836ed2c02a23df8900213175178739"
+      ],
+      "role": "launcher"
+    },
+    {
+      "package": "dnsfilter.android",
+      "versionName": "1.50.61.3",
+      "versionCode": 1506103,
+      "install": "install",
+      "apk": [
+        "provision/apk/dnsfilter.android.apk"
+      ],
+      "sha256": [
+        "3ddd0db322d1ca5fe950ea29dc1788af6e6581bb5f34694085fb4aa2e77b68ad"
+      ],
+      "role": "dnsfilter"
+    },
+    {
+      "package": "com.arvio.tv",
+      "versionName": "2.3",
+      "versionCode": 321,
+      "install": "install",
+      "apk": [
+        "apps/arvio-2.3.apk"
+      ],
+      "sha256": [
+        "a860a62422f0185ff53fb55f1bde2a63237e8febd60843c49d1c7e172b63bd3f"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "com.kick.mobile",
+      "versionName": "1.9.0",
+      "versionCode": 208,
+      "install": "install",
+      "apk": [
+        "provision/apk/com.kick.mobile.apk"
+      ],
+      "sha256": [
+        "d395b760355e6831ed27f3aa50f6888afbabd7e62c6541233a781bbab078b6cd"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "com.lagradost.cloudstream3",
+      "versionName": "4.8.0",
+      "versionCode": 68,
+      "install": "install",
+      "apk": [
+        "apps/cloudstream-4.8.0.apk"
+      ],
+      "sha256": [
+        "348c3f09551f2dda4fba25ba348928ee7b82a47ce98a6b1eae3295d4c127877c"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "com.lonelycatgames.Xplore",
+      "versionName": "4.46.00",
+      "versionCode": 44600,
+      "install": "install",
+      "apk": [
+        "apps/x-plore-4.46.00.apk"
+      ],
+      "sha256": [
+        "1f019bde72fd4b6fefb273e57222d26e27449f36d0ecff370448db205c793a3d"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "com.lumera.app",
+      "versionName": "0.1.8-beta",
+      "versionCode": 9,
+      "install": "install",
+      "apk": [
+        "apps/lumera-0.1.8-beta.apk"
+      ],
+      "sha256": [
+        "bdf7c56fc116a66a0eba93912ed6a9341db0baa027d2e2e70fc45989000529d6"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "com.neilturner.aerialviews",
+      "versionName": "1.8.5",
+      "versionCode": 148,
+      "install": "install",
+      "apk": [
+        "apps/aerial-views-1.8.5.apk"
+      ],
+      "sha256": [
+        "a20b4bc748da5ce890d96536494952aa4f50a6b589c50dee176415c021407070"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "com.rumble.firetv",
+      "versionName": "2.11.0",
+      "versionCode": 10198,
+      "install": "install",
+      "apk": [
+        "provision/apk/com.rumble.firetv.apk"
+      ],
+      "sha256": [
+        "60ac36e80a678cf15db33bf2e9b1f246f5b82e58d744ae418357500f59260a59"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "com.s0und.s0undtv",
+      "versionName": "beta_146",
+      "versionCode": 146,
+      "install": "install",
+      "apk": [
+        "apps/s0undtv-beta_146.apk"
+      ],
+      "sha256": [
+        "8b35320030912a20a2c8e18e762b5d7e71ce98031f3e06162a70e17710b4a1a4"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "com.saikou.sozo_tv",
+      "versionName": "1.0.2",
+      "versionCode": 2,
+      "install": "install",
+      "apk": [
+        "apps/sozo-tv-1.0.2.apk"
+      ],
+      "sha256": [
+        "c380e31071f13f346a1305b106c424c93f925dcdc94fc71f66c073e23570866f"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "com.spyou.watch_app",
+      "versionName": "2.3.4",
+      "versionCode": 22630,
+      "install": "install",
+      "apk": [
+        "apps/zangetsu-2.3.4-v7a.apk"
+      ],
+      "sha256": [
+        "41cfa8b6c725f3a75a41ed09298b57191dd77dbf9d9c6d323f60a3daf347b113"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "com.x.xtv",
+      "versionName": "1.3",
+      "versionCode": 7,
+      "install": "install",
+      "apk": [
+        "provision/apk/com.x.xtv.apk"
+      ],
+      "sha256": [
+        "954c983219fa9f434315e4fcb88a8f8b50ff12d29f54992a455a07d5e9aac734"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "eu.kanade.tachiyomi.animeextension.all.anizone",
+      "versionName": "16.15",
+      "versionCode": 15,
+      "install": "install",
+      "apk": [
+        "apps/ext-watchbox/aniyomi-all.anizone-v16.15.apk"
+      ],
+      "sha256": [
+        "3596cf21bde05de7a957a6ab56a53ea53db2cb6a1f45fdc85e7cbaef7a2047b5"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "eu.kanade.tachiyomi.animeextension.en.anichi",
+      "versionName": "16.10",
+      "versionCode": 10,
+      "install": "install",
+      "apk": [
+        "apps/ext-watchbox/aniyomi-en.anichi-v16.10.apk"
+      ],
+      "sha256": [
+        "ad58ea7c4cc52c1d5e1aee1c2c8790da33d6f2bd41ecff513d9a20c6daddf40e"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "eu.kanade.tachiyomi.animeextension.en.animepahe",
+      "versionName": "16.56",
+      "versionCode": 56,
+      "install": "install",
+      "apk": [
+        "apps/ext-watchbox/aniyomi-en.animepahe-v16.56.apk"
+      ],
+      "sha256": [
+        "a0d5a0dc2089f083b8515804c8f13534e26a17506bdbb8ddc5c11e9ae9ab0b62"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "eu.kanade.tachiyomi.animeextension.en.animesogo",
+      "versionName": "16.10",
+      "versionCode": 10,
+      "install": "install",
+      "apk": [
+        "apps/ext-watchbox/aniyomi-en.animesogo-v16.10.apk"
+      ],
+      "sha256": [
+        "32c38ff533efb427cbb0334f91c38c2c981223e8c105901ebb34f26ff4e6f594"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "eu.kanade.tachiyomi.animeextension.en.kickassanime",
+      "versionName": "14.63",
+      "versionCode": 63,
+      "install": "install",
+      "apk": [
+        "apps/ext-watchbox/aniyomi-en.kickassanime-v14.63.apk"
+      ],
+      "sha256": [
+        "7a5514e4fa32e637e4e19f894d912b184203197a63bced5e4b638afb9b4b6d9d"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "eu.kanade.tachiyomi.animeextension.en.kotokai",
+      "versionName": "16.10",
+      "versionCode": 10,
+      "install": "install",
+      "apk": [
+        "apps/ext-watchbox/aniyomi-en.kotokai-v16.10.apk"
+      ],
+      "sha256": [
+        "ca701b74da790dd67745c10a02ba0e4a4a6e2e9af530c46eb47f3e7364398385"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "org.smarttube.stable",
+      "versionName": "32.56",
+      "versionCode": 2446,
+      "install": "install",
+      "apk": [
+        "provision/apk/org.smarttube.stable.apk"
+      ],
+      "sha256": [
+        "4a35b90940612e048e4e9cb9e10379f7db1e84f30375994129f10a571ee04ce5"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "space.nicart.watchbox.tv",
+      "versionName": "4.14.12-tv",
+      "versionCode": 91,
+      "install": "install",
+      "apk": [
+        "apps/watchbox-tv-4.14.12-v7a.apk"
+      ],
+      "sha256": [
+        "c3e611386657ab066c6e7e0732d93b3f82c73e93ab010ea4999de8a1fda37d7d"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "st.atlantic.app",
+      "versionName": "v1.0.6",
+      "versionCode": 10,
+      "install": "install",
+      "apk": [
+        "apps/atlantic-app.apk"
+      ],
+      "sha256": [
+        "fa896541b90a8833c3480fe3a40c95f59548dc1bb4b8815f5cdb813e045219e6"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "tv.animeheaven.web",
+      "versionName": "3.9.1",
+      "versionCode": 31,
+      "install": "install",
+      "apk": [
+        "provision/apk/tv.animeheaven.web.apk"
+      ],
+      "sha256": [
+        "47d88473cce84998ce9a2f5be84149474b4a18beb4dc0b39494b547016c8923a"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "tv.framextv.web",
+      "versionName": "3.9.1",
+      "versionCode": 31,
+      "install": "install",
+      "apk": [
+        "provision/apk/tv.framextv.web.apk"
+      ],
+      "sha256": [
+        "08dd362700b774dc52f2e1e0a7bc5e9f51d1b764351d68001f81c8dab3514aaf"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "tv.miruro.web",
+      "versionName": "3.9.1",
+      "versionCode": 31,
+      "install": "install",
+      "apk": [
+        "provision/apk/tv.miruro.web.apk"
+      ],
+      "sha256": [
+        "d92ef3b024a4985db8ee1f7d14e5f2636389dbc494aa4fe7b21a001a7ca6b967"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "tv.mmabite.web",
+      "versionName": "3.9.1",
+      "versionCode": 31,
+      "install": "install",
+      "apk": [
+        "provision/apk/tv.mmabite.web.apk"
+      ],
+      "sha256": [
+        "840694b0e2903ccccf1edf5f77d100998cde1d9726fa66fa21d6ba174a834d4e"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "tv.obbywatcher.web",
+      "versionName": "3.9.1",
+      "versionCode": 31,
+      "install": "install",
+      "apk": [
+        "provision/apk/tv.obbywatcher.web.apk"
+      ],
+      "sha256": [
+        "aa43b0ba70ca371d2d00801246fbfa44b5a56de2f37ff3c7e31dbcdc5e815960"
+      ],
+      "role": "app"
+    },
+    {
+      "package": "tv.streameast.web",
+      "versionName": "3.9.1",
+      "versionCode": 31,
+      "install": "install",
+      "apk": [
+        "provision/apk/tv.streameast.web.apk"
+      ],
+      "sha256": [
+        "6c4e72b117c1627194e3fe7376c979a9dcbe9ec6e2e9f586bb3c56ffbc2f3fe3"
+      ],
+      "role": "app"
+    }
+  ],
+  "disabled_packages": [
+    "com.amazon.ale",
+    "com.amazon.ceviche",
+    "com.amazon.comms.starktachyon",
+    "com.amazon.connectivitydiag",
+    "com.amazon.device_remote_config_sync_service",
+    "com.amazon.dp.logger",
+    "com.amazon.dummy.alarmclock",
+    "com.amazon.dummy.calendar",
+    "com.amazon.dummy.contacts",
+    "com.amazon.dummy.gallery",
+    "com.amazon.dummy.music",
+    "com.amazon.dummy.settings",
+    "com.amazon.hedwig",
+    "com.amazon.hybridadidservice",
+    "com.amazon.katoch",
+    "com.amazon.logan",
+    "com.amazon.media.recommendations",
+    "com.amazon.neo.minerva.logcat",
+    "com.amazon.perfc",
+    "com.amazon.perfcollection",
+    "com.amazon.privacypassservice",
+    "com.amazon.shoptv.client",
+    "com.amazon.shoptv.firetv.client",
+    "com.amazon.sneakpeek",
+    "com.amazon.storm.lightning.tutorial",
+    "com.amazon.systemnotices",
+    "com.amazon.tigris",
+    "com.amazon.tmm.tutorial",
+    "com.amazon.tv.acr",
+    "com.amazon.tv.democontent.provider",
+    "com.amazon.tv.developer.dataservice",
+    "com.amazon.tv.easyupgrade",
+    "com.amazon.tv.forcedotaupdater.v2",
+    "com.amazon.tv.fw.metrics",
+    "com.amazon.tv.releasenotes",
+    "com.amazon.tv.website_launcher",
+    "com.amazon.wirelessmetrics.service",
+    "com.android.nfc",
+    "com.android.traceur"
+  ],
+  "settings": {
+    "always_on_vpn_app": "dnsfilter.android",
+    "alarm_manager_constants": "min_futurity=0",
+    "enabled_accessibility_services": "tv.cleantv.home/tv.cleantv.home.Guard"
+  }
+}

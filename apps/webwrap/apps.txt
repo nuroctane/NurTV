@@ -1,0 +1,10 @@
+# One line per app. Order = the order they are built.
+# slug | applicationId | label | url | icon png
+# Optional banner override: icons/<slug>-banner.png (320x180) wins over the
+# auto-generated banner (icon centred on black).
+framextv|tv.framextv.web|frameX|https://framextv.cc/|icons/framextv.png
+fight|tv.obbywatcher.web|Fights|https://fight.nswfiles.com/|icons/fight.png
+mma|tv.mmabite.web|MMA Stream|https://mmabite.plus/|icons/mma.png
+streameast|tv.streameast.web|StreamEast|https://v2.streameast.ga/|icons/streameast.png|nochat|auth.streamea.st
+animeheaven|tv.animeheaven.web|AnimeHeaven|https://animeheaven.me/|icons/animeheaven.png
+miruro|tv.miruro.web|Miruro|https://www.miruro.cx/|icons/miruro.png
