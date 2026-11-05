@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Capture app state that lives in private data, without sign-ins.
+# Capture app state that lives in private data, filtering likely sign-in data.
 #
 #   ./scripts/capture-app-settings.sh <working-tv-ip>
 #
@@ -12,8 +12,8 @@
 #
 # The raw backup holds sign-in sessions, so it is never kept: app_settings.py
 # writes private/app-settings/app-settings.ab without caches, webview data or
-# credential-looking files and keys, and prints everything it dropped.
-# provision-tv.sh restores that file onto a new TV.
+# credential-looking files and keys. Filtering is heuristic; treat it as sensitive.
+# Provisioning can restore it only with --restore-app-settings.
 #
 # The apps are force-stopped by the backup, so pick a time nothing is playing.
 set -uo pipefail

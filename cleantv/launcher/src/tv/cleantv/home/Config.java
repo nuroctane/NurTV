@@ -86,12 +86,21 @@ final class Config {
     static final Choice DIM = new Choice("dim", "Image dim", "40",
             new String[] {"0", "20", "40", "60", "80"},
             new String[] {"0%", "20%", "40%", "60%", "80%"});
+    // Dim mode (1.4.3): an 80% black translucent Guard overlay over
+    // everything, one click on / one click off, stays until untoggled.
+    // This is NOT the image dim above, which only shades a wallpaper on
+    // the home screen, and NOT system brightness: Android brightness is
+    // proven dead on this TCL panel, so no brightness writes are used.
+    // Key: dim_mode=off/on. The old 1.4.2 dim_saved key is obsolete.
+    static final Choice DIM_MODE = new Choice("dim_mode", "Dim mode (overlay)", "off",
+            new String[] {"off", "on"},
+            new String[] {"Off", "On (80% overlay dim)"});
 
     static final Choice ROTATE = new Choice("rotate", "Wallpaper rotation", "off",
             new String[] {"off", "visit", "hourly", "daily", "daytime"},
             new String[] {"Off", "Every return home", "Every hour", "Every day", "By time of day"});
 
-    static final Choice[] CHOICES = {ACCENT, TILES, LAYOUT, ORDER, LABELS, CLOCK, INPUTS, SWITCH, BACKGROUND, DIM, ROTATE};
+    static final Choice[] CHOICES = {ACCENT, TILES, LAYOUT, ORDER, LABELS, CLOCK, INPUTS, SWITCH, BACKGROUND, DIM, DIM_MODE, ROTATE};
 
     /** Folder of wallpapers, next to home.conf, that Background › Image file rotates through. */
     static final String WALLPAPERS = "wallpapers";

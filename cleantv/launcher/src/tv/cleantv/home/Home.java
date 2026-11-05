@@ -65,6 +65,7 @@ public final class Home extends Activity {
     private View shade;
     private View tint;
     private TextView clock, date;
+    private TextView dimChip;
     private Row apps, inputs;
     private Map<String, Long> recent = new HashMap<>();
     private Tile moving;
@@ -221,6 +222,7 @@ public final class Home extends Activity {
         resumed = true;
         Guard.arrived(this);
         cfg.refresh();
+        refreshDimChip();
         cfg.visited();
         if (cfg.version() != applied) apply();
         else background();
@@ -457,6 +459,45 @@ public final class Home extends Activity {
                     View below = nearest(apps.tiles(), focused);
                     if (below != null) return below;
                 }
+                // Circular navigation (nur, Nov 2026): left from the first tile
+                // in a row wraps to the last tile in that row, and right from
+                // the last tile wraps to the first. For the apps strip this
+                // means left from the first app goes to the last app.
+                // Up and down are unchanged.
+                if (focused instanceof Tile
+                        && focused.getParent() instanceof ViewGroup
+                        && (direction == View.FOCUS_LEFT
+                                || direction == View.FOCUS_RIGHT)) {
+                    ViewGroup parent = (ViewGroup) focused.getParent();
+                    int idx = parent.indexOfChild(focused);
+                    int count = parent.getChildCount();
+                    if (idx >= 0 && count > 1) {
+                        boolean grid = parent instanceof Grid;
+                        if (direction == View.FOCUS_LEFT) {
+                            if (grid) {
+                                int cols = ((Grid) parent).columns();
+                                int rowStart = idx - (idx % cols);
+                                if (idx == rowStart) {
+                                    int rowEnd = Math.min(rowStart + cols - 1, count - 1);
+                                    return parent.getChildAt(rowEnd);
+                                }
+                            } else if (idx == 0) {
+                                return parent.getChildAt(count - 1);
+                            }
+                        } else {
+                            if (grid) {
+                                int cols = ((Grid) parent).columns();
+                                int rowStart = idx - (idx % cols);
+                                int rowEnd = Math.min(rowStart + cols - 1, count - 1);
+                                if (idx == rowEnd) {
+                                    return parent.getChildAt(rowStart);
+                                }
+                            } else if (idx == count - 1) {
+                                return parent.getChildAt(0);
+                            }
+                        }
+                    }
+                }
                 return super.focusSearch(focused, direction);
             }
         };
@@ -481,6 +522,8 @@ public final class Home extends Activity {
         head.addView(when, new LinearLayout.LayoutParams(0, WRAP, 1f));
         head.addView(chip("Options", v -> startActivity(new Intent(this, Options.class))));
         head.addView(chip("Settings", v -> openSettings()));
+        dimChip = chip("Dim", v -> toggleDim());
+        head.addView(dimChip);
         column.addView(head, new LinearLayout.LayoutParams(MATCH, WRAP));
 
         apps = new Row(Catalog.APPS, "Apps", column);
@@ -538,6 +581,39 @@ public final class Home extends Activity {
         v.setLayoutParams(lp);
         chips.add(v);
         return v;
+    }
+
+    /**
+     * Dim mode (1.4.3): one click, an 80% black translucent overlay over
+     * everything, stays until untoggled. No idle timer, no auto-dim.
+     * This is a Guard accessibility overlay, NOT Settings.System brightness:
+     * Android brightness is proven dead on this TCL panel (adb settings put
+     * to 10 and 255 moved dumpsys with zero visible change, Nov 5 2026),
+     * so no brightness writes happen here at all. The overlay is a picture
+     * filter only: content keeps playing underneath, the remote passes
+     * straight through it, and the backlight stays full.
+     */
+    private void toggleDim() {
+        boolean on = "on".equals(cfg.get(Config.DIM_MODE));
+        if (on) {
+            cfg.set(Config.DIM_MODE.key, "off");
+            Guard.setDim(false);
+            Toast.makeText(this, "Dim off", Toast.LENGTH_SHORT).show();
+        } else {
+            cfg.set(Config.DIM_MODE.key, "on");
+            Guard.setDim(true);
+            Toast.makeText(this, "Dim on", Toast.LENGTH_SHORT).show();
+        }
+        refreshDimChip();
+    }
+
+    private void refreshDimChip() {
+        if (dimChip == null) return;
+        boolean on = "on".equals(cfg.get(Config.DIM_MODE));
+        dimChip.setText(on ? "Dim: On" : "Dim");
+        // Sync the overlay with the saved setting, e.g. dim turned on in
+        // Options, or Guard restarted while dim was on.
+        Guard.setDim(on);
     }
 
     private void apply() {

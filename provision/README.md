@@ -8,14 +8,15 @@ Two commands, both driven by `provision/golden-state.json`:
 ./scripts/provision-tv.sh         <new-tv-ip>      # repo -> new TV, everything
 ```
 
-`capture-app-settings.sh` is what makes this one-shot for the apps whose setup lives
+`capture-app-settings.sh` captures data for apps whose setup lives
 in private data: SmartTube's ad/SponsorBlock/shorts settings, S0undTV's Luminous
 ad-free proxy slots, CloudStream's repos **and downloaded plugins**, Zangetsu's
 provider repo **and installed providers**, and Watchbox's repo list. It runs
 `adb backup` (the TV asks "Back up my data": press it, no password), strips caches,
 webview cookies and anything that looks like a sign-in (`scripts/app_settings.py`
 prints every dropped file and key), and writes `private/app-settings/app-settings.ab`.
-Provisioning restores it (the new TV asks "Restore my data": press it). Run the
+This filtering is heuristic, so the private backup may still contain sensitive data.
+Restoration is opt-in and has not been verified on another TV. Run the
 capture when nothing is playing: the backup force-stops those apps.
 
 Capture the working TV after app or launcher changes. Provisioning installs the
@@ -36,6 +37,7 @@ Then:
 ./scripts/provision-tv.sh <ip> --dry-run        # say what would happen, touch nothing
 ./scripts/provision-tv.sh <ip> --verify-only    # change nothing, only check
 ./scripts/provision-tv.sh <ip> --skip-system    # apps + config only, no debloat/DNS/HOME
+./scripts/provision-tv.sh <ip> --restore-app-settings  # also restore the private backup
 python scripts/source-checklist.py               # current manual add-on checklist
 ```
 
@@ -56,10 +58,18 @@ overrides that, deliberately.
 | config | `apps/home.conf` → `files/home.conf`, `apps/art/*.png` → `files/art/`, the applied wallpaper → `files/wallpaper.jpg` |
 | restart | launcher force-stop + start so the new art is read (art is cached per tile), then the accessibility Guard is rebound |
 | media sources | `scripts/apply-sources.sh`: the six Watchbox extension APKs in `provision/sources.json`, hash-checked |
-| app state | `adb restore private/app-settings/app-settings.ab`: SmartTube, S0undTV, CloudStream, Zangetsu, Watchbox state without sign-ins. One button press on the TV; skipped with a note if never captured |
+| app state | Opt in with `--restore-app-settings`: Android restore may replace settings on the target and requires a TV confirmation. The sanitized backup has been captured, but restoring it to another TV has not been verified. Arvio, Lumera and Atlantic are not included. |
 | verify | versions + APK hashes, `home.conf` by key/value, art by bytes, the VPN/alarm/accessibility settings and disabled list; a normal run also presses **HOME** to test the takeover |
 
 Exit status is non-zero if any check fails; every failure is printed as a `!` line.
+
+`provision/apk-updates.json` can override a captured app with a newer, locally
+verified APK. The captured `golden-state.json` still describes the source TV;
+provisioning and `--verify-only` compare against the override where one exists.
+SmartTube 32.68 and Atlantic 1.0.9 were installed on the source TV and recaptured;
+their entries no longer need overrides. The captured SmartTube APK supports the
+source TV's 32-bit ARM architecture. After updating and recapturing a staged app,
+remove its corresponding override. APK hash checks still run before installation.
 
 ## What is in this directory
 
@@ -91,18 +101,19 @@ difference on every run.
 
 | Not copied | Why |
 |---|---|
-| accounts and sign-ins (S0undTV/Twitch, Kick, Rumble, X, Sozo, Atlantic, Prime, Netflix) | per-device accounts; nothing here touches credentials |
+| accounts and sign-ins (S0undTV/Twitch, Kick, Rumble, X, Sozo, Atlantic, Prime, Netflix) | not intentionally migrated; the backup sanitizer is heuristic and may retain sensitive data |
 | Aerial Views as screensaver (`secure screensaver_*`) | four adb lines in apps/manifest.md "APK installs: Aerial Views, X-plore" |
-| sign-in material inside app state | the app-state backup drops it; TorBox, AniList/MAL/Simkl and the like need signing in again |
+| sign-in material inside app state | the sanitizer attempts to remove credentials; it cannot guarantee every credential is removed. Treat the backup as sensitive, and expect to sign in again |
 | Arvio add-ons | `allowBackup` is off, and `stremio://addon/…` was delivered then dropped. Add the manifests in Settings → Addons → Add Addon; the current list is in `sources.json` |
 | Lumera add-ons | `allowBackup` is off. Enter the manifests from `sources.json`, or use the Lumera Household prototype (provision/CUSTOM-CLIENTS.md), which seeds them into new profiles |
 | Netflix's updated system app | the Appstore restores it on any Fire TV of this model; capture skips it |
 | Appstore ownership | Kick/Rumble/X are installed from their pulled APKs, so they run, but the Appstore will not offer updates for them as it does for a store-installed copy |
 
 Left for a human after a successful run: the sign-ins above and the Arvio and
-Lumera add-on lists in `provision/sources.json`. If `capture-app-settings.sh` was
-never run, SmartTube/S0undTV settings and the CloudStream/Zangetsu sources are
-manual too. Run `python scripts/source-checklist.py` for the URLs and provider names.
+Lumera add-on lists in `provision/sources.json`. SmartTube/S0undTV settings and
+CloudStream/Zangetsu sources are manual unless the private backup is restored;
+verify them afterward because that restore has not been tested. Run
+`python scripts/source-checklist.py` for the URLs and provider names.
 Confirm each installed source in its app and test playback: these third-party
 services can change, and a reachable manifest does not guarantee a working stream.
 Watchbox's repo link can optionally be opened with `./scripts/apply-sources.sh <ip> --with-intents`;

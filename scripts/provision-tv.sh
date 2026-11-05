@@ -10,7 +10,7 @@
 #
 # After the golden-state APKs, scripts/apply-sources.sh installs the Watchbox
 # extension packages in provision/sources.json, then private/app-settings/app-settings.ab
-# (from ./scripts/capture-app-settings.sh) restores SmartTube/S0undTV settings and
+# (from ./scripts/capture-app-settings.sh) can optionally restore settings and
 # CloudStream/Zangetsu/Watchbox sources. Arvio/Lumera add-ons forbid backup: manual.
 #
 # Source of truth is provision/golden-state.json, captured from the working TV by
@@ -33,13 +33,15 @@ require_adb || exit 1
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 STATE=$ROOT/provision/golden-state.json
-IP=""; DRY=0; VERIFY_ONLY=0; SKIP_SYSTEM=0; FORCE=0
+UPDATES=$ROOT/provision/apk-updates.json
+IP=""; DRY=0; VERIFY_ONLY=0; SKIP_SYSTEM=0; FORCE=0; RESTORE_APP_SETTINGS=0
 for a in "$@"; do
   case $a in
     --dry-run) DRY=1 ;;
     --verify-only) VERIFY_ONLY=1 ;;
     --skip-system) SKIP_SYSTEM=1 ;;
     --force) FORCE=1 ;;
+    --restore-app-settings) RESTORE_APP_SETTINGS=1 ;;
     -*) echo "unknown flag: $a" >&2; exit 2 ;;
     *) IP=$a ;;
   esac
@@ -69,10 +71,26 @@ trap 'rm -rf "$WORK"' EXIT
 : > "$WORK/verified.txt"
 
 step "plan"
-python - "$(win "$STATE")" "$(win "$WORK")" <<'PY'
+python - "$(win "$STATE")" "$(win "$WORK")" "$(win "$UPDATES")" <<'PY'
 import json, sys
+from pathlib import Path
 state = json.load(open(sys.argv[1], encoding='utf-8'))
 out = sys.argv[2]
+updates_path = Path(sys.argv[3])
+if updates_path.exists():
+    updates = json.load(updates_path.open(encoding='utf-8')).get('packages', [])
+    packages = {p['package']: p for p in state['packages']}
+    seen = set()
+    for update in updates:
+        name = update['package']
+        if name in seen or name not in packages:
+            raise ValueError(f'duplicate or unknown update package: {name}')
+        seen.add(name)
+        target = packages[name]
+        if int(update['versionCode']) < int(target['versionCode']):
+            raise ValueError(f'update would downgrade {name}')
+        target.update(versionCode=int(update['versionCode']), versionName=update['versionName'],
+                      install='install', apk=[update['apk']], sha256=[update['sha256']])
 with open(f'{out}/meta.sh', 'w', encoding='utf-8', newline='\n') as f:
     f.write(f"GUARD_DEVICE={state['guard']['ro.product.device']!r}\n")
     f.write(f"GUARD_MODEL={state['guard']['ro.product.model']!r}\n")
@@ -97,6 +115,7 @@ PY
 # shellcheck disable=SC1091
 source "$WORK/meta.sh"
 note "from      provision/golden-state.json, captured $CAPTURED_AT"
+[ -f "$UPDATES" ] && note "updates   provision/apk-updates.json overrides captured package versions"
 note "target    $S"
 note "expected  $GUARD_DEVICE / $GUARD_MODEL, sdk $GUARD_SDK"
 note "packages  $(wc -l < "$WORK/packages.tsv" | tr -d ' ') "
@@ -282,11 +301,13 @@ else
 fi
 
 # App state in private data (SmartTube/S0undTV ad-blocking settings, CloudStream
-# plugins, Zangetsu providers, Watchbox repo), minus sign-ins: the backup made by
+# plugins, Zangetsu providers, Watchbox repo), filtered for likely sign-ins: the backup made by
 # scripts/capture-app-settings.sh. adb restore needs one button press on the TV.
 step "app state (SmartTube, S0undTV, CloudStream, Zangetsu, Watchbox)"
 APPSET=$ROOT/private/app-settings/app-settings.ab
-if [ ! -f "$APPSET" ]; then
+if [ "$RESTORE_APP_SETTINGS" = 0 ]; then
+  note "skipped; use --restore-app-settings only on the intended target after reviewing the backup"
+elif [ ! -f "$APPSET" ]; then
   note "no private/app-settings/app-settings.ab — run ./scripts/capture-app-settings.sh <working-tv-ip> once"
 elif [ "$(sha "$APPSET")" != "$(cat "$APPSET.sha256" 2>/dev/null)" ]; then
   fail "private/app-settings/app-settings.ab does not match its .sha256; capture it again"
@@ -295,7 +316,7 @@ elif [ "$DRY" = 1 ] || [ "$VERIFY_ONLY" = 1 ]; then
 else
   note "On the TV: press 'Restore my data' (no password). Waiting up to 2 minutes."
   if timeout 150 "$ADB_BIN" -s "$S" restore "$(win "$APPSET")" </dev/null >/dev/null 2>&1; then
-    note "restored app state; sign-ins were not copied"
+    note "restore command finished; check each app's settings and add-ons on the target TV"
   else
     fail "adb restore timed out or failed; rerun or press Restore on the TV"
   fi

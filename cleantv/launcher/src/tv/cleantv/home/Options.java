@@ -132,6 +132,7 @@ public final class Options extends Activity {
         int i = Arrays.asList(c.values).indexOf(cfg.get(c));
         int n = c.values.length;
         cfg.set(c.key, c.values[((i + by) % n + n) % n]);
+        if (c == Config.DIM_MODE) Guard.setDim("on".equals(cfg.get(c)));
         refresh();
         return true;
     }

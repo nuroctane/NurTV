@@ -1,4 +1,4 @@
-"""Android backups of app state that lives in private data, minus sign-ins.
+"""Android backups of private app state, filtered for likely sign-in data.
 
     python scripts/app_settings.py sanitize <in.ab> <out.ab>   keep state, drop sign-ins
     python scripts/app_settings.py list <file.ab>              show what an .ab holds
@@ -11,7 +11,8 @@ slots), CloudStream (repos + downloaded .cs3 plugins), Zangetsu (provider repos
 A raw backup also holds account sessions. `sanitize` drops caches, webview
 cookies and storage, no-backup data, any file whose name looks like a
 credential store, and every shared_prefs key that looks like a credential.
-Everything dropped is printed so it can be checked.
+Everything dropped is printed so it can be checked. Filtering is heuristic and
+cannot guarantee the resulting archive contains no sensitive data.
 """
 import io
 import re
@@ -68,7 +69,9 @@ def sanitize(src, dst):
     version, body = read_ab(src)
     kept, dropped = [], []
     out = io.BytesIO()
-    with tarfile.open(fileobj=io.BytesIO(body)) as tin, tarfile.open(fileobj=out, mode="w", format=tarfile.USTAR_FORMAT) as tout:
+    # Android backup archives can contain paths too long for USTAR; preserve
+    # them with POSIX extended headers instead of failing mid-capture.
+    with tarfile.open(fileobj=io.BytesIO(body)) as tin, tarfile.open(fileobj=out, mode="w", format=tarfile.PAX_FORMAT) as tout:
         for m in tin:
             parts = m.name.split("/")
             # apps/<pkg>/_manifest must stay first for its package; tin order is preserved.

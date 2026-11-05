@@ -5,6 +5,10 @@
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
+    <!-- 1.4.3 dim mode is a Guard accessibility overlay, not a brightness
+         write: Android brightness is proven dead on this TCL panel, so
+         WRITE_SETTINGS was removed and no brightness writes happen. -->
+
     <!-- Fire OS 6 only: the Keeper reads the foreground package through UsageStats.
          maxSdkVersion keeps Fire OS 7/8 on the permission-free accessibility path. -->
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"

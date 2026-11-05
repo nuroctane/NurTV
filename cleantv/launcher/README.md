@@ -61,6 +61,19 @@ Undo: `./launcher/install.sh --undo` gives HOME back to Amazon's launcher.
 | Open inputs with | Automatic, the TV's app, CleanTV home (see below) |
 | Background | black, graphite, midnight, image, adaptive, adaptive tint |
 | Image dim, wallpaper rotation | for image backgrounds |
+| Dim mode (overlay) | off, on (80% overlay dim) — also a Dim chip on the home screen |
+
+**Dim mode (1.4.3, global, no idle timer):** one click on the Dim chip puts an
+80% black translucent overlay over everything and stays there until untoggled,
+even while media is playing. It is a Guard accessibility overlay, not the panel
+backlight: Android brightness is proven dead on this TCL panel (adb settings
+put to 10 and 255 moved the system readout with zero visible change), so no
+brightness writes happen and no extra permission is needed. The level matches
+SmartTube 32.68's paused-idle dim (black at 80%, alpha 204). Content keeps
+playing underneath and the remote passes straight through. The backlight stays
+full, so it saves no power.
+The existing `dim` setting is different: it only shades a wallpaper image on
+the home screen.
 
 Below them: Next wallpaper, which apps and inputs appear on the home screen, a
 reset for order, names and hidden tiles, and **Open Amazon's home screen**. Apps
@@ -275,3 +288,18 @@ Delete both to stop.
 3. Upload it as `cleantv-home.apk` to a release tagged `launcher-v<VERSION>`.
 4. `./launcher/release-check.sh` fails if the tag, the APK and the hash disagree.
    CI runs `--manifest` on every push.
+
+## Guard rebind after a launcher restart
+
+Guard is what makes HOME land on cleantv and what hosts the dim overlay.
+Any launcher force-stop/restart must rebind Guard afterward:
+
+```
+adb shell settings put secure enabled_accessibility_services tv.cleantv.home/tv.cleantv.home.Guard
+adb shell settings put secure accessibility_enabled 1
+```
+
+A plain `am start` of the Home activity does not rebind it. Skipping the
+rebind leaves Guard dead, HOME landing on Amazon home, and dim broken
+(hit Nov 5, 2026: a cleaned home.conf push plus force-stop/start without
+the rebind broke both, fixed by rebinding Guard and restarting).

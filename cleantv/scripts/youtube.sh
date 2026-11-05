@@ -30,11 +30,11 @@ fi
 
 PKG=org.smarttube.stable
 YT=com.amazon.firetv.youtube
-APK_URL=https://github.com/yuliskov/SmartTube/releases/download/32.56s/SmartTube_stable_32.56_universal.apk
+APK_URL=https://github.com/yuliskov/SmartTube/releases/download/32.68s/SmartTube_stable_32.68_universal.apk
 # Pinned: releases are immutable, so this hash identifies the exact build.
-APK_SHA256=4a35b90940612e048e4e9cb9e10379f7db1e84f30375994129f10a571ee04ce5
+APK_SHA256=45a36e62110bcb866527ba8e9ab876f4122e1143647bbd0a97362d13803f6b94
 # versionCode of that build. Update it with the URL and hash.
-APK_VERSION_CODE=2446
+APK_VERSION_CODE=2458
 HOME_DIR=/sdcard/Android/data/tv.cleantv.home/files
 
 step "plan"

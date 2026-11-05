@@ -1,6 +1,6 @@
 {
   "_comment": "Captured by scripts/capture-tv.sh \u2014 this is what the TV actually has. Do not hand-edit; re-run capture after changing anything on the TV.",
-  "captured_at": "2026-10-30_015242",
+  "captured_at": "2026-10-30_150242",
   "device": {
     "device": "hazel",
     "model": "AFTMD001",
@@ -23,14 +23,14 @@
   "packages": [
     {
       "package": "tv.cleantv.home",
-      "versionName": "1.4",
-      "versionCode": 6,
+      "versionName": "1.4.3",
+      "versionCode": 9,
       "install": "install",
       "apk": [
         "apps/cleantv-home.apk"
       ],
       "sha256": [
-        "eb7d364bd57b20539f4444f55e8e8e9ea3836ed2c02a23df8900213175178739"
+        "d0a9d9e68ee4ea4abf7b01e2b451b039b8ba08e015d10352ad43c8b29739b07a"
       ],
       "role": "launcher"
     },
@@ -270,14 +270,14 @@
     },
     {
       "package": "org.smarttube.stable",
-      "versionName": "32.56",
-      "versionCode": 2446,
+      "versionName": "32.68",
+      "versionCode": 2458,
       "install": "install",
       "apk": [
-        "provision/apk/org.smarttube.stable.apk"
+        "apps/smarttube-stable-32.68-v7a.apk"
       ],
       "sha256": [
-        "4a35b90940612e048e4e9cb9e10379f7db1e84f30375994129f10a571ee04ce5"
+        "2130b23b17ed5cfd324baec81750a2be22059212b6ee17449f21cae2cb3a60d9"
       ],
       "role": "app"
     },
@@ -296,14 +296,14 @@
     },
     {
       "package": "st.atlantic.app",
-      "versionName": "v1.0.6",
-      "versionCode": 10,
+      "versionName": "v1.0.9",
+      "versionCode": 13,
       "install": "install",
       "apk": [
-        "apps/atlantic-app.apk"
+        "apps/atlantic-v1.0.9.apk"
       ],
       "sha256": [
-        "fa896541b90a8833c3480fe3a40c95f59548dc1bb4b8815f5cdb813e045219e6"
+        "b9905cb0643d8f386bff5a914d5936b7a32b64802d508f57c1b72f955e1b86e4"
       ],
       "role": "app"
     },

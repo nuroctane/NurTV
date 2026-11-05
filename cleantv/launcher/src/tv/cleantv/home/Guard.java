@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.Looper;
@@ -40,13 +41,39 @@ public final class Guard extends AccessibilityService {
     private static final long LAUNCH_FALLBACK_MS = 150;
 
     private static volatile boolean paused;
+    private static volatile boolean dimOn;
     private static Guard running;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable uncover = this::uncover;
     private final Runnable launch = () -> home(this);
     private View cover;
+    private View dim;
     private long lastLaunch;
+
+    /** Dim overlay (1.4.3): a black translucent filter over everything.
+     * Level matched to SmartTube 32.68's paused-idle dim, from its source
+     * (github.com/yuliskov/SmartTube, tag 32.68): ScreensaverManager
+     * shows an in-app full-screen dim_container overlay after 60 s idle
+     * while paused, black at GeneralData's default 80% dimming percents,
+     * i.e. alpha (int)(255 * 80 / 100) = 204. SmartTube's version is
+     * in-app only (its own activity decor view) and only fires paused, so
+     * it cannot dim other apps; this Guard overlay is the same technique
+     * lifted to system level, so it dims any app while playing. */
+    static void setDim(boolean on) {
+        dimOn = on;
+        if (running != null) running.applyDim();
+    }
+
+    static boolean isDim() {
+        return dimOn;
+    }
+
+    private void applyDim() {
+        if (dim == null) return;
+        dim.setBackgroundColor(Color.argb(204, 0, 0, 0));
+        dim.setVisibility(dimOn ? View.VISIBLE : View.GONE);
+    }
 
     /** Lets Amazon's home stay on screen until the user leaves it. */
     static void pause() {
@@ -104,6 +131,29 @@ public final class Guard extends AccessibilityService {
         lp.windowAnimations = 0;
         ((WindowManager) getSystemService(WINDOW_SERVICE)).addView(view, lp);
         cover = view;
+        // Second, separate overlay for dim (1.4.3). It must NOT share the cover
+        // view: cover() hides it after 1.5 s, which would lift dim on its own.
+        // TRANSLUCENT is critical: OPAQUE would ignore the alpha and black out
+        // the screen. NOT_FOCUSABLE | NOT_TOUCHABLE lets the remote pass through
+        // to whatever app is playing underneath, so dim works while media plays
+        // and never swallows input. Level is SmartTube's paused-idle dim:
+        // 80% black, alpha 204 (see setDim). Dim is a picture filter only:
+        // the panel backlight stays full, so it saves no power.
+        View dimView = new View(this);
+        dimView.setBackgroundColor(Color.argb(204, 0, 0, 0));
+        dimView.setVisibility(View.GONE);
+        WindowManager.LayoutParams dimLp = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                        | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                PixelFormat.TRANSLUCENT);
+        dimLp.windowAnimations = 0;
+        ((WindowManager) getSystemService(WINDOW_SERVICE)).addView(dimView, dimLp);
+        dim = dimView;
+        dimOn = "on".equals(Config.get(this).get(Config.DIM_MODE));
+        applyDim();
     }
 
     @Override
@@ -111,6 +161,7 @@ public final class Guard extends AccessibilityService {
         handler.removeCallbacks(uncover);
         handler.removeCallbacks(launch);
         if (cover != null) ((WindowManager) getSystemService(WINDOW_SERVICE)).removeView(cover);
+        if (dim != null) ((WindowManager) getSystemService(WINDOW_SERVICE)).removeView(dim);
         if (running == this) running = null;
         super.onDestroy();
     }
