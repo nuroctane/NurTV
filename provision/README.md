@@ -24,6 +24,38 @@ captured APKs and settings on a matching TV; app-private add-ons and sign-ins st
 need the manual steps below. `capture-tv.sh` never writes to the TV and
 `provision-tv.sh` never uninstalls anything.
 
+## What Golden State is
+
+Golden State is **what was done to the TV**, not what version its apps are.
+Apps update all the time, so third-party app versions are not tracked and an
+app that updated itself is never a failure. Golden State is the plugins,
+add-ons, settings, and little quality-of-life improvements made along the way,
+recorded in the `tweaks` section of `golden-state.json`:
+
+- **Launcher:** CleanTV 1.4.3 — circular navigation, the one-click 80% dim
+  overlay (SmartTube's paused-idle level), the Guard that takes HOME from
+  Amazon's launcher, `home.conf`.
+- **DNS:** personalDNSfilter as an always-on local VPN, HaGeZi Amazon-only
+  blocklist, Alexa hosts blocked, no general blocklists.
+- **Ad blocking:** SmartTube (no ad code at all), S0undTV's Luminous proxy
+  for Twitch's server-side ads, the DNS filter's Amazon-only list.
+- **Video player / browser wrappers:** the WebView shells in `apps/webwrap`
+  — native input that reaches into iframes, container fullscreen that keeps
+  the player's controls, the DPR scale fix.
+- **Plugins / add-ons:** the Watchbox extensions, CloudStream repos and
+  plugins, Zangetsu's nine providers, Arvio/Lumera add-on manifests, and the
+  app-settings backup (`private/app-settings/app-settings.ab`).
+- **Settings:** `home.conf`, wallpaper, the 39 disabled Amazon packages,
+  the VPN/alarm/accessibility settings.
+
+The one version that *is* pinned is the CleanTV launcher itself
+(`check: exact`, 1.4.3 / versionCode 9): it is this household's own build,
+its version is the QoL work, and provision installs exactly that build.
+Every other package is verified by presence only (`check: presence`); its
+`apk`/`sha256` in the golden state are the install source provision uses
+when the app is missing, hash-checked before install, never compared
+against what the TV has.
+
 ## What the new TV needs first
 
 1. `Settings > My Fire TV > About` → tap **OK 7 times** → **Developer Options** → *ADB debugging* **on**.
@@ -52,31 +84,36 @@ overrides that, deliberately.
 |---|---|
 | guard | refuses a different model (`hazel / AFTMD001 / sdk 28`), unless `--force` |
 | backup | `scripts/backup-packages.sh` on the *target* first: a new `backups/<stamp>/` undo sheet |
-| app layer | every package in the golden state, in order: launcher, DNS filter, then apps. Each APK is hash-checked against the repo **before** install and the installed base APK is pulled back and hash-checked **after**. Already-current packages are skipped. |
+| app layer | every package in the golden state, in order: launcher, DNS filter, then apps. Each repo APK is hash-checked **before** install. A package that is already installed at any version is left alone (versions are not pinned); a missing package is installed from the repo APK and the installed base APK is pulled back and hash-checked **after**. The CleanTV launcher is the exception: it is installed at exactly the pinned version. |
 | system layer | `cleantv/scripts/all.sh -y`: debloat, lockdown, on-device DNS filter, HOME takeover (`cleantv/cleantv.conf` holds the household answers) |
 | extra debloat | any package the working TV has disabled that CleanTV's scripts do not touch |
 | config | `apps/home.conf` → `files/home.conf`, `apps/art/*.png` → `files/art/`, the applied wallpaper → `files/wallpaper.jpg` |
 | restart | launcher force-stop + start so the new art is read (art is cached per tile), then the accessibility Guard is rebound |
 | media sources | `scripts/apply-sources.sh`: the six Watchbox extension APKs in `provision/sources.json`, hash-checked |
 | app state | Opt in with `--restore-app-settings`: Android restore may replace settings on the target and requires a TV confirmation. The sanitized backup has been captured, but restoring it to another TV has not been verified. Arvio, Lumera and Atlantic are not included. |
-| verify | versions + APK hashes, `home.conf` by key/value, art by bytes, the VPN/alarm/accessibility settings and disabled list; a normal run also presses **HOME** to test the takeover |
+| verify | presence of every package (the CleanTV launcher also by exact version), `home.conf` by key/value, art by bytes, the VPN/alarm/accessibility settings and disabled list; a normal run also presses **HOME** to test the takeover. An app at a newer version than the repo APK is **not** a failure. |
 
 Exit status is non-zero if any check fails; every failure is printed as a `!` line.
 
-`provision/apk-updates.json` can override a captured app with a newer, locally
-verified APK. The captured `golden-state.json` still describes the source TV;
-provisioning and `--verify-only` compare against the override where one exists.
-SmartTube 32.68 and Atlantic 1.0.9 were installed on the source TV and recaptured;
-their entries no longer need overrides. The captured SmartTube APK supports the
-source TV's 32-bit ARM architecture. After updating and recapturing a staged app,
-remove its corresponding override. APK hash checks still run before installation.
+`provision/apk-updates.json` can override the install source for a package
+with a newer, locally verified APK. The golden state no longer pins
+third-party app versions, so an override replaces the apk + sha256
+provision installs when the app is missing; for the version-pinned
+CleanTV launcher an override must not downgrade the pinned version.
+The captured SmartTube APK supports the source TV's 32-bit ARM
+architecture. After updating and recapturing a staged app, remove its
+corresponding override. APK hash checks still run before installation.
 
 ## What is in this directory
 
 ```
-provision/golden-state.json   what the working TV has: device guard, every package
-                              with version, install mode, APK path and sha256, the
-                              disabled list, and the settings the scripts leave behind
+provision/golden-state.json   what was done to the working TV: device guard,
+                              the tweaks (launcher, DNS, ad blocking, video-player
+                              wrappers, plugins/add-ons, settings), every package
+                              with install mode, APK path and sha256 plus a
+                              presence/exact check (only the CleanTV launcher
+                              carries a version), the disabled list, and the
+                              settings the scripts leave behind
 provision/sources.json        Watchbox extension APKs (installed on every provision)
                               plus the in-app repo URLs capture cannot see
 provision/apk/<pkg>.apk       byte-exact APKs for anything the repo did not already
@@ -121,7 +158,7 @@ finish any confirmation in the app. The extension APKs themselves install automa
 
 ## Launcher signing key
 
-`apps/cleantv-home.apk` is `tv.cleantv.home` v1.4 (versionCode 6), signed with
+`apps/cleantv-home.apk` is `tv.cleantv.home` v1.4.3 (versionCode 9), signed with
 `private/cleantv.keystore` — `CN=CleanTV`, SHA-256
 `40:DB:8E:0A:AE:E8:A8:7D:B9:66:CB:5C:8C:BC:19:08:2D:6C:6F:47:38:13:63:EE:41:8A:B9:4B:C3:4A:86:0E`.
 That key exists, so a rebuild upgrades in place. Keep it backed up: a different key cannot
@@ -145,12 +182,14 @@ A normal provisioning run **presses HOME** to test the takeover. `--verify-only`
 
 ## Live state at capture time
 
-`hazel / AFTMD001`, Fire OS 7.7.1.7 (sdk 28), 15 packages, 39 disabled packages,
+`hazel / AFTMD001`, Fire OS 7.7.1.7 (sdk 28), 28 packages, 39 disabled packages,
 wallpaper `apps/wallpapers/dark-waves.jpg`. `provision/golden-state.json` carries the
-`captured_at` stamp and is the authority — it changes every time capture runs.
+`captured_at` stamp and is the authority for the tweaks — it changes when a tweak
+changes, not when an app updates.
 
 Verified by `./scripts/provision-tv.sh <tv-ip> --verify-only` against the source
-TV (pass the address; do not reuse an old one): every package by versionCode and pulled-APK sha256, `home.conf` by key/value, both
+TV (pass the address; do not reuse an old one): every package by presence (the
+CleanTV launcher also by exact version), `home.conf` by key/value, both
 art files by bytes, the 39-package disabled list, the VPN/alarm/accessibility settings,
 and a real HOME press landing back on CleanTV. Also checked: capture is idempotent (a
 second run reports "unchanged" everywhere), `--dry-run` writes nothing, an unreachable

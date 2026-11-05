@@ -1,4 +1,1 @@
-{
-  "_comment": "Verified newer APKs for provisioning. golden-state.json remains a record of the captured TV. Remove an entry after capturing that version on the TV.",
-  "packages": []
-}
+{"_comment":"Install-source overrides for provisioning. Golden State no longer pins third-party app versions, so an entry here replaces the apk + sha256 provision installs when the app is missing (and supplies version fields when they matter, e.g. the CleanTV launcher, where an override must not downgrade the pinned version). Remove an entry after capturing that version on the TV.","packages":[]}

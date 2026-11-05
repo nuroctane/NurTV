@@ -17,6 +17,17 @@
 # ./scripts/capture-tv.sh. Nothing here ever uninstalls a package: a signing
 # mismatch is reported, never worked around by deleting the installed app.
 #
+# Golden State is what was done to the TV, not what version its apps are.
+# Third-party apps update all the time, so their versions are NOT tracked:
+# a package is verified by presence only (check: presence), and the apk/sha256
+# in the golden state are the install source used when the app is missing,
+# hash-checked before install, never compared against the TV. The one exception
+# is the CleanTV launcher (check: exact): it is this household's own build, its
+# version IS the QoL work, and provision installs exactly that build.
+# The `tweaks` section of the golden state records the actual work: plugins,
+# add-ons, settings, DNS, ad blocking, video-player/browser-wrapper work,
+# and launcher QoL (dim, circular nav, Guard).
+#
 # The new TV needs: ADB debugging on (Settings > My Fire TV > About > tap OK 7x >
 # Developer Options) and the "Allow ADB debugging?" prompt accepted.
 set -uo pipefail
@@ -87,10 +98,18 @@ if updates_path.exists():
             raise ValueError(f'duplicate or unknown update package: {name}')
         seen.add(name)
         target = packages[name]
-        if int(update['versionCode']) < int(target['versionCode']):
-            raise ValueError(f'update would downgrade {name}')
-        target.update(versionCode=int(update['versionCode']), versionName=update['versionName'],
-                      install='install', apk=[update['apk']], sha256=[update['sha256']])
+        # The no-downgrade check only applies where the golden state pins a
+        # version at all (the CleanTV launcher). Third-party apps carry no
+        # version in the golden state, so an override just replaces the
+        # install source: apk + sha256 (+ version fields when supplied).
+        if target.get('versionCode') is not None and 'versionCode' in update:
+            if int(update['versionCode']) < int(target['versionCode']):
+                raise ValueError(f'update would downgrade {name}')
+        target.update(install='install', apk=[update['apk']], sha256=[update['sha256']])
+        if 'versionCode' in update:
+            target['versionCode'] = int(update['versionCode'])
+        if 'versionName' in update:
+            target['versionName'] = update['versionName']
 with open(f'{out}/meta.sh', 'w', encoding='utf-8', newline='\n') as f:
     f.write(f"GUARD_DEVICE={state['guard']['ro.product.device']!r}\n")
     f.write(f"GUARD_MODEL={state['guard']['ro.product.model']!r}\n")
@@ -101,9 +120,14 @@ with open(f'{out}/meta.sh', 'w', encoding='utf-8', newline='\n') as f:
     f.write(f"WALLPAPER={state['config']['wallpaper']!r}\n")
     f.write(f"CLEANTV_CONF={state['config']['cleantv_conf']!r}\n")
 with open(f'{out}/packages.tsv', 'w', encoding='utf-8', newline='\n') as f:
+    # versionCode is LAST on purpose: bash `read` with a tab IFS collapses
+    # empty fields in the middle, so a version-less (presence) row would
+    # shift every later column left. A trailing empty field is simply unset.
     for p in state['packages']:
-        f.write('\t'.join([p['package'], str(p['versionCode'] or ''), p['install'],
-                           p['role'], ','.join(p['apk']), ','.join(p['sha256'])]) + '\n')
+        f.write('\t'.join([p['package'], p['install'],
+                           p['role'], ','.join(p['apk']), ','.join(p['sha256']),
+                           p.get('check', 'presence'),
+                           str(p.get('versionCode') or '')]) + '\n')
 with open(f'{out}/settings.tsv', 'w', encoding='utf-8', newline='\n') as f:
     for k, v in state['settings'].items():
         f.write(f'{k}\t{v if v is not None else ""}\n')
@@ -115,7 +139,7 @@ PY
 # shellcheck disable=SC1091
 source "$WORK/meta.sh"
 note "from      provision/golden-state.json, captured $CAPTURED_AT"
-[ -f "$UPDATES" ] && note "updates   provision/apk-updates.json overrides captured package versions"
+[ -f "$UPDATES" ] && note "updates   provision/apk-updates.json overrides the install source for a package"
 note "target    $S"
 note "expected  $GUARD_DEVICE / $GUARD_MODEL, sdk $GUARD_SDK"
 note "packages  $(wc -l < "$WORK/packages.tsv" | tr -d ' ') "
@@ -154,8 +178,9 @@ if [ "$VERIFY_ONLY" = 0 ] && [ "$DRY" = 0 ]; then
 fi
 
 step "app layer"
-while IFS=$'\t' read -r pkg code mode role apks hashes; do
+while IFS=$'\t' read -r pkg mode role apks hashes check code; do
   [ -n "$pkg" ] || continue
+  [ -n "$check" ] || check=presence
   IFS=',' read -r -a files <<<"$apks"
   IFS=',' read -r -a sums <<<"$hashes"
   valid=1
@@ -172,24 +197,43 @@ while IFS=$'\t' read -r pkg code mode role apks hashes; do
   done
   [ "$valid" = 1 ] || continue
   local_code=$(vcode "$pkg")
-  # Current when the version matches and the installed base APK is byte-identical.
-  if [ -n "$local_code" ] && [ "$local_code" = "$code" ] && [ "${#files[@]}" = 1 ]; then
-    remote=$(sh_ "pm path $pkg" | sed 's/^package://' | head -1)
-    "$ADB_BIN" -s "$S" pull "$remote" "$WORK/check.apk" >/dev/null 2>&1
-    if [ "$(sha "$WORK/check.apk")" = "${sums[0]}" ]; then
-      note "current   $pkg  code=$code"
+  if [ "$check" = presence ]; then
+    # Golden State does not pin this app's version: installed at any version
+    # is good. The repo APK is only the install source when it is missing.
+    if [ -n "$local_code" ]; then
+      note "present   $pkg  code=$local_code (version not pinned)"
       echo "$pkg" >> "$WORK/verified.txt"
       continue
     fi
-    note "reinstall $pkg  (code=$code but the APK differs)"
-  fi
-  if [ "$VERIFY_ONLY" = 1 ]; then
-    fail "$pkg: not at $code on $S (has ${local_code:-none})"
-    continue
-  fi
-  if [ "$DRY" = 1 ]; then
-    note "install   $pkg  code=$code  from ${files[0]}"
-    continue
+    if [ "$VERIFY_ONLY" = 1 ]; then
+      fail "$pkg: not installed"
+      continue
+    fi
+    if [ "$DRY" = 1 ]; then
+      note "install   $pkg  from ${files[0]} (not installed)"
+      continue
+    fi
+  else
+    # check=exact (the CleanTV launcher only): current when the version
+    # matches and the installed base APK is byte-identical.
+    if [ -n "$local_code" ] && [ "$local_code" = "$code" ] && [ "${#files[@]}" = 1 ]; then
+      remote=$(sh_ "pm path $pkg" | sed 's/^package://' | head -1)
+      "$ADB_BIN" -s "$S" pull "$remote" "$WORK/check.apk" >/dev/null 2>&1
+      if [ "$(sha "$WORK/check.apk")" = "${sums[0]}" ]; then
+        note "current   $pkg  code=$code"
+        echo "$pkg" >> "$WORK/verified.txt"
+        continue
+      fi
+      note "reinstall $pkg  (code=$code but the APK differs)"
+    fi
+    if [ "$VERIFY_ONLY" = 1 ]; then
+      fail "$pkg: not at $code on $S (has ${local_code:-none})"
+      continue
+    fi
+    if [ "$DRY" = 1 ]; then
+      note "install   $pkg  code=$code  from ${files[0]}"
+      continue
+    fi
   fi
   args=(); for f in "${files[@]}"; do args+=("$ROOT/$f"); done
   out=$("$ADB_BIN" -s "$S" "$mode" -r "${args[@]}" 2>&1 | grep -m1 -E 'Success|Failure|failed' || true)
@@ -201,7 +245,11 @@ while IFS=$'\t' read -r pkg code mode role apks hashes; do
     *) fail "$pkg: install failed: ${out:-no output}"; continue ;;
   esac
   new=$(vcode "$pkg")
-  [ "$new" = "$code" ] || fail "$pkg: installed versionCode $new, expected $code"
+  if [ "$check" = exact ]; then
+    [ "$new" = "$code" ] || fail "$pkg: installed versionCode $new, expected $code"
+  else
+    [ -n "$new" ] || fail "$pkg: install reported success but the package is not on the TV"
+  fi
   remote=$(sh_ "pm path $pkg" | sed 's/^package://' | head -1)
   "$ADB_BIN" -s "$S" pull "$remote" "$WORK/check.apk" >/dev/null 2>&1
   if [ "$(sha "$WORK/check.apk")" = "${sums[0]}" ]; then
@@ -323,16 +371,26 @@ else
 fi
 
 step "verify"
-while IFS=$'\t' read -r pkg code mode role apks hashes; do
+while IFS=$'\t' read -r pkg mode role apks hashes check code; do
   [ -n "$pkg" ] || continue
+  [ -n "$check" ] || check=presence
   IFS=',' read -r -a sums <<<"$hashes"
   got=$(vcode "$pkg")
   if [ -z "$got" ]; then
     fail "$pkg is not installed"
-  elif [ "$got" != "$code" ]; then
+  elif [ "$check" = exact ] && [ "$got" != "$code" ]; then
     fail "$pkg has versionCode $got, expected $code"
-  else
+  elif [ "$check" = exact ]; then
     note "ok        $pkg  code=$got"
+  else
+    note "ok        $pkg  code=$got (version not pinned)"
+  fi
+  # Presence packages are never compared against the golden sha256 here: an
+  # app that updated itself is fine, and its installed APK legitimately
+  # differs from the repo's install source. Only the exact-pinned launcher
+  # gets the pulled-APK hash check (unless it was already verified above).
+  if [ "$check" != exact ]; then
+    continue
   fi
   remote=$(sh_ "pm path $pkg" | sed 's/^package://' | head -1)
   if grep -qx "$pkg" "$WORK/verified.txt"; then

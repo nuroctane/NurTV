@@ -8,7 +8,9 @@
 # removed. Re-run it after any change on the TV; it only rewrites what differs.
 #
 # It writes under provision/ (see provision/README.md):
-#   provision/golden-state.json   device guard + every package with its APK hash
+#   provision/golden-state.json   device guard + every package (presence-checked,
+#                                 except the CleanTV launcher, which is version-pinned)
+#                                 + the tweaks section describing what was done to the TV
 #   provision/apk/<pkg>.apk       byte-exact copies of APKs the repo lacks
 # and refreshes the pieces this repo already owns:
 #   apps/home.conf, apps/art/*.png, apps/wallpapers/<applied>.jpg
@@ -283,16 +285,24 @@ def rows(name):
 packages = []
 for pkg, vname, vcode, mode, apks in rows('apps.tsv'):
     files = apks.split(',')
-    packages.append({
+    # Golden State does not pin third-party app versions: apps update all the
+    # time. Only the CleanTV launcher keeps its version (check: exact); the
+    # launcher version IS the QoL work. Everything else is verified by
+    # presence (check: presence), with apk/sha256 kept as the install source
+    # provision uses when the app is missing, hash-checked before install.
+    entry = {
         'package': pkg,
-        'versionName': vname or None,
-        'versionCode': int(vcode) if vcode.isdigit() else None,
         'install': mode,
         'apk': files,
         'sha256': [hashlib.sha256(open(os.path.join(root, a), 'rb').read()).hexdigest() for a in files],
         'role': ('launcher' if pkg == 'tv.cleantv.home'
                  else 'dnsfilter' if pkg == 'dnsfilter.android' else 'app'),
-    })
+        'check': ('exact' if pkg == 'tv.cleantv.home' else 'presence'),
+    }
+    if pkg == 'tv.cleantv.home':
+        entry['versionName'] = vname or None
+        entry['versionCode'] = int(vcode) if vcode.isdigit() else None
+    packages.append(entry)
 packages.sort(key=lambda e: (e['role'] != 'launcher', e['role'] != 'dnsfilter', e['package']))
 
 settings = {}
@@ -301,9 +311,24 @@ for line in open(os.path.join(work, 'settings.txt'), encoding='utf-8'):
         k, v = line.rstrip('\n').split('=', 1)
         settings[k] = None if v in ('', 'null') else v
 
+# The tweaks section is the human record of what was done to the TV; capture
+# cannot derive it from the device, so a re-capture carries it forward
+# instead of dropping it. Update it by hand when a tweak changes.
+old_path = os.path.join(root, 'provision', 'golden-state.json')
+old_tweaks = {}
+if os.path.exists(old_path):
+    try:
+        old_tweaks = json.load(open(old_path, encoding='utf-8')).get('tweaks') or {}
+    except Exception:
+        old_tweaks = {}
+
 state = {
-    '_comment': 'Captured by scripts/capture-tv.sh — this is what the TV actually has. '
-                'Do not hand-edit; re-run capture after changing anything on the TV.',
+    '_comment': 'Golden State: what was done to this TV, not what version its apps are. '
+                'Third-party app versions are NOT tracked (check: presence); apk/sha256 '
+                'are the install source provision uses when an app is missing. Only the '
+                'CleanTV launcher is version-pinned (check: exact). The `tweaks` section '
+                'records the actual work. Do not hand-edit the captured parts; re-run '
+                'capture after changing anything on the TV.',
     'captured_at': stamp,
     'device': {'device': device, 'model': model, 'sdk': int(sdk), 'fire_os': fireos,
                'build': build, 'abi': abi},
@@ -312,6 +337,7 @@ state = {
     'config': {'home_conf': 'apps/home.conf', 'art': 'apps/art',
                'wallpaper': open(os.path.join(work, 'wallpaper.path'), encoding='utf-8').read().strip(),
                'cleantv_conf': 'cleantv/cleantv.conf'},
+    'tweaks': old_tweaks,
     'packages': packages,
     'disabled_packages': [l for l in open(os.path.join(work, 'disabled.txt'), encoding='utf-8')
                           .read().splitlines() if l],

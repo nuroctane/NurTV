@@ -10,6 +10,10 @@
 #
 # In-app CloudStream plugins, Zangetsu providers, and Arvio/Lumera add-ons are not
 # applied here. See the "manual" list in provision/sources.json.
+#
+# Extension versions are not pinned: an extension that updated itself is fine.
+# A package is verified by presence only; apk/sha256 are the install source
+# used when it is missing, hash-checked before install.
 set -uo pipefail
 
 unset MSYS_NO_PATHCONV
@@ -50,7 +54,7 @@ import json, sys
 src = json.load(open(sys.argv[1], encoding='utf-8'))
 with open(sys.argv[2], 'w', encoding='utf-8', newline='\n') as f:
     for e in src.get('extensions', []):
-        f.write('\t'.join([e['package'], str(e['versionCode']), e['apk'], e['sha256']]) + '\n')
+        f.write('\t'.join([e['package'], e['apk'], e['sha256']]) + '\n')
 PY
 
 echo "== media sources =="
@@ -60,7 +64,7 @@ if [ "$("$ADB_BIN" -s "$S" get-state 2>/dev/null)" != device ]; then
   exit 1
 fi
 
-while IFS=$'\t' read -r pkg code apk sum; do
+while IFS=$'\t' read -r pkg apk sum; do
   [ -n "$pkg" ] || continue
   if [ ! -f "$ROOT/$apk" ]; then
     fail "$pkg: $apk is missing from the repo"
@@ -71,21 +75,16 @@ while IFS=$'\t' read -r pkg code apk sum; do
     continue
   fi
   got=$(vcode "$pkg")
-  if [ "$got" = "$code" ]; then
-    remote=$(sh_ "pm path $pkg" | sed 's/^package://' | head -1)
-    rm -f "$WORK/check.apk"
-    if [ -n "$remote" ] && "$ADB_BIN" -s "$S" pull "$remote" "$WORK/check.apk" >/dev/null 2>&1 && [ "$(sha "$WORK/check.apk")" = "$sum" ]; then
-      note "current   $pkg  code=$code  sha256 verified"
-      continue
-    fi
-    note "$pkg: version matches but APK differs or could not be read"
+  if [ -n "$got" ]; then
+    note "present   $pkg  code=$got (version not pinned)"
+    continue
   fi
   if [ "$VERIFY_ONLY" = 1 ]; then
-    fail "$pkg: installed APK does not match code $code and its recorded sha256 (has ${got:-none})"
+    fail "$pkg: not installed"
     continue
   fi
   if [ "$DRY" = 1 ]; then
-    note "install   $pkg  code=$code  from $apk"
+    note "install   $pkg  from $apk (not installed)"
     continue
   fi
   out=$("$ADB_BIN" -s "$S" install -r "$ROOT/$apk" 2>&1 | grep -m1 -E 'Success|Failure|failed' || true)
@@ -97,8 +96,8 @@ while IFS=$'\t' read -r pkg code apk sum; do
     *) fail "$pkg: install failed: ${out:-no output}"; continue ;;
   esac
   new=$(vcode "$pkg")
-  if [ "$new" != "$code" ]; then
-    fail "$pkg: installed versionCode $new, expected $code"
+  if [ -z "$new" ]; then
+    fail "$pkg: install reported success but the package is not on the TV"
     continue
   fi
   remote=$(sh_ "pm path $pkg" | sed 's/^package://' | head -1)

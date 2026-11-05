@@ -3,37 +3,31 @@
   "extensions": [
     {
       "package": "eu.kanade.tachiyomi.animeextension.all.anizone",
-      "versionCode": 15,
       "apk": "apps/ext-watchbox/aniyomi-all.anizone-v16.15.apk",
       "sha256": "3596cf21bde05de7a957a6ab56a53ea53db2cb6a1f45fdc85e7cbaef7a2047b5"
     },
     {
       "package": "eu.kanade.tachiyomi.animeextension.en.anichi",
-      "versionCode": 10,
       "apk": "apps/ext-watchbox/aniyomi-en.anichi-v16.10.apk",
       "sha256": "ad58ea7c4cc52c1d5e1aee1c2c8790da33d6f2bd41ecff513d9a20c6daddf40e"
     },
     {
       "package": "eu.kanade.tachiyomi.animeextension.en.animepahe",
-      "versionCode": 56,
       "apk": "apps/ext-watchbox/aniyomi-en.animepahe-v16.56.apk",
       "sha256": "a0d5a0dc2089f083b8515804c8f13534e26a17506bdbb8ddc5c11e9ae9ab0b62"
     },
     {
       "package": "eu.kanade.tachiyomi.animeextension.en.animesogo",
-      "versionCode": 10,
       "apk": "apps/ext-watchbox/aniyomi-en.animesogo-v16.10.apk",
       "sha256": "32c38ff533efb427cbb0334f91c38c2c981223e8c105901ebb34f26ff4e6f594"
     },
     {
       "package": "eu.kanade.tachiyomi.animeextension.en.kickassanime",
-      "versionCode": 63,
       "apk": "apps/ext-watchbox/aniyomi-en.kickassanime-v14.63.apk",
       "sha256": "7a5514e4fa32e637e4e19f894d912b184203197a63bced5e4b638afb9b4b6d9d"
     },
     {
       "package": "eu.kanade.tachiyomi.animeextension.en.kotokai",
-      "versionCode": 10,
       "apk": "apps/ext-watchbox/aniyomi-en.kotokai-v16.10.apk",
       "sha256": "ca701b74da790dd67745c10a02ba0e4a4a6e2e9af530c46eb47f3e7364398385"
     }
