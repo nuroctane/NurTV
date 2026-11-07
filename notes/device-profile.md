@@ -22,6 +22,44 @@
   could never do.
 - Storage is not a constraint (10.1 GB free).
 
+## Network (re-confirmed 2026-11-07)
+
+| Field | Value |
+|---|---|
+| TV IPv4 | **`192.0.2.10`** (wired, DHCP) |
+| ADB target | `192.0.2.10:5555` |
+| Gateway | `192.0.2.1` |
+
+`./scripts/connect.sh` now defaults to this address; pass an IP to override.
+
+**Why discovery kept failing.** This PC has two NICs on the same `/24` —
+Ethernet `192.0.2.12` (ifMetric 25) and Wi-Fi `192.0.2.13` (ifMetric 35).
+Windows routes LAN traffic out Ethernet, but `arp -a` and `Get-NetNeighbor` only
+show hosts that NIC has already talked to, so a neighbour-table scan looks almost
+empty. And a plain ICMP sweep misses the TV when it is idle/asleep — the first
+pass found six hosts and not the TV.
+
+What works: SSDP. Send an `M-SEARCH` for
+`urn:dial-multiscreen-org:service:dial:1` from the wired address and read the
+replies. The TV answers with `friendlyName Fire TV`, `manufacturer TCL`,
+`modelName 65Q650F` on port 60000. Do not confuse it with the Roku at
+`192.0.2.14` (SSDP server `Roku/15.3.4`, DIAL on 8060).
+
+```powershell
+# bind the probe to the wired NIC, or it may leave via Wi-Fi
+$local = [System.Net.IPAddress]::Parse('192.0.2.12')
+$udp = New-Object System.Net.Sockets.UdpClient(0, [System.Net.Sockets.AddressFamily]::InterNetwork)
+$udp.Client.Bind((New-Object System.Net.IPEndPoint($local, 0)))
+$udp.Client.SetSocketOption([System.Net.Sockets.SocketOptionLevel]::IP,
+  [System.Net.Sockets.SocketOptionName]::MulticastInterface, $local.GetAddressBytes())
+$msg = "M-SEARCH * HTTP/1.1`r`nHOST: 239.255.255.250:1900`r`nMAN: `"ssdp:discover`"`r`nMX: 2`r`nST: urn:dial-multiscreen-org:service:dial:1`r`n`r`n"
+$b = [Text.Encoding]::ASCII.GetBytes($msg)
+$udp.Send($b, $b.Length, (New-Object System.Net.IPEndPoint([System.Net.IPAddress]::Parse('239.255.255.250'), 1900)))
+```
+
+A refused connection on 5555 means the host is up but ADB debugging is off —
+that is a TV setting, not a network fault.
+
 ## Known-risky package
 
 `com.amazon.tv.launcher` — never disable by hand before a working replacement is

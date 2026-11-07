@@ -23,3 +23,7 @@
 
 # Old screenshots.
 /apps/.*.png
+
+# Research scratch and reports stay local.
+/reports/
+/research_notes/

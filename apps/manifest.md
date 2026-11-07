@@ -1,7 +1,7 @@
 # Apps — TCL_65Q650F (hazel / AFTMD001, Fire OS 7.7.1.7)
 
 Current inventory: SmartTube, S0undTV, Kick, Rumble, X, Atlantic, SozoTV,
-X-plore, Aerial Views, ARVIO, CloudStream, Lumera, Watchbox, Zangetsu, CleanTV,
+X-plore, Aerial Views, ARVIO, CloudStream, Lumera, Lumora, Watchbox, Zangetsu, CleanTV,
 personalDNSfilter, Netflix, and the wrappers in
 webwrap/apps.txt.
 The live inventory captured on 2026-10-27 contains no Nuvio, Hayase, NTV or
@@ -642,3 +642,36 @@ the TV (it was in use). Rejected in the sweep: Streamflix Reborn (repo 404), Ani
 Flixclusive (no leanback launcher activity, phone UI). NuvioTV 1.1.0-beta.8 also passes
 the checks if it's wanted back. All of these pull from third-party sources; same
 trust/legal footing as Sozo and Atlantic.
+
+### Lumora 7.1 installed (2026-11-07)
+
+Added as the live-TV/plugin shell. **Not** Lumera — different project, different
+package, nothing to do with `com.lumera.app` above.
+
+| Tile | Package | Version | APK in apps/ | sha256 |
+|---|---|---|---|---|
+| Lumora | `com.lumora` | 7.1 (71) | `lumora-7.1.apk` | `5c66032eb9053e0c9e0a31e9e4ace9debbe4ee77f89eb4266467b474408a204a` |
+
+Source: https://github.com/LumoraPlayer/Lumora release `v7.1` (asset `Lumora.apk`).
+Hash equals the digest GitHub publishes for the asset. `aapt2 dump badging` checked
+before install: minSdk 25, targetSdk 36, `native-code` includes `armeabi-v7a`, and
+`leanback-launchable-activity: com.lumora.MainActivity` is present, so it lists in the
+Fire TV app row. Installed with `adb -s 192.0.2.10:5555 install -r`; confirmed
+running as the top window.
+
+What it is: a player, not a provider. It ships no channels. Sources are Xtream Codes,
+M3U/M3U8, Stalker Portal, Jellyfin, Emby, Silo and Plex — any number at once, merged
+into one guide — plus a JS plugin engine, a plugin store, and Stremio add-ons under
+Settings → Plugins. Live TV, EPG, catch-up, DVR, multiview, and a Sports tab that maps
+fixture feeds (API-Sports / SportAPI.ai) onto channels found in your own EPG.
+
+Licence is **PolyForm Noncommercial 1.0.0** — fine for personal use, not OSI open
+source, and it forbids selling, rebranding or bundling it. Do not treat it as GPL for
+forking purposes.
+
+Limits worth remembering: the Sports tab covers football, basketball, baseball, hockey,
+American football, handball, volleyball, rugby and AFL — **not MMA or motorsports**,
+which are only findable by browsing the guide or via an added plugin. The plugin store
+and built-in site sources are third-party and unfiltered; they are the user's call, not
+a catalogue this repo vouches for.
+

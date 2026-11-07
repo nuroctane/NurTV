@@ -11,10 +11,14 @@ export MSYS2_ARG_CONV_EXCL="${MSYS2_ARG_CONV_EXCL:+$MSYS2_ARG_CONV_EXCL;}/sdcard
 source "$(dirname "${BASH_SOURCE[0]}")/_adb.sh"
 ADB_VERBOSE=1 require_adb || exit 1
 
-IP="${1:-}"
+DEFAULT_IP="192.0.2.10"
+IP="${1:-$DEFAULT_IP}"
 if [ -z "$IP" ]; then
-  echo "usage: $0 <tv-ip>      (TV: Settings → Network)"
+  echo "usage: $0 [tv-ip]      (default: $DEFAULT_IP)"
   exit 1
+fi
+if [ -z "${1:-}" ]; then
+  echo "using default TV address $DEFAULT_IP (pass an IP to override)"
 fi
 S="$IP:5555"
 
