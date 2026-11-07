@@ -12,6 +12,34 @@ Full research (sources, plugins, add-on catalogues, sports-tab internals):
 not in this repo). obnoxious.lol integration research:
 `~/workspace/tv-lumora/obnoxious-lol-integration-2026-11-07.md`.
 
+## Patched build installed (2026-11-07)
+
+- Package `com.lumora`, versionName 7.1, **versionCode 71001** (patched build line).
+- APK built on his PC (`C:\Users\david\Laboratory\lumora-patched-7.1.apk`, 39,952,866 bytes), sha256 `ed8a180e5051e3ccc5ec50eab5e0e2240cd79857b969c935eb35c3750ac23fc9`. Release build, signed with a locally generated key at `C:\Users\david\Laboratory\lumora-release.jks` (password only in `lumora-keystore.properties`, never committed). Reusing that key lets later patched builds upgrade this one in place.
+- Release is **debuggable on purpose**: it lets the app private data be provisioned with `adb shell run-as` instead of hand-driving the UI. Single-user TV build, never shipped to a store.
+- Installed 2026-11-07 as a fresh install (stock 7.1 uninstalled first; a new signing key cannot upgrade stock in place, so stock data was wiped and provisioning redone). Install date and hash recorded here; the APK binary itself is not committed to this repo.
+- Build result: release `BUILD_EXIT=0`. Unit tests did not go green in the build run: the test compile failed on nullability in the new `IrcMessageTest` (parse returns nullable, test accessed it directly). Fixed in the patch (`!!` on the parse calls); a rebuild to confirm the tests pass has not run yet.
+- The patch in this folder is now 40 files, +1865/-48, against pristine v7.1 (`c0be28d`). It adds the MMA/motorsports sports section, a built-in IRC client (below), and the live-edge player recovery (below).
+
+## What was provisioned live (2026-11-07, via run-as file push)
+
+- 4 JS plugins installed and explicitly enabled: anime-senshi, torrent-search, reddit-iptvscan, scraper-sites (edited copy: Pelota Libre TV, Tv Libre Futbol, TvporinternetHD re-enabled).
+- 9 Stremio add-ons installed and explicitly enabled: Cinemeta, Torrentio, MediaFusion (configured manifest, sports catalogs on), Comet, WatchHub, OpenSubtitles v3, Anime Kitsu, Anime Catalogs, ObnoxiousTV (per-member manifest, supplied by the user; no URL recorded anywhere).
+- Launcher: `apps/home.conf` pushed live, com.lumora 5th, launcher restarted, Guard rebound.
+- Not installed: epg6 guide source (no `sqlite3` binary on the TV, so the row could not be inserted; his tap in Settings → Lists → EPG sources). AIOStreams (needs his browser configure step; functionally covered by Torrentio + MediaFusion + Comet). Jellyfin provider (needs his ModdingCartel media account). Debrid key (none supplied). API-Sports keys (none supplied; MMA/F1 boards run guide-only).
+
+## Built-in IRC client (Modding Cartel fight chat)
+
+- Native Kotlin client inside Lumora, Views/XML, no Compose. Connects to `irc.obnoxious.lol:6697` TLS, trusted certificates only, no server password. Nick configurable in the chat view, default `nuroctane`.
+- Two ways in: an MMA event offers Fight chat (titled with the fight), and a Fight chat tile in the player options panel overlays playback (Back closes the panel first).
+- Channel is configurable and defaults to blank on purpose: the fight site never publishes the channel name in any page or bundle it serves, so the first open asks for it once and remembers it. He reads it off The Lounge at chat.obnoxious.lol.
+- UI patterns adapted from IRCCloud for Android (Apache-2.0): RecyclerView message list, one deterministic colour per nick, timestamps, auto-scroll only while already at the bottom. Revolution IRC (GPL-3.0) was studied for UX behaviour only; none of its code is copied.
+- Open item: TCP connects to irc.obnoxious.lol on 6697/6666 timed out from his residential IP on 2026-11-07 (80/443 fine), so the native client may not connect until the server side allows external clients or the daemon is up. The client reconnects with backoff and shows status; it is built, not yet proven live.
+
+## Player
+
+- Lumora already played via Media3/ExoPlayer with HLS/DASH, fast-zap LoadControl, track picker, sidecar subtitles, external-player handoff and a torrent engine, so that base stayed. One proven piece adopted: behind-live-window recovery from the Media3 demo app (Apache-2.0). A live HLS stream that falls behind its playlist window now seeks to the default position and prepares instead of running the generic failover, which replayed the same URL from position 0 and errored again. mpv-android and VLC are whole GPL engines and were not adopted as pieces.
+
 ## Install source (provision)
 
 - Package `com.lumora`, version 7.1 (versionCode 71).
@@ -29,11 +57,7 @@ not in this repo). obnoxious.lol integration research:
 - `apps/home.conf`: `com.lumora` sits 5th in `apps.order`, after the four
   renamed tiles (Movies and TV, Anime, YouTube, Twitch) and before the
   webwrap tiles. No display rename — the tile reads Lumora.
-- The live TV push of this entry is still pending: the TV was unreachable
-  (off/asleep, no ADB/SSDP answer) when this was committed, so the repo
-  change lands first and the next `provision-tv.sh` run (or a capture)
-  carries it to the TV. Do not force-stop the launcher for this without
-  rebinding Guard afterwards (see below).
+- The live TV push of this entry is done: pushed 2026-11-07, launcher restarted, Guard rebound.
 
 ## JS plugins (official store, 4 scripts only)
 
@@ -140,8 +164,9 @@ either — there is no `MMA` entry in the `Sport` enum, and the guide keywords
 `motogp`/`motorsport` are mapped onto Formula 1. The patch in this folder
 adds them the same way the existing sports are wired:
 
-- `mma-motorsports-events-2026-11-07.patch` — 23 files, +661/-47, against
-  pristine v7.1 (`c0be28d`). Verified to apply cleanly. MMA reads
+- `mma-motorsports-events-2026-11-07.patch` — 40 files, +1865/-48, against
+  pristine v7.1 (`c0be28d`). Installed as versionCode 71001 on 2026-11-07
+  (see "Patched build installed" above). MMA reads
   API-Sports `/fights` (two fighters on a card, weight class, finish method
   instead of a score); Formula 1 reads `/races` by season, filtered to the
   day. MotoGP, NASCAR, IndyCar, WEC, WRC and Formula E join as guide-only
@@ -150,9 +175,10 @@ adds them the same way the existing sports are wired:
   `formula e`). Event rows hide the score boxes for fights/races.
 - Build instructions, key slots and the current build blocker:
   `provision/lumora/BUILD.md`.
-- Until a patched build ships, the working MMA/motorsports path is
+- A patched build is installed (see "Patched build installed" above).
   MediaFusion (sports catalogs on) + the re-enabled live-sports scrapers
-  above + ModdingCartel Live on the web.
+  above + ModdingCartel Live on the web remain the working path for
+  streams until a keyed build ships.
 
 ## Guard rebind (launcher restarts)
 
@@ -169,25 +195,24 @@ after its launcher restart step.
 
 ## Live steps remaining (his taps in the app — not faked, not done)
 
-1. Open Lumora → Settings → Plugins → install the 4 JS plugins from the
-   store (or the staged `.js` files in `provision/lumora/plugins/`) and
-   **enable each one explicitly**.
-2. Settings → Plugins → paste each Stremio manifest URL from the table
-   above (Cinemeta first, then Torrentio, MediaFusion, Comet, the rest).
-   For AIOStreams, open the configure page and paste the manifest URL it
-   generates for his config.
-3. Settings → Streaming sites → re-enable Pelota Libre TV, Tv Libre Futbol,
-   TvporinternetHD (and Pluto TV regions if wanted).
-4. Settings → Providers → add Jellyfin `https://jellyfin.obnoxious.lol/`
+Done live on 2026-11-07 and struck from this list: the 4 JS plugins
+installed and enabled, the 9 Stremio add-ons installed and enabled
+(including ObnoxiousTV from his per-member manifest), the scraper sites
+re-enabled, home.conf pushed. What is left:
+
+1. Settings → Lists → EPG sources → add the epg6 guide URL (no sqlite3 on
+   the TV, so it could not be inserted from the shell).
+2. Settings → Providers → add Jellyfin `https://jellyfin.obnoxious.lol/`
    with his ModdingCartel media account; add Remux
    `https://remux.obnoxious.lol/` only if needed.
-5. Paste his ObnoxiousTV manifest URL (from the Modding Cartel Discord /
-   tv.obby.ca) into Settings → Plugins.
-6. Enter his debrid key in Settings (one of Real-Debrid / AllDebrid /
+3. Enter his debrid key in Settings (one of Real-Debrid / AllDebrid /
    Premiumize / TorBox / Debrid-Link).
-7. Add the epg6 guide URL as an EPG source.
-8. Sports tab → tick the sports wanted; check the board fills (tells
-   whether the installed build carries API-Sports keys — stock v7.1
-   probably does not, so expect guide-only until a patched build ships).
-9. Optional: open https://fight.nswfiles.com/ for live fights (web, not
+4. For AIOStreams, open the configure page and paste the manifest URL it
+   generates for his config.
+5. Sports tab → tick the sports wanted; check the board fills (no
+   API-Sports keys in this build, so expect guide-only for MMA/F1 until a
+   keyed build ships).
+6. Fight chat: open an MMA event → Fight chat, enter the channel name once
+   (read it off The Lounge at chat.obnoxious.lol).
+7. Optional: open https://fight.nswfiles.com/ for live fights (web, not
    in Lumora).

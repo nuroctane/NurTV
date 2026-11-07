@@ -2,7 +2,7 @@
 
 ## The patch
 
-`mma-motorsports-events-2026-11-07.patch` — 23 files, +661/-47, against
+`mma-motorsports-events-2026-11-07.patch` — 40 files, +1865/-48, against
 pristine Lumora v7.1 (`c0be28d`, `versionCode 71`). Verified to apply
 cleanly to a pristine `c0be28d` checkout (`git apply --check`, 2026-11-07).
 
@@ -10,7 +10,10 @@ What it adds: MMA as a fixture-feed sport (API-Sports `/fights` on host
 `v1.mma.api-sports.io`) and Formula 1 as a fixture-feed sport (`/races`),
 plus MotoGP, NASCAR, IndyCar, WEC, WRC and Formula E as guide-only sports
 with their own chips, icons and keywords. Event rows hide the score boxes
-for fights/races. See the patch's CHANGELOG entry for the full list.
+for fights/races. Plus a built-in IRC client for the ModdingCartel fight
+chat (irc.obnoxious.lol:6697 TLS, channel configurable, nick default
+`nuroctane`) and the behind-live-window player recovery from the Media3
+demo app. See the patch's CHANGELOG entry for the full list.
 
 ## Apply and build
 
@@ -63,30 +66,40 @@ Environment equivalents (CI): `API_SPORTS_KEYS`, `TRAKT_CLIENT_ID`,
 requests/day per sport. API-Sports products needed: MMA
 (`v1.mma.api-sports.io`) and Formula 1 (`/races`).
 
-## Current build blocker (2026-11-07)
+## Build result (2026-11-07, his PC)
 
-The APK is **not built yet**. This VM's sandbox blocks JVM loopback TCP
-(`other_tcp` Deny), so the Gradle client cannot connect to its daemon and
-the build cannot run here. Do not try to evade that gate. Build on a host
-where Gradle loopback TCP is allowed (his PC, or any normal machine with
-Android SDK + JDK 17).
+Built on the PC with JDK 17 and the Android SDK (platforms 35/36,
+build-tools 36.0.0). Fourth build run went green on release:
+`BUILD_EXIT=0`, APK `C:\Users\david\Laboratory\lumora-patched-7.1.apk`
+(39,952,866 bytes), sha256
+`ed8a180e5051e3ccc5ec50eab5e0e2240cd79857b969c935eb35c3750ac23fc9`,
+package `com.lumora`, versionCode 71001, versionName 7.1. Installed on the
+TV the same day as a fresh install (stock uninstalled first).
+
+Release signing key: `C:\Users\david\Laboratory\lumora-release.jks`
+(RSA 2048, alias `lumora`, generated 2026-11-07), password only in
+`C:\Users\david\Laboratory\lumora-keystore.properties`. Reuse it for later
+patched builds so they upgrade this one in place. The release is
+debuggable on purpose so the app private data can be provisioned with
+`adb shell run-as`.
+
+Unit tests did not go green in that run: the test compile failed on
+nullability in the new `IrcMessageTest` (parse returns nullable, test
+accessed it directly). Fixed in the patch (`!!` on the parse calls); a
+rebuild to confirm the tests pass has not run yet. Main code compiled
+clean in both debug and release.
 
 ## Install the built APK
 
 ```sh
 adb connect <tv-ip>:5555
-adb install -r app-release.apk
+adb uninstall com.lumora
+adb install app-release.apk
 ```
 
-`install -r` only; sign-ins, plugins and settings stay. Keep the previous
-APK for rollback: the stock fallback is the repo's `apps/lumora-7.1.apk`
-(sha256 `5c66032eb9053e0c9e0a31e9e4ace9debbe4ee77f89eb4266467b474408a204a`).
-
-Note the signing caveat above: a locally built APK signed with a new key
-cannot upgrade the stock install in place. If the goal is an in-place
-upgrade, the build must be signed with the same key that signed the
-installed APK — for the stock release that is upstream's key, which is not
-available. In practice the first patched build is a fresh install
-(uninstall stock first, or accept the data wipe); provision afterwards from
-`provision/lumora/README.md` again (plugins/add-ons live in the app's
-private data dir, which an uninstall wipes).
+Uninstall first: a locally built APK signed with a new key cannot upgrade
+the stock install in place, so the first patched build is a fresh install
+and the app private data is wiped. Provision afterwards from
+`provision/lumora/README.md` again (plugins/add-ons live in the app
+private data dir, which an uninstall wipes). Later builds signed with the
+same local key upgrade in place with `install -r`.
