@@ -71,3 +71,10 @@
 - https://atlantic.st/dl/plugin/manifest.json, https://atlantic.st/dl/app/manifest.json
 - ~/workspace/tv-lumora/lumora-plugins-sources-2026-11-07.md, ~/workspace/tv-lumora/obnoxious-lol-integration-2026-11-07.md
 - https://github.com/zstream-mov/Android — does not resolve (404) as of 2026-11-07; not used.
+
+## 2026-11-07 - Updated to v1.0.11 (in place)
+
+- Updated Atlantic st.atlantic.app from v1.0.10 to v1.0.11 (versionCode 15) via adb install -r only. No uninstall, no clear, profile/sign-ins/settings/plugins preserved (firstInstallTime 2026-10-25 unchanged, lastUpdateTime 2026-11-07 13:13:32).
+- Update freeze lifted for the install only (REQUEST_INSTALL_PACKAGES allow), then re-applied (ignore). In-app background update check toggle stays OFF (UI-only, cannot be flipped from code).
+- Nepu source is gated on the app version ('Nepu needs a newer app version'); with v1.0.11 installed the gate is lifted. Whether Nepu shows in the source list is confirmed live by nur (source list lives in private prefs).
+- Rollback remains apps/atlantic-1.0.10.apk.
