@@ -76,9 +76,9 @@ build-tools 36.0.0). Fourth build run went green on release:
 package `com.lumora`, versionCode 71001, versionName 7.1. Installed on the
 TV the same day as a fresh install (stock uninstalled first).
 
-Release signing key: `C:\Users\david\Laboratory\lumora-release.jks`
+Release signing key: `C:\Users\david\Scripts\lumora-work\lumora-release.jks`
 (RSA 2048, alias `lumora`, generated 2026-11-07), password only in
-`C:\Users\david\Laboratory\lumora-keystore.properties`. Reuse it for later
+`C:\Users\david\Scripts\lumora-work\lumora-keystore.properties`. Reuse it for later
 patched builds so they upgrade this one in place. The release is
 debuggable on purpose so the app private data can be provisioned with
 `adb shell run-as`.
