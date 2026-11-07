@@ -2,7 +2,7 @@
 
 ## The patch
 
-`mma-motorsports-events-2026-11-07.patch` — 40 files, +1865/-48, against
+`mma-motorsports-events-2026-11-07.patch` — 40 files, +1859/-48, against
 pristine Lumora v7.1 (`c0be28d`, `versionCode 71`). Verified to apply
 cleanly to a pristine `c0be28d` checkout (`git apply --check`, 2026-11-07).
 
@@ -69,12 +69,17 @@ requests/day per sport. API-Sports products needed: MMA
 ## Build result (2026-11-07, his PC)
 
 Built on the PC with JDK 17 and the Android SDK (platforms 35/36,
-build-tools 36.0.0). Fourth build run went green on release:
-`BUILD_EXIT=0`, APK `C:\Users\david\Laboratory\lumora-patched-7.1.apk`
-(39,952,866 bytes), sha256
-`ed8a180e5051e3ccc5ec50eab5e0e2240cd79857b969c935eb35c3750ac23fc9`,
+build-tools 36.0.0). Build 6 went green on release and tests
+(2026-11-07 13:48–14:00 CT): `TESTS_EXIT=0`, `BUILD_EXIT=0`, confirming the
+`!!` fix for the `IrcMessageTest` nullability compile failure from the
+earlier build. APK `C:\Users\david\Scripts\lumora-work\lumora-patched-7.1.apk`
+(39,952,686 bytes), sha256
+`af21e4ffbc92effeebc3f8590904c40f6af7b6d96c8659653a3aff956bde4507`,
 package `com.lumora`, versionCode 71001, versionName 7.1. Installed on the
-TV the same day as a fresh install (stock uninstalled first).
+TV 2026-11-07 14:05:50 CT via `adb install -r` — an in-place upgrade over
+the earlier patched build, same signing key, data preserved
+(`firstInstallTime` still 2026-11-07 13:15:21). Build 5 was the first
+patched build, installed as a fresh install (stock uninstalled first).
 
 Release signing key: `C:\Users\david\Scripts\lumora-work\lumora-release.jks`
 (RSA 2048, alias `lumora`, generated 2026-11-07), password only in
@@ -83,23 +88,16 @@ patched builds so they upgrade this one in place. The release is
 debuggable on purpose so the app private data can be provisioned with
 `adb shell run-as`.
 
-Unit tests did not go green in that run: the test compile failed on
-nullability in the new `IrcMessageTest` (parse returns nullable, test
-accessed it directly). Fixed in the patch (`!!` on the parse calls); a
-rebuild to confirm the tests pass has not run yet. Main code compiled
-clean in both debug and release.
-
 ## Install the built APK
 
 ```sh
 adb connect <tv-ip>:5555
-adb uninstall com.lumora
-adb install app-release.apk
+adb install -r app-release.apk
 ```
 
-Uninstall first: a locally built APK signed with a new key cannot upgrade
-the stock install in place, so the first patched build is a fresh install
-and the app private data is wiped. Provision afterwards from
-`provision/lumora/README.md` again (plugins/add-ons live in the app
-private data dir, which an uninstall wipes). Later builds signed with the
-same local key upgrade in place with `install -r`.
+Uninstall first only for the very first patched build: a locally built APK
+signed with a new key cannot upgrade the stock install in place, so the
+first patched build is a fresh install and the app private data is wiped.
+Provision afterwards from `provision/lumora/README.md` again (plugins/add-ons
+live in the app private data dir, which an uninstall wipes). Later builds
+signed with the same local key upgrade in place with `install -r`.

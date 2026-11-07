@@ -15,16 +15,16 @@ not in this repo). obnoxious.lol integration research:
 ## Patched build installed (2026-11-07)
 
 - Package `com.lumora`, versionName 7.1, **versionCode 71001** (patched build line).
-- APK built on his PC (`C:\Users\david\Laboratory\lumora-patched-7.1.apk`, 39,952,866 bytes), sha256 `ed8a180e5051e3ccc5ec50eab5e0e2240cd79857b969c935eb35c3750ac23fc9`. Release build, signed with a locally generated key at `C:\Users\david\Scripts\lumora-work\lumora-release.jks` (password only in `C:\Users\david\Scripts\lumora-work\lumora-keystore.properties`, never committed). Reusing that key lets later patched builds upgrade this one in place.
+- **Build 6 (2026-11-07, 13:48–14:00 CT, his PC):** `TESTS_EXIT=0 BUILD_EXIT=0` — the unit tests went green this run, confirming the `!!` fix for the `IrcMessageTest` nullability compile failure from the earlier build. APK `C:\Users\david\Scripts\lumora-work\lumora-patched-7.1.apk`, 39,952,686 bytes, sha256 `af21e4ffbc92effeebc3f8590904c40f6af7b6d96c8659653a3aff956bde4507`. Release build, signed with the locally generated key at `C:\Users\david\Scripts\lumora-work\lumora-release.jks` (password only in `C:\Users\david\Scripts\lumora-work\lumora-keystore.properties`, never committed). Same key as the earlier patched build, so this one upgrades it in place.
 - Release is **debuggable on purpose**: it lets the app private data be provisioned with `adb shell run-as` instead of hand-driving the UI. Single-user TV build, never shipped to a store.
-- Installed 2026-11-07 as a fresh install (stock 7.1 uninstalled first; a new signing key cannot upgrade stock in place, so stock data was wiped and provisioning redone). Install date and hash recorded here; the APK binary itself is not committed to this repo.
-- Build result: release `BUILD_EXIT=0`. Unit tests did not go green in the build run: the test compile failed on nullability in the new `IrcMessageTest` (parse returns nullable, test accessed it directly). Fixed in the patch (`!!` on the parse calls); a rebuild to confirm the tests pass has not run yet.
-- The patch in this folder is now 40 files, +1865/-48, against pristine v7.1 (`c0be28d`). It adds the MMA/motorsports sports section, a built-in IRC client (below), and the live-edge player recovery (below).
+- Installed 2026-11-07 14:05:50 CT via `adb install -r` (Success) — an in-place upgrade over the earlier patched build, same signing key, data preserved (`firstInstallTime` still 2026-11-07 13:15:21). Build 5 was the first patched build, installed as a fresh install (stock 7.1 uninstalled first; a new signing key cannot upgrade stock in place, so stock data was wiped and provisioning redone). Install date and hash recorded here; the APK binary itself is not committed to this repo.
+- The patch in this folder is now 40 files, +1859/-48, against pristine v7.1 (`c0be28d`), regenerated from the fork before build 6. It adds the MMA/motorsports sports section, a built-in IRC client (below), and the live-edge player recovery (below).
 
 ## What was provisioned live (2026-11-07, via run-as file push)
 
-- 4 JS plugins installed and explicitly enabled: anime-senshi, torrent-search, reddit-iptvscan, scraper-sites (edited copy: Pelota Libre TV, Tv Libre Futbol, TvporinternetHD re-enabled).
-- 9 Stremio add-ons installed and explicitly enabled: Cinemeta, Torrentio, MediaFusion (configured manifest, sports catalogs on), Comet, WatchHub, OpenSubtitles v3, Anime Kitsu, Anime Catalogs, ObnoxiousTV (per-member manifest, supplied by the user; no URL recorded anywhere).
+- JS plugins: torrent-search, reddit-iptvscan and anime-senshi installed and explicitly enabled; scraper-sites.js installed as registry data (not runnable).
+- 9 Stremio add-ons installed and explicitly enabled: Cinemeta, Torrentio, MediaFusion (configured manifest, sports catalogs on — Fighting WWE/UFC, Formula Racing, MotoGP, Live TV PPV, UFC Fight Pass, DAZN, ESPN Plus), Comet, WatchHub, OpenSubtitles v3, Anime Kitsu, Anime Catalogs, ObnoxiousTV (per-member manifest, supplied by the user; no URL recorded anywhere).
+- Live-sports scraper re-enable NOT confirmed: Pelota Libre TV, Tv Libre Futbol, TvporinternetHD toggles live in the app DB, not prefs files, so they could not be flipped from the shell. His tap in Settings → Streaming sites.
 - Launcher: `apps/home.conf` pushed live, com.lumora 5th, launcher restarted, Guard rebound.
 - Not installed: epg6 guide source (no `sqlite3` binary on the TV, so the row could not be inserted; his tap in Settings → Lists → EPG sources). AIOStreams (needs his browser configure step; functionally covered by Torrentio + MediaFusion + Comet). Jellyfin provider (needs his ModdingCartel media account). Debrid key (none supplied). API-Sports keys (none supplied; MMA/F1 boards run guide-only).
 
@@ -164,7 +164,7 @@ either — there is no `MMA` entry in the `Sport` enum, and the guide keywords
 `motogp`/`motorsport` are mapped onto Formula 1. The patch in this folder
 adds them the same way the existing sports are wired:
 
-- `mma-motorsports-events-2026-11-07.patch` — 40 files, +1865/-48, against
+- `mma-motorsports-events-2026-11-07.patch` — 40 files, +1859/-48, against
   pristine v7.1 (`c0be28d`). Installed as versionCode 71001 on 2026-11-07
   (see "Patched build installed" above). MMA reads
   API-Sports `/fights` (two fighters on a card, weight class, finish method
@@ -176,9 +176,9 @@ adds them the same way the existing sports are wired:
 - Build instructions, key slots and the current build blocker:
   `provision/lumora/BUILD.md`.
 - A patched build is installed (see "Patched build installed" above).
-  MediaFusion (sports catalogs on) + the re-enabled live-sports scrapers
-  above + ModdingCartel Live on the web remain the working path for
-  streams until a keyed build ships.
+  MediaFusion (sports catalogs on) + the live-sports scrapers (re-enable
+  unconfirmed, see above) + ModdingCartel Live on the web remain the working
+  path for streams until a keyed build ships.
 
 ## Guard rebind (launcher restarts)
 
@@ -195,24 +195,25 @@ after its launcher restart step.
 
 ## Live steps remaining (his taps in the app — not faked, not done)
 
-Done live on 2026-11-07 and struck from this list: the 4 JS plugins
+Done live on 2026-11-07 and struck from this list: the 3 runnable JS plugins
 installed and enabled, the 9 Stremio add-ons installed and enabled
-(including ObnoxiousTV from his per-member manifest), the scraper sites
-re-enabled, home.conf pushed. What is left:
+(including ObnoxiousTV from his per-member manifest), home.conf pushed. What is left:
 
-1. Settings → Lists → EPG sources → add the epg6 guide URL (no sqlite3 on
+1. Settings → Streaming sites → re-enable Pelota Libre TV, Tv Libre Futbol,
+   TvporinternetHD (toggles live in the app DB, unconfirmed from the shell).
+2. Settings → Lists → EPG sources → add the epg6 guide URL (no sqlite3 on
    the TV, so it could not be inserted from the shell).
-2. Settings → Providers → add Jellyfin `https://jellyfin.obnoxious.lol/`
+3. Settings → Providers → add Jellyfin `https://jellyfin.obnoxious.lol/`
    with his ModdingCartel media account; add Remux
    `https://remux.obnoxious.lol/` only if needed.
-3. Enter his debrid key in Settings (one of Real-Debrid / AllDebrid /
+4. Enter his debrid key in Settings (one of Real-Debrid / AllDebrid /
    Premiumize / TorBox / Debrid-Link).
-4. For AIOStreams, open the configure page and paste the manifest URL it
+5. For AIOStreams, open the configure page and paste the manifest URL it
    generates for his config.
-5. Sports tab → tick the sports wanted; check the board fills (no
+6. Sports tab → tick the sports wanted; check the board fills (no
    API-Sports keys in this build, so expect guide-only for MMA/F1 until a
    keyed build ships).
-6. Fight chat: open an MMA event → Fight chat, enter the channel name once
+7. Fight chat: open an MMA event → Fight chat, enter the channel name once
    (read it off The Lounge at chat.obnoxious.lol).
-7. Optional: open https://fight.nswfiles.com/ for live fights (web, not
+8. Optional: open https://fight.nswfiles.com/ for live fights (web, not
    in Lumora).
