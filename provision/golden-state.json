@@ -53,18 +53,16 @@
     },
     "video_player_browser_wrappers": {
       "what": [
-        "WebView wrapper shells in apps/webwrap (frameXTV, ObbyWatcher, MMABite, StreamEast, AnimeHeaven, Miruro): native MotionEvent taps and ACTION_HOVER_MOVE that reach into iframes and count as genuine user activation; container fullscreen pin that keeps the player's own controls; DPR scale derived from innerWidth (panel 3840x2160, Fire OS app layer 1920x1080).",
+        "WebView wrapper shells in apps/webwrap (frameXTV, ObbyWatcher): native MotionEvent taps and ACTION_HOVER_MOVE that reach into iframes and count as genuine user activation; container fullscreen pin that keeps the player's own controls; DPR scale derived from innerWidth (panel 3840x2160, Fire OS app layer 1920x1080).",
+        "Removed Nov 7, 2026 as deprecated (uninstalled from the TV): MMABite, StreamEast, AnimeHeaven, Miruro wrappers.",
         "Wrapper source is the tweak: apps/webwrap (apps.txt, build.sh). Installed wrapper versions are not pinned; presence is what is checked."
       ],
       "notes": "apps/manifest.md (wrapper v1.2-v2.8 history)"
     },
     "plugins_addons": {
       "what": [
-        "Watchbox extensions: six Aniyomi extension APKs installed by scripts/apply-sources.sh from provision/sources.json, plus the Watchbox repo deep link (manual, --with-intents only).",
-        "CloudStream: phisher98 + recloudstream extension repos; installed plugins move with capture-app-settings.sh.",
+        "Removed Nov 7, 2026 as deprecated (uninstalled from the TV): Watchbox plus its six Aniyomi extension APKs and the Watchbox repo deep link; CloudStream plus its phisher98/recloudstream extension repos; Arvio plus its add-ons (Torrentio, Comet, Flix-Streams Free, HdHub, OpenSubtitles v3); Lumera plus its add-ons (Cinemeta, Torrentio, Comet, OpenSubtitles v3, MediaFusion, Flix-Streams Free, HdHub).",
         "Zangetsu: nine installed providers (AniKoto, 4K HDHub, UHD Movies, HDHub4u, HiAnime, VegaMovies, MultiMovies, AnimeCube, TorBox) from the zangetsu-providers index; TorBox needs its key re-entered.",
-        "Arvio add-ons (manual, Settings > Addons): Torrentio, Comet, Flix-Streams Free, HdHub, OpenSubtitles v3.",
-        "Lumera add-ons (manual): Cinemeta, Torrentio, Comet, OpenSubtitles v3, MediaFusion, Flix-Streams Free, HdHub.",
         "Atlantic: content plugin is built into the APK, nothing to provision."
       ],
       "sources": "provision/sources.json",
@@ -108,18 +106,6 @@
       "check": "presence"
     },
     {
-      "package": "com.arvio.tv",
-      "install": "install",
-      "apk": [
-        "apps/arvio-2.3.apk"
-      ],
-      "sha256": [
-        "a860a62422f0185ff53fb55f1bde2a63237e8febd60843c49d1c7e172b63bd3f"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
       "package": "com.kick.mobile",
       "install": "install",
       "apk": [
@@ -132,18 +118,6 @@
       "check": "presence"
     },
     {
-      "package": "com.lagradost.cloudstream3",
-      "install": "install",
-      "apk": [
-        "apps/cloudstream-4.8.0.apk"
-      ],
-      "sha256": [
-        "348c3f09551f2dda4fba25ba348928ee7b82a47ce98a6b1eae3295d4c127877c"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
       "package": "com.lonelycatgames.Xplore",
       "install": "install",
       "apk": [
@@ -151,18 +125,6 @@
       ],
       "sha256": [
         "1f019bde72fd4b6fefb273e57222d26e27449f36d0ecff370448db205c793a3d"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
-      "package": "com.lumera.app",
-      "install": "install",
-      "apk": [
-        "apps/lumera-0.1.8-beta.apk"
-      ],
-      "sha256": [
-        "bdf7c56fc116a66a0eba93912ed6a9341db0baa027d2e2e70fc45989000529d6"
       ],
       "role": "app",
       "check": "presence"
@@ -204,18 +166,6 @@
       "check": "presence"
     },
     {
-      "package": "com.saikou.sozo_tv",
-      "install": "install",
-      "apk": [
-        "apps/sozo-tv-1.0.2.apk"
-      ],
-      "sha256": [
-        "c380e31071f13f346a1305b106c424c93f925dcdc94fc71f66c073e23570866f"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
       "package": "com.spyou.watch_app",
       "install": "install",
       "apk": [
@@ -240,78 +190,6 @@
       "check": "presence"
     },
     {
-      "package": "eu.kanade.tachiyomi.animeextension.all.anizone",
-      "install": "install",
-      "apk": [
-        "apps/ext-watchbox/aniyomi-all.anizone-v16.15.apk"
-      ],
-      "sha256": [
-        "3596cf21bde05de7a957a6ab56a53ea53db2cb6a1f45fdc85e7cbaef7a2047b5"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
-      "package": "eu.kanade.tachiyomi.animeextension.en.anichi",
-      "install": "install",
-      "apk": [
-        "apps/ext-watchbox/aniyomi-en.anichi-v16.10.apk"
-      ],
-      "sha256": [
-        "ad58ea7c4cc52c1d5e1aee1c2c8790da33d6f2bd41ecff513d9a20c6daddf40e"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
-      "package": "eu.kanade.tachiyomi.animeextension.en.animepahe",
-      "install": "install",
-      "apk": [
-        "apps/ext-watchbox/aniyomi-en.animepahe-v16.56.apk"
-      ],
-      "sha256": [
-        "a0d5a0dc2089f083b8515804c8f13534e26a17506bdbb8ddc5c11e9ae9ab0b62"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
-      "package": "eu.kanade.tachiyomi.animeextension.en.animesogo",
-      "install": "install",
-      "apk": [
-        "apps/ext-watchbox/aniyomi-en.animesogo-v16.10.apk"
-      ],
-      "sha256": [
-        "32c38ff533efb427cbb0334f91c38c2c981223e8c105901ebb34f26ff4e6f594"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
-      "package": "eu.kanade.tachiyomi.animeextension.en.kickassanime",
-      "install": "install",
-      "apk": [
-        "apps/ext-watchbox/aniyomi-en.kickassanime-v14.63.apk"
-      ],
-      "sha256": [
-        "7a5514e4fa32e637e4e19f894d912b184203197a63bced5e4b638afb9b4b6d9d"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
-      "package": "eu.kanade.tachiyomi.animeextension.en.kotokai",
-      "install": "install",
-      "apk": [
-        "apps/ext-watchbox/aniyomi-en.kotokai-v16.10.apk"
-      ],
-      "sha256": [
-        "ca701b74da790dd67745c10a02ba0e4a4a6e2e9af530c46eb47f3e7364398385"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
       "package": "org.smarttube.stable",
       "install": "install",
       "apk": [
@@ -319,18 +197,6 @@
       ],
       "sha256": [
         "2130b23b17ed5cfd324baec81750a2be22059212b6ee17449f21cae2cb3a60d9"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
-      "package": "space.nicart.watchbox.tv",
-      "install": "install",
-      "apk": [
-        "apps/watchbox-tv-4.14.12-v7a.apk"
-      ],
-      "sha256": [
-        "c3e611386657ab066c6e7e0732d93b3f82c73e93ab010ea4999de8a1fda37d7d"
       ],
       "role": "app",
       "check": "presence"
@@ -348,18 +214,6 @@
       "check": "presence"
     },
     {
-      "package": "tv.animeheaven.web",
-      "install": "install",
-      "apk": [
-        "provision/apk/tv.animeheaven.web.apk"
-      ],
-      "sha256": [
-        "47d88473cce84998ce9a2f5be84149474b4a18beb4dc0b39494b547016c8923a"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
       "package": "tv.framextv.web",
       "install": "install",
       "apk": [
@@ -372,30 +226,6 @@
       "check": "presence"
     },
     {
-      "package": "tv.miruro.web",
-      "install": "install",
-      "apk": [
-        "provision/apk/tv.miruro.web.apk"
-      ],
-      "sha256": [
-        "d92ef3b024a4985db8ee1f7d14e5f2636389dbc494aa4fe7b21a001a7ca6b967"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
-      "package": "tv.mmabite.web",
-      "install": "install",
-      "apk": [
-        "provision/apk/tv.mmabite.web.apk"
-      ],
-      "sha256": [
-        "840694b0e2903ccccf1edf5f77d100998cde1d9726fa66fa21d6ba174a834d4e"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
       "package": "tv.obbywatcher.web",
       "install": "install",
       "apk": [
@@ -403,18 +233,6 @@
       ],
       "sha256": [
         "aa43b0ba70ca371d2d00801246fbfa44b5a56de2f37ff3c7e31dbcdc5e815960"
-      ],
-      "role": "app",
-      "check": "presence"
-    },
-    {
-      "package": "tv.streameast.web",
-      "install": "install",
-      "apk": [
-        "provision/apk/tv.streameast.web.apk"
-      ],
-      "sha256": [
-        "6c4e72b117c1627194e3fe7376c979a9dcbe9ec6e2e9f586bb3c56ffbc2f3fe3"
       ],
       "role": "app",
       "check": "presence"

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Install the Watchbox extension APKs listed in provision/sources.json.
+# Install the extension APKs listed in provision/sources.json.
+# (Watchbox extensions were removed Nov 7, 2026 as deprecated; the list is
+# currently empty, so this is a no-op until something is added again.)
 #
 #   ./scripts/apply-sources.sh <tv-ip> [--dry-run] [--verify-only] [--with-intents]
 #
@@ -8,8 +10,9 @@
 # It never uninstalls. It does not press HOME and it does not open apps unless
 # --with-intents is passed (that one fires the Watchbox repo link).
 #
-# In-app CloudStream plugins, Zangetsu providers, and Arvio/Lumera add-ons are not
-# applied here. See the "manual" list in provision/sources.json.
+# In-app Zangetsu providers are not applied here. See the "manual" list in
+# provision/sources.json. (CloudStream, Arvio, Lumera entries were removed
+# Nov 7, 2026 as deprecated.)
 #
 # Extension versions are not pinned: an extension that updated itself is fine.
 # A package is verified by presence only; apk/sha256 are the install source
@@ -108,14 +111,6 @@ while IFS=$'\t' read -r pkg apk sum; do
     fail "$pkg: installed APK does not match the recorded sha256"
   fi
 done < "$WORK/ext.tsv"
-
-if [ "$WITH_INTENTS" = 1 ] && [ "$DRY" = 0 ] && [ "$VERIFY_ONLY" = 0 ]; then
-  # URL is inside the remote command so Git Bash does not rewrite https://.
-  note "intent    aniyomi://add-repo (yuzono anime repo)"
-  "$ADB_BIN" -s "$S" shell am start -a android.intent.action.VIEW \
-    -d 'aniyomi://add-repo?url=https%3A%2F%2Fraw.githubusercontent.com%2Fyuzono%2Fanime-repo%2Frepo%2Findex.min.json' \
-    >/dev/null 2>&1 || fail "Watchbox repo intent was not delivered"
-fi
 
 if [ "$FAILED" = 0 ]; then
   if [ "$DRY" = 1 ]; then note "extension package plan complete (no installs performed)"

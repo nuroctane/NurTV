@@ -1,54 +1,7 @@
 {
   "_comment": "Applied by scripts/apply-sources.sh after the APKs in golden-state.json. Capture cannot see in-app repos: they live in private app data. Do not put accounts or tokens in this file.",
-  "extensions": [
-    {
-      "package": "eu.kanade.tachiyomi.animeextension.all.anizone",
-      "apk": "apps/ext-watchbox/aniyomi-all.anizone-v16.15.apk",
-      "sha256": "3596cf21bde05de7a957a6ab56a53ea53db2cb6a1f45fdc85e7cbaef7a2047b5"
-    },
-    {
-      "package": "eu.kanade.tachiyomi.animeextension.en.anichi",
-      "apk": "apps/ext-watchbox/aniyomi-en.anichi-v16.10.apk",
-      "sha256": "ad58ea7c4cc52c1d5e1aee1c2c8790da33d6f2bd41ecff513d9a20c6daddf40e"
-    },
-    {
-      "package": "eu.kanade.tachiyomi.animeextension.en.animepahe",
-      "apk": "apps/ext-watchbox/aniyomi-en.animepahe-v16.56.apk",
-      "sha256": "a0d5a0dc2089f083b8515804c8f13534e26a17506bdbb8ddc5c11e9ae9ab0b62"
-    },
-    {
-      "package": "eu.kanade.tachiyomi.animeextension.en.animesogo",
-      "apk": "apps/ext-watchbox/aniyomi-en.animesogo-v16.10.apk",
-      "sha256": "32c38ff533efb427cbb0334f91c38c2c981223e8c105901ebb34f26ff4e6f594"
-    },
-    {
-      "package": "eu.kanade.tachiyomi.animeextension.en.kickassanime",
-      "apk": "apps/ext-watchbox/aniyomi-en.kickassanime-v14.63.apk",
-      "sha256": "7a5514e4fa32e637e4e19f894d912b184203197a63bced5e4b638afb9b4b6d9d"
-    },
-    {
-      "package": "eu.kanade.tachiyomi.animeextension.en.kotokai",
-      "apk": "apps/ext-watchbox/aniyomi-en.kotokai-v16.10.apk",
-      "sha256": "ca701b74da790dd67745c10a02ba0e4a4a6e2e9af530c46eb47f3e7364398385"
-    }
-  ],
+  "extensions": [],
   "manual": [
-    {
-      "app": "Watchbox repo",
-      "package": "space.nicart.watchbox.tv",
-      "why": "The six extension APKs above are installed silently. The repo itself is one deep link, fired by apply-sources only with --with-intents, because it brings the app forward and the provision verify step presses HOME.",
-      "url": "https://raw.githubusercontent.com/yuzono/anime-repo/repo/index.min.json",
-      "intent": "aniyomi://add-repo?url=https%3A%2F%2Fraw.githubusercontent.com%2Fyuzono%2Fanime-repo%2Frepo%2Findex.min.json"
-    },
-    {
-      "app": "CloudStream",
-      "package": "com.lagradost.cloudstream3",
-      "why": "Plugins are private app data. The external plugins directory on the working TV was empty. cloudstreamrepo:// opens an add-repository dialog, so it is not safe to fire during an unattended run. The official repo is master/repo.json (builds/repo.json is 404). Both are seeded into CloudStream Household, and the installed plugins move with scripts/capture-app-settings.sh.",
-      "urls": [
-        "https://raw.githubusercontent.com/phisher98/cloudstream-extensions-phisher/builds/repo.json",
-        "https://raw.githubusercontent.com/recloudstream/extensions/master/repo.json"
-      ]
-    },
     {
       "app": "Zangetsu",
       "package": "com.spyou.watch_app",
@@ -64,30 +17,6 @@
         "MultiMovies",
         "AnimeCube",
         "TorBox"
-      ]
-    },
-    {
-      "app": "Arvio",
-      "package": "com.arvio.tv",
-      "why": "Private app data; add manually in Settings > Addons. OpenSubtitles v3, Torrentio, Comet and Flix-Streams Free were visible and enabled on 2026-10-30. Flix-Streams needs no account. Two Interstellar links returned HTTP 200 video/mkv; four Shawshank links returned HTTP 502. TV playback not verified. HdHub was installed on 2026-10-30; a sampled direct video link returned HTTP 206 on a PC, but TV playback has not been verified.",
-      "urls": [
-        "https://torrentio.strem.fun/manifest.json",
-        "https://comet.elfhosted.com/manifest.json",
-        "https://free.flixnest.app/manifest.json",
-        "https://hdhub.thevolecitor.qzz.io/manifest.json"
-      ]
-    },
-    {
-      "app": "Lumera",
-      "package": "com.lumera.app",
-      "why": "Settings > Addons requires manual entry; app data cannot be copied. On the source TV, Cinemeta, Torrentio, Comet, OpenSubtitles v3, MediaFusion, and Flix-Streams Free were visible on 2026-10-30. Flix-Streams returns HTTP links without an account; playback still needs testing. Flix-Streams HTTP tests on 2026-10-30: two Interstellar links returned HTTP 200 video/mkv, while four Shawshank links returned HTTP 502; TV playback not verified. HdHub was installed on 2026-10-30; a sampled direct video link returned HTTP 206 on a PC, but TV playback has not been verified.",
-      "urls": [
-        "https://torrentio.strem.fun/manifest.json",
-        "https://comet.elfhosted.com/manifest.json",
-        "https://opensubtitles-v3.strem.io/manifest.json",
-        "https://mediafusion.elfhosted.com/manifest.json",
-        "https://free.flixnest.app/manifest.json",
-        "https://hdhub.thevolecitor.qzz.io/manifest.json"
       ]
     },
     {
