@@ -28,7 +28,7 @@ Build from `custom-lumera/`, with Android SDK 36 and JDK 17 or later:
 
 ```powershell
 $env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
-powershell -NoProfile -File %USERPROFILE%\.agents\lowcpu.ps1 cmd.exe /c gradlew.bat :app:assembleDebug --max-workers=4 --no-daemon
+powershell -NoProfile -File "$env:USERPROFILE\.agents\lowcpu.ps1" cmd.exe /c gradlew.bat :app:assembleDebug --max-workers=4 --no-daemon
 ```
 
 The source checkout is a separate Git repository. Keep its changes, the manifest
@@ -69,7 +69,7 @@ Build (JDK 17 toolchain, Android SDK 36), from `provision/`:
 
 ```powershell
 $env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"; $d = "$PWD\custom-cloudstream"
-powershell -NoProfile -File %USERPROFILE%\.agents\lowcpu.ps1 "$d\gradlew.bat" -p $d :app:assembleStableDebug --max-workers=4 --no-daemon
+powershell -NoProfile -File "$env:USERPROFILE\.agents\lowcpu.ps1" "$d\gradlew.bat" -p $d :app:assembleStableDebug --max-workers=4 --no-daemon
 ```
 
 ## Not built

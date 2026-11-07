@@ -656,7 +656,7 @@ Source: https://github.com/LumoraPlayer/Lumora release `v7.1` (asset `Lumora.apk
 Hash equals the digest GitHub publishes for the asset. `aapt2 dump badging` checked
 before install: minSdk 25, targetSdk 36, `native-code` includes `armeabi-v7a`, and
 `leanback-launchable-activity: com.lumora.MainActivity` is present, so it lists in the
-Fire TV app row. Installed with `adb -s 192.0.2.10:5555 install -r`; confirmed
+Fire TV app row. Installed with `adb -s "$TV_IP:5555" install -r`; confirmed
 running as the top window.
 
 What it is: a player, not a provider. It ships no channels. Sources are Xtream Codes,

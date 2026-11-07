@@ -27,3 +27,7 @@
 # Research scratch and reports stay local.
 /reports/
 /research_notes/
+
+# Local device addresses and machine paths never get committed.
+/.tv-ip
+*.local.env

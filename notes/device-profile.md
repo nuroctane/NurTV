@@ -22,32 +22,28 @@
   could never do.
 - Storage is not a constraint (10.1 GB free).
 
-## Network (re-confirmed 2026-11-07)
+## Network
 
-| Field | Value |
-|---|---|
-| TV IPv4 | **`192.0.2.10`** (wired, DHCP) |
-| ADB target | `192.0.2.10:5555` |
-| Gateway | `192.0.2.1` |
+No addresses, host names or adapter details belong in this repo. The TV's
+address is local state: keep it in `.tv-ip` at the repo root (gitignored) or in
+the `TV_IP` environment variable. `./scripts/connect.sh` reads those; pass an IP
+to override for one run.
 
-`./scripts/connect.sh` now defaults to this address; pass an IP to override.
-
-**Why discovery kept failing.** This PC has two NICs on the same `/24` —
-Ethernet `192.0.2.12` (ifMetric 25) and Wi-Fi `192.0.2.13` (ifMetric 35).
-Windows routes LAN traffic out Ethernet, but `arp -a` and `Get-NetNeighbor` only
-show hosts that NIC has already talked to, so a neighbour-table scan looks almost
-empty. And a plain ICMP sweep misses the TV when it is idle/asleep — the first
-pass found six hosts and not the TV.
+**Why discovery kept failing.** A neighbour-table scan (`arp -a`,
+`Get-NetNeighbor`) only shows hosts that the interface has already talked to, so
+it looks nearly empty on a clean run. An ICMP sweep also misses the TV when it is
+idle or asleep. And with more than one NIC on the same subnet, the OS may send
+the probe out the wrong one.
 
 What works: SSDP. Send an `M-SEARCH` for
-`urn:dial-multiscreen-org:service:dial:1` from the wired address and read the
-replies. The TV answers with `friendlyName Fire TV`, `manufacturer TCL`,
-`modelName 65Q650F` on port 60000. Do not confuse it with the Roku at
-`192.0.2.14` (SSDP server `Roku/15.3.4`, DIAL on 8060).
+`urn:dial-multiscreen-org:service:dial:1` bound to the interface that faces the
+TV, and read the replies. Fire OS answers as a TV device with the manufacturer
+and model in the `dd.xml`; a Roku on the same LAN answers with its own SSDP
+server string and a different DIAL port, so check the model before connecting.
 
 ```powershell
-# bind the probe to the wired NIC, or it may leave via Wi-Fi
-$local = [System.Net.IPAddress]::Parse('192.0.2.12')
+# replace with the local address of the NIC that faces the TV
+$local = [System.Net.IPAddress]::Parse('192.0.2.10')
 $udp = New-Object System.Net.Sockets.UdpClient(0, [System.Net.Sockets.AddressFamily]::InterNetwork)
 $udp.Client.Bind((New-Object System.Net.IPEndPoint($local, 0)))
 $udp.Client.SetSocketOption([System.Net.Sockets.SocketOptionLevel]::IP,

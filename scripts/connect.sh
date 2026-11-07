@@ -11,14 +11,16 @@ export MSYS2_ARG_CONV_EXCL="${MSYS2_ARG_CONV_EXCL:+$MSYS2_ARG_CONV_EXCL;}/sdcard
 source "$(dirname "${BASH_SOURCE[0]}")/_adb.sh"
 ADB_VERBOSE=1 require_adb || exit 1
 
-DEFAULT_IP="192.0.2.10"
-IP="${1:-$DEFAULT_IP}"
-if [ -z "$IP" ]; then
-  echo "usage: $0 [tv-ip]      (default: $DEFAULT_IP)"
-  exit 1
+# The TV's address is local state and must never be committed. Set TV_IP, write
+# it to .tv-ip (gitignored), or pass it as the first argument.
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+IP="${1:-${TV_IP:-}}"
+if [ -z "$IP" ] && [ -f "$ROOT/.tv-ip" ]; then
+  IP="$(tr -d '[:space:]' < "$ROOT/.tv-ip")"
 fi
-if [ -z "${1:-}" ]; then
-  echo "using default TV address $DEFAULT_IP (pass an IP to override)"
+if [ -z "$IP" ]; then
+  echo "usage: $0 <tv-ip>      (or set TV_IP, or write the address to .tv-ip)"
+  exit 1
 fi
 S="$IP:5555"
 
