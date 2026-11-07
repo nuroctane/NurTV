@@ -375,6 +375,192 @@ index 329eec8..d0be391 100644
              val played = fixture.homeScore != null && fixture.awayScore != null
              homeScore.text = fixture.homeScore?.toString() ?: context.getString(R.string.sports_score_none)
              awayScore.text = fixture.awayScore?.toString() ?: context.getString(R.string.sports_score_none)
+diff --git a/app/src/main/java/com/lumora/data/sync/EpgChannelMapping.kt b/app/src/main/java/com/lumora/data/sync/EpgChannelMapping.kt
+index 69d4a31..98c3d8e 100644
+--- a/app/src/main/java/com/lumora/data/sync/EpgChannelMapping.kt
++++ b/app/src/main/java/com/lumora/data/sync/EpgChannelMapping.kt
+@@ -77,4 +77,118 @@ object EpgChannelMapping {
+         }
+         return out
+     }
++
++    /** Indexes channels by their exact, un-normalised name → the app channels it stands for. */
++    fun byRawName(channels: List<Channel>): Map<String, Set<GuideTarget>> {
++        val map = HashMap<String, MutableSet<GuideTarget>>()
++        for (channel in channels) {
++            if (channel.name.isBlank()) continue
++            map.getOrPut(channel.name) { mutableSetOf() }.add(channel.guideTarget())
++        }
++        return map
++    }
++
++    /**
++     * Feed channel ids the epg6 guide is known to mis-map, verified live 2026-11-07 against
++     * the feed itself:
++     * - `ufc.us` carries ¡Hola! TV Spanish lifestyle shows ("Las reinas del shopping",
++     *   "Mi primer viaje"), not UFC.
++     * - `ufc.uk` carries 47 programmes all titled literally "UFC" with no description:
++     *   placeholder data, not a schedule.
++     * The genuine UFC FAST channel is `400000106` ("UFC Fight Flashback",
++     * "100 UFC Submissions!"). These ids are skipped outright so they can never claim a
++     * channel; see [FeedChannelResolver].
++     */
++    val KNOWN_BAD_XMLTV_IDS = setOf("ufc.us", "ufc.uk")
++
++    /**
++     * Resolves one feed channel at a time to the app channels it may write programmes for,
++     * keeping only the best match per app channel.
++     *
++     * The old join matched by normalised display name alone, so every feed channel whose
++     * name normalises to "ufc" wrote rows for the same UFC channel: `ufc.us` (¡Hola! TV),
++     * `ufc6.us` (all-day "No EVENT Today" placeholders) and `400000106` (the real UFC FAST
++     * channel) merged into one jumbled 66-row guide. Ranks, lower wins:
++     * 0. the feed id is exactly an app channel's tvg-id;
++     * 1. the feed id's base (before the first '.') is an app channel's tvg-id
++     *    (`ufc.us` → `ufc`);
++     * 2. the first display name is exactly an app channel's name;
++     * 3. the first display name normalises onto an app channel's name;
++     * 4. a secondary display name is exactly an app channel's name.
++     * A secondary name only counts when it is exact: `ufc6.us` lists "Ufc" second, which
++     * normalises onto "UFC" but is not the channel's name, so it no longer claims it. A
++     * feed channel that ties with an earlier one keeps the earlier claim (feed order wins);
++     * a better-ranked one evicts it. Xtream panels still join at rank 3, because their
++     * decorated names ("NOW: SKY SPORTS MAIN EVENT ᵁᴴᴰ") only meet the feed's plain name
++     * after normalisation.
++     *
++     * Stateful, deliberately: a feed lists every <channel> before any <programme>, so by
++     * the time programmes arrive every claim is final.
++     */
++    class FeedChannelResolver(
++        private val tvgIdIndex: Map<String, Set<GuideTarget>>,
++        private val rawNameIndex: Map<String, Set<GuideTarget>>,
++        private val nameIndex: Map<String, Set<GuideTarget>>,
++    ) {
++        /** Best (lowest) rank claimed so far per app channel. */
++        private val bestRankByTarget = HashMap<GuideTarget, Int>()
++
++        /** Feed id → the app channels it currently owns. */
++        private val claims = HashMap<String, MutableSet<GuideTarget>>()
++
++        /** Resolves [feedChannel] and returns the app channels it owns afterwards. */
++        fun resolve(feedChannel: XmltvParser.XmltvChannel): Set<GuideTarget> {
++            if (feedChannel.id in KNOWN_BAD_XMLTV_IDS) return emptySet()
++            val (targets, rank) = match(feedChannel) ?: return emptySet()
++            val kept = mutableSetOf<GuideTarget>()
++            for (target in targets) {
++                val best = bestRankByTarget[target]
++                // A tie keeps the first feed channel in the file; a worse rank loses.
++                if (best != null && best <= rank) continue
++                // A better rank evicts the previous claimant for this target.
++                if (best != null) {
++                    claims.values.firstOrNull { it.contains(target) }?.remove(target)
++                }
++                bestRankByTarget[target] = rank
++                kept.add(target)
++            }
++            if (kept.isNotEmpty()) {
++                claims.getOrPut(feedChannel.id) { mutableSetOf() }.addAll(kept)
++            }
++            return targetsFor(feedChannel.id)
++        }
++
++        /** The app channels [feedId] currently owns, if any. */
++        fun targetsFor(feedId: String): Set<GuideTarget> = claims[feedId] ?: emptySet()
++
++        /** Every live claim, feed id → app channels. Empty claims are omitted. */
++        fun claims(): Map<String, Set<GuideTarget>> =
++            claims.filterValues { it.isNotEmpty() }
++
++        private fun match(feedChannel: XmltvParser.XmltvChannel): Pair<Set<GuideTarget>, Int>? {
++            // 0: the feed id is exactly an app channel's tvg-id.
++            tvgIdIndex.entries.firstOrNull {
++                it.key.equals(feedChannel.id, ignoreCase = true)
++            }?.let { return it.value to 0 }
++            // 1: the feed id's base is an app channel's tvg-id.
++            val base = feedChannel.id.substringBefore('.')
++            if (base != feedChannel.id) {
++                tvgIdIndex.entries.firstOrNull {
++                    it.key.equals(base, ignoreCase = true)
++                }?.let { return it.value to 1 }
++            }
++            val firstName = feedChannel.displayNames.firstOrNull()
++                ?: feedChannel.displayName.takeIf { it.isNotBlank() }
++                ?: return null
++            // 2: the first display name is exactly an app channel's name.
++            rawNameIndex[firstName]?.let { return it to 2 }
++            // 3: the first display name normalises onto an app channel's name.
++            nameIndex[normalizeLiveChannelKey(firstName)]?.let { return it to 3 }
++            // 4: a secondary display name is exactly an app channel's name.
++            for (name in feedChannel.displayNames.drop(1)) {
++                rawNameIndex[name]?.let { return it to 4 }
++            }
++            return null
++        }
++    }
+ }
+diff --git a/app/src/main/java/com/lumora/data/sync/EpgSyncWorker.kt b/app/src/main/java/com/lumora/data/sync/EpgSyncWorker.kt
+index b24f702..2108a8f 100644
+--- a/app/src/main/java/com/lumora/data/sync/EpgSyncWorker.kt
++++ b/app/src/main/java/com/lumora/data/sync/EpgSyncWorker.kt
+@@ -23,7 +23,6 @@ import com.lumora.model.MediaType
+ import com.lumora.util.DeviceProfile
+ import com.lumora.util.groupLiveQualityVersions
+ import com.lumora.util.isAdultCategory
+-import com.lumora.util.normalizeLiveChannelKey
+ import com.lumora.util.withoutBackupOnlyGroups
+ import kotlinx.coroutines.runBlocking
+ import okhttp3.OkHttpClient
+@@ -76,6 +75,10 @@ class EpgSyncWorker(
+         // Xtream portal carries no tvg-id at all, so a curated XMLTV feed's ids ("espn.us") match
+         // nothing in its catalogue - the name is the only join there is.
+         val nameToChannelIds = EpgChannelMapping.byName(guideChannels)
++        // The same channels indexed by exact name, for the ranked feed-channel join: a feed
++        // channel whose first display name is exactly the channel's name outranks one that
++        // only normalises onto it (see EpgChannelMapping.FeedChannelResolver).
++        val rawNameToChannelIds = EpgChannelMapping.byRawName(guideChannels)
+         // A catalogue that exists but carries neither tvg-ids nor names this feed knows can
+         // never match an XMLTV row. Retrying forever would just re-download every source against
+         // a mapping that cannot fill in - succeed and leave the sources alone until a catalogue
+@@ -134,6 +137,13 @@ class EpgSyncWorker(
+                     }
+ 
+                     val sourceKey = "xmltv:${source.id}"
++                    // Ranked feed-channel resolution for this source, fresh per source:
++                    // claims from one feed must never leak into another's programmes.
++                    val feedResolver = EpgChannelMapping.FeedChannelResolver(
++                        tvgIdToChannelIds,
++                        rawNameToChannelIds,
++                        nameToChannelIds
++                    )
+                     // Raw XMLTV id -> the app channel ids whose display name it is. Filled as
+                     // the parser reads each <channel>, so the programmes that follow can be
+                     // mapped without holding the whole feed in memory.
+@@ -169,14 +179,17 @@ class EpgSyncWorker(
+                         keepChannelNames = nameToChannelIds.keys,
+                         maxProgrammes = Int.MAX_VALUE,
+                         onChannel = { channel ->
+-                            val targets = tvgIdToChannelIds[channel.id]
+-                                ?: channel.displayNames.firstNotNullOfOrNull { name ->
+-                                    nameToChannelIds[normalizeLiveChannelKey(name)]
+-                                }
+-                                ?: channel.displayName.takeIf { it.isNotBlank() }?.let { name ->
+-                                    nameToChannelIds[normalizeLiveChannelKey(name)]
+-                                }
+-                            if (!targets.isNullOrEmpty()) xmltvIdToChannelIds[channel.id] = targets
++                            // Ranked resolution, not first-name-that-matches: several feed
++                            // channels can normalise onto one app channel (ufc.us, ufc6.us
++                            // and 400000106 all read as "UFC"), and every one of them used
++                            // to write its own rows for it. The resolver keeps only the
++                            // best-ranked feed channel per app channel and can evict an
++                            // earlier claimant, so the worker's copy is rebuilt from it.
++                            // A feed lists every <channel> before any <programme>, so by
++                            // the time programmes arrive every claim is final.
++                            feedResolver.resolve(channel)
++                            xmltvIdToChannelIds.clear()
++                            xmltvIdToChannelIds.putAll(feedResolver.claims())
+                         },
+                         onProgramme = { programme ->
+                             val targets = tvgIdToChannelIds[programme.channel]
 diff --git a/app/src/main/java/com/lumora/irc/IrcChatActivity.kt b/app/src/main/java/com/lumora/irc/IrcChatActivity.kt
 new file mode 100644
 index 0000000..a4912fd
@@ -1110,6 +1296,52 @@ index 9cea32d..bc23b5b 100644
      /** Seek forward/backward by a relative delta, clamped to [0, duration]. */
      fun seekBy(deltaMs: Long) {
          if (released) return
+diff --git a/app/src/main/java/com/lumora/player/playback/StreamContentSniffer.kt b/app/src/main/java/com/lumora/player/playback/StreamContentSniffer.kt
+index 7c8fe2f..7fe1ece 100644
+--- a/app/src/main/java/com/lumora/player/playback/StreamContentSniffer.kt
++++ b/app/src/main/java/com/lumora/player/playback/StreamContentSniffer.kt
+@@ -48,17 +48,35 @@ internal object StreamContentSniffer {
+     /**
+      * True when [url] is an http(s) URL whose path extension does not identify a container.
+      *
+-     * An extensionless URL is left alone: Stalker and Xtream panels hand out `live.php?stream=`
+-     * or bare `/live/user/pass/123` links that are usually MPEG-TS, and probing those would
+-     * spend a request on a URL that is already decoded correctly - some of those links are
+-     * single-use and would be consumed by the probe. A disguised host almost always keeps a
+-     * path that ends in some extension (`.png`, `.php`, `.do`), which is what this catches.
++     * An extensionless URL is probed too, unless it looks like a bare Xtream/Stalker live
++     * link (`/live/user/pass/12345`, `/movie/...`, `/series/...`): those are usually MPEG-TS,
++     * which Media3 already decodes correctly from the bytes, and some of them are single-use,
++     * so a probe would spend the request on a URL that is already decoded correctly. A FAST
++     * proxy like Samsung TV Plus hands out extensionless single-segment links
++     * (`jmp2.uk/stvp-US600011Q2`) that are really HLS playlists: without a probe Media3
++     * falls back to the progressive extractors and dies with UnrecognizedInputFormatException,
++     * so those are probed. A disguised host almost always keeps a path that ends in some
++     * extension (`.png`, `.php`, `.do`), which is what this catches.
+      */
+     fun shouldProbe(url: String): Boolean {
+         val lower = url.lowercase(Locale.US)
+         if (!lower.startsWith("http://") && !lower.startsWith("https://")) return false
+         val extension = pathExtension(url)
+-        return extension.isNotEmpty() && extension !in KNOWN_CONTAINER_EXTENSIONS
++        if (extension.isNotEmpty()) return extension !in KNOWN_CONTAINER_EXTENSIONS
++        return !isBarePanelLink(url)
++    }
++
++    /**
++     * True when [url] is an extensionless bare panel link: its first path segment is one of
++     * the Xtream/Stalker catalogue verbs. Those links are multi-segment (`/live/user/pass/id`)
++     * and point at a transport stream; a single-segment extensionless path is a FAST proxy
++     * link or similar and is probed instead.
++     */
++    private fun isBarePanelLink(url: String): Boolean {
++        val afterScheme = url.substringAfter("://", "")
++        val path = afterScheme.substringAfter('/', "")
++        val firstSegment = path.substringBefore('/').lowercase(Locale.US)
++        return firstSegment in setOf("live", "movie", "series")
+     }
+ 
+     /**
 diff --git a/app/src/main/java/com/lumora/sports/ApiSportsClient.kt b/app/src/main/java/com/lumora/sports/ApiSportsClient.kt
 index 196d8a3..3306216 100644
 --- a/app/src/main/java/com/lumora/sports/ApiSportsClient.kt
@@ -2134,6 +2366,95 @@ index 0000000..7681903
 +        assertFalse(isBehindLiveWindowError(PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED))
 +    }
 +}
+diff --git a/app/src/test/java/com/lumora/data/sync/EpgChannelMappingTest.kt b/app/src/test/java/com/lumora/data/sync/EpgChannelMappingTest.kt
+index 03e1380..eb53528 100644
+--- a/app/src/test/java/com/lumora/data/sync/EpgChannelMappingTest.kt
++++ b/app/src/test/java/com/lumora/data/sync/EpgChannelMappingTest.kt
+@@ -115,4 +115,84 @@ class EpgChannelMappingTest {
+             byName["sky sport main event"]
+         )
+     }
++
++    private fun resolver(channels: List<Channel>) = EpgChannelMapping.FeedChannelResolver(
++        EpgChannelMapping.byTvgId(channels),
++        EpgChannelMapping.byRawName(channels),
++        EpgChannelMapping.byName(channels)
++    )
++
++    @Test
++    fun `the UFC guide stops merging three feed channels into one`() {
++        // Live epg6 data, 2026-11-07: ufc.us carries ¡Hola! TV Spanish lifestyle shows,
++        // ufc.uk carries 47 programmes all titled "UFC" with no description, ufc6.us
++        // carries all-day "No EVENT Today" placeholders, and 400000106 is the genuine
++        // UFC FAST channel. All four normalise onto the same app channel name, which is
++        // what merged them into one jumbled 66-row guide.
++        val channels = listOf(channel("ufc-hls", "UFC", tvgId = "UFC"))
++        val resolve = resolver(channels)
++        // Feed order: the genuine channel first, then the bad ones.
++        assertEquals(setOf(target("ufc-hls")), resolve.resolve(xmltv("400000106", "UFC", "Ufc")))
++        assertTrue(resolve.resolve(xmltv("ufc.uk", "UFC", "Ufc")).isEmpty())
++        assertTrue(resolve.resolve(xmltv("ufc.us", "UFC", "Ufc")).isEmpty())
++        assertTrue(resolve.resolve(xmltv("ufc6.us", "UFC 6", "Ufc")).isEmpty())
++        assertEquals(mapOf("400000106" to setOf(target("ufc-hls"))), resolve.claims())
++    }
++
++    @Test
++    fun `a better-ranked feed channel evicts an earlier claimant`() {
++        // espn2.us claims ESPN on a normalised first name; the exact tvg-id match
++        // arriving later takes the channel, and the earlier claim is gone.
++        val channels = listOf(channel("espn-hls", "ESPN", tvgId = "espn.us"))
++        val resolve = resolver(channels)
++        assertEquals(setOf(target("espn-hls")), resolve.resolve(xmltv("espn2.us", "ESPN")))
++        assertEquals(setOf(target("espn-hls")), resolve.resolve(xmltv("espn.us", "ESPN")))
++        assertTrue(resolve.targetsFor("espn2.us").isEmpty())
++        assertEquals(mapOf("espn.us" to setOf(target("espn-hls"))), resolve.claims())
++    }
++
++    @Test
++    fun `the exact tvg-id join wins over the name join in the resolver`() {
++        val channels = listOf(
++            channel("by-id", "Sky Sports Main Event HD", tvgId = "skysportsmainevent.uk"),
++            channel("by-name", "NOW: SKY SPORTS MAIN EVENT ᵁᴴᴰ")
++        )
++        val resolve = resolver(channels)
++        assertEquals(
++            setOf(target("by-id")),
++            resolve.resolve(xmltv("skysportsmainevent.uk", "Sky Sports Main Event"))
++        )
++    }
++
++    @Test
++    fun `a decorated Xtream name still joins on the normalised name`() {
++        val channels = listOf(channel("xtream-1", "NOW: SKY SPORTS MAIN EVENT ᵁᴴᴰ ³⁸⁴⁰ᴾ"))
++        val resolve = resolver(channels)
++        assertEquals(
++            setOf(target("xtream-1")),
++            resolve.resolve(xmltv("skysportsmainevent.uk", "Sky Sports Main Event"))
++        )
++    }
++
++    @Test
++    fun `an exact secondary display name still joins`() {
++        // First name is an abbreviation, second is the plain name: the alias counts only
++        // because it is exactly the channel's name, not because it normalises onto it.
++        val channels = listOf(channel("sky-1", "Sky Sports Main Event"))
++        val resolve = resolver(channels)
++        assertEquals(
++            setOf(target("sky-1")),
++            resolve.resolve(xmltv("skysportsmainevent.uk", "SkySpMainEv", "Sky Sports Main Event"))
++        )
++    }
++
++    @Test
++    fun `a non-exact secondary display name does not join`() {
++        // "Ufc" normalises onto "UFC" but is not the channel's name: this is the
++        // ufc6.us shape, and it must not claim the channel on its own.
++        val channels = listOf(channel("ufc-hls", "UFC", tvgId = "UFC"))
++        val resolve = resolver(channels)
++        assertTrue(resolve.resolve(xmltv("ufc6.us", "UFC 6", "Ufc")).isEmpty())
++        assertTrue(resolve.claims().isEmpty())
++    }
+ }
 diff --git a/app/src/test/java/com/lumora/irc/IrcMessageTest.kt b/app/src/test/java/com/lumora/irc/IrcMessageTest.kt
 new file mode 100644
 index 0000000..29a4c4c
@@ -2230,6 +2551,32 @@ index 0000000..29a4c4c
 +        assertEquals(60_000L, delays.last())
 +    }
 +}
+diff --git a/app/src/test/java/com/lumora/player/playback/StreamContentSnifferTest.kt b/app/src/test/java/com/lumora/player/playback/StreamContentSnifferTest.kt
+index d290292..832b08a 100644
+--- a/app/src/test/java/com/lumora/player/playback/StreamContentSnifferTest.kt
++++ b/app/src/test/java/com/lumora/player/playback/StreamContentSnifferTest.kt
+@@ -122,6 +122,21 @@ class StreamContentSnifferTest {
+         assertFalse(StreamContentSniffer.shouldProbe("smb://nas/video.ts"))
+     }
+ 
++    @Test
++    fun `probes extensionless FAST proxy links but not bare panel live links`() {
++        // Samsung TV Plus hands out extensionless single-segment links that are really HLS
++        // playlists; without a probe Media3 dies with UnrecognizedInputFormatException.
++        assertTrue(StreamContentSniffer.shouldProbe("https://jmp2.uk/stvp-US600011Q2"))
++        assertTrue(StreamContentSniffer.shouldProbe("https://jmp2.uk/stvp-US3500007C4"))
++        assertTrue(StreamContentSniffer.shouldProbe("https://jmp2.uk/stvp-US700021SM"))
++
++        // Bare Xtream/Stalker live links stay unprobed: usually MPEG-TS, sometimes
++        // single-use, and Media3 already decodes them correctly.
++        assertFalse(StreamContentSniffer.shouldProbe("https://panel.example/live/user/pass/12345"))
++        assertFalse(StreamContentSniffer.shouldProbe("https://panel.example/movie/user/pass/67890"))
++        assertFalse(StreamContentSniffer.shouldProbe("https://panel.example/series/user/pass/13579"))
++    }
++
+     @Test
+     fun `probe reads a playlist disguised as a png`() {
+         val server = MockWebServer()
 diff --git a/app/src/test/java/com/lumora/sports/GuideSportsTest.kt b/app/src/test/java/com/lumora/sports/GuideSportsTest.kt
 index ee2161c..4c206c8 100644
 --- a/app/src/test/java/com/lumora/sports/GuideSportsTest.kt

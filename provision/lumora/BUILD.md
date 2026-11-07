@@ -2,7 +2,7 @@
 
 ## The patch
 
-`mma-motorsports-events-2026-11-07.patch` — 40 files, +1859/-48, against
+`mma-motorsports-events-2026-11-07.patch` — 45 files, +2114/-63, against
 pristine Lumora v7.1 (`c0be28d`, `versionCode 71`). Verified to apply
 cleanly to a pristine `c0be28d` checkout (`git apply --check`, 2026-11-07).
 
@@ -13,7 +13,10 @@ with their own chips, icons and keywords. Event rows hide the score boxes
 for fights/races. Plus a built-in IRC client for the ModdingCartel fight
 chat (irc.obnoxious.lol:6697 TLS, channel configurable, nick default
 `nuroctane`) and the behind-live-window player recovery from the Media3
-demo app. See the patch's CHANGELOG entry for the full list.
+demo app. Build 7 adds two more fixes: `StreamContentSniffer` probes
+extensionless URLs (Samsung TV Plus `jmp2.uk/stvp-*` HLS) and the EPG
+`FeedChannelResolver` with ranked matching plus `ufc.us`/`ufc.uk`
+exclusion. See the patch's CHANGELOG entry for the full list.
 
 ## Apply and build
 
@@ -28,6 +31,8 @@ git apply /path/to/mma-motorsports-events-2026-11-07.patch
 
 Run the unit tests before shipping a build:
 `./gradlew :app:testDebugUnitTest` (the patch adds/updates sports tests).
+Build 7 skipped the test gate per his order on that job — release APK
+only, no separate test run.
 
 ## Key slots (build-time, never committed)
 
@@ -87,6 +92,25 @@ Release signing key: `C:\Users\david\Scripts\lumora-work\lumora-release.jks`
 patched builds so they upgrade this one in place. The release is
 debuggable on purpose so the app private data can be provisioned with
 `adb shell run-as`.
+
+Build 7 went green on the second assemble (2026-11-07 ~16:30–17:00 CT,
+Grok Build on the VM driving the PC build): `BUILD_EXIT=0` in 5m 3s.
+The first assemble failed in 2m 32s on three compile errors in the new
+EPG resolver (`XmltvChannel` unqualified — it only exists as
+`XmltvParser.XmltvChannel`); the two signatures were qualified, the
+patch regenerated (45 files, sha256
+`8845ef9a3fe45efd0ab29233b6df4b43cb8a1fcd26ac4138fae8c57660c09b62`),
+rebuilt once, green. APK
+`C:\Users\david\Scripts\lumora-work\lumora-patched-7.1.apk`
+(39,954,802 bytes), sha256
+`84229b1812f2447a54d98b5a0ff47d2da60013848a0c9e52c1493583380d32b6`,
+package `com.lumora`, versionCode 71001, versionName 7.1. Installed on
+the TV 2026-11-07 ~17:00 CT via `adb install -r` — an in-place upgrade
+over build 6, same signing key, data preserved. Playback verified live
+after install: Samsung NASCAR, Pluto NFL Channel, NHL Network, beIN
+Sports USA and beIN XTRA all play; UFC HLS plays in fullscreen once the
+relay went live; zero parse errors in logcat. Favorites expanded to 92
+URLs; UFC guide re-synced clean under the new resolver.
 
 ## Install the built APK
 

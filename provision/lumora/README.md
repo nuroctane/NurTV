@@ -15,10 +15,11 @@ not in this repo). obnoxious.lol integration research:
 ## Patched build installed (2026-11-07)
 
 - Package `com.lumora`, versionName 7.1, **versionCode 71001** (patched build line).
-- **Build 6 (2026-11-07, 13:48–14:00 CT, his PC):** `TESTS_EXIT=0 BUILD_EXIT=0` — the unit tests went green this run, confirming the `!!` fix for the `IrcMessageTest` nullability compile failure from the earlier build. APK `C:\Users\david\Scripts\lumora-work\lumora-patched-7.1.apk`, 39,952,686 bytes, sha256 `af21e4ffbc92effeebc3f8590904c40f6af7b6d96c8659653a3aff956bde4507`. Release build, signed with the locally generated key at `C:\Users\david\Scripts\lumora-work\lumora-release.jks` (password only in `C:\Users\david\Scripts\lumora-work\lumora-keystore.properties`, never committed). Same key as the earlier patched build, so this one upgrades it in place.
+- **Build 7 (2026-11-07, ~16:30–17:00 CT, his PC, Grok Build on the VM driving):** `BUILD_EXIT=0` on the second assemble (5m 3s). The first assemble failed in 2m 32s on three compile errors in the new EPG resolver (`XmltvChannel` unqualified — it only exists as `XmltvParser.XmltvChannel`); the two signatures were qualified, the patch regenerated, rebuilt once, green. Unit-test gate skipped per his order on this job. APK `C:\Users\david\Scripts\lumora-work\lumora-patched-7.1.apk`, 39,954,802 bytes, sha256 `84229b1812f2447a54d98b5a0ff47d2da60013848a0c9e52c1493583380d32b6` (differs from build 6's `af21e4ff…`, as it must — the code changed). Same signing key, installed 2026-11-07 ~17:00 CT via `adb install -r` (Success), data preserved.
+- **Build 7 fixes:** (1) Samsung TV Plus playback — `StreamContentSniffer.shouldProbe()` now also probes extensionless URLs (except bare Xtream/Stalker `/live|/movie|/series` panel links), so Samsung `jmp2.uk/stvp-*` HLS streams get a manifest type instead of falling back to progressive extractors (`UnrecognizedInputFormatException` in build 6). (2) EPG matching — new `FeedChannelResolver` in `EpgChannelMapping.kt` ranks feed channels (exact tvg-id, then id base, then exact first display name, then normalised name, then exact secondary name) with per-target best-winner eviction, and excludes known-bad feed ids `ufc.us` and `ufc.uk` (verified live in the epg6 feed: `ufc.us` carries ¡Hola! TV Spanish lifestyle data, `ufc.uk` is 47 placeholder rows titled literally "UFC", `ufc6.us` is all-day "No EVENT Today" blocks). No upstream report filed, per his decision. Verified live after install: zero parse errors in logcat across all five playback taps; Samsung NASCAR, Pluto NFL Channel (one failover, then ~3 min play), NHL Network, beIN Sports USA and beIN XTRA (failover, then 4K HW AVC ~4 Mbps sustained) all play; UFC HLS plays in fullscreen (HW AVC 1280x720, ~3.7 Mbps) once the relay went live at ~17:14 CT. UFC guide rows rewritten by the new resolver: 0 "No EVENT Today" rows in the DB, UFC channel shows only genuine UFC programming ("UFC Fight Flashback", "UFC Main Event", "100 UFC Submissions!").
 - Release is **debuggable on purpose**: it lets the app private data be provisioned with `adb shell run-as` instead of hand-driving the UI. Single-user TV build, never shipped to a store.
 - Installed 2026-11-07 14:05:50 CT via `adb install -r` (Success) — an in-place upgrade over the earlier patched build, same signing key, data preserved (`firstInstallTime` still 2026-11-07 13:15:21). Build 5 was the first patched build, installed as a fresh install (stock 7.1 uninstalled first; a new signing key cannot upgrade stock in place, so stock data was wiped and provisioning redone). Install date and hash recorded here; the APK binary itself is not committed to this repo.
-- The patch in this folder is now 40 files, +1859/-48, against pristine v7.1 (`c0be28d`), regenerated from the fork before build 6. It adds the MMA/motorsports sports section, a built-in IRC client (below), and the live-edge player recovery (below).
+- The patch in this folder is now 45 files, +2114/-63, against pristine v7.1 (`c0be28d`), regenerated from the fork before build 7. It adds the MMA/motorsports sports section, a built-in IRC client (below), and the live-edge player recovery (below), plus the build-7 Samsung playback probe fix and the EPG `FeedChannelResolver` (above).
 
 ## What was provisioned live (2026-11-07, via run-as file push)
 
@@ -27,6 +28,14 @@ not in this repo). obnoxious.lol integration research:
 - Live-sports scraper re-enable NOT confirmed: Pelota Libre TV, Tv Libre Futbol, TvporinternetHD toggles live in the app DB, not prefs files, so they could not be flipped from the shell. His tap in Settings → Streaming sites.
 - Launcher: `apps/home.conf` pushed live, com.lumora 5th, launcher restarted, Guard rebound.
 - Not installed: epg6 guide source (no `sqlite3` binary on the TV, so the row could not be inserted; his tap in Settings → Lists → EPG sources). AIOStreams (needs his browser configure step; functionally covered by Torrentio + MediaFusion + Comet). Jellyfin provider (needs his ModdingCartel media account). Debrid key (none supplied). API-Sports keys (none supplied; MMA/F1 boards run guide-only).
+
+## What was provisioned live, build 7 (2026-11-07, via run-as file push)
+
+- Four IPTV providers added earlier in the day and still in prefs: iptv-org sports (479 in / 464 live out), Samsung TV Plus US (593 channels), Pluto TV US (458 channels), NHL Network and beIN XTRA as one-entry M3U wraps. Catalog after all six providers (incl. UFC): 1,471 in / 1,288 live out.
+- UFC HLS provider (`provision/lumora/ufc.m3u`, two entries UFC + UFC Mirror, group Sports) pointing at the raw GitHub URL; favorited. The relay serves a real playlist once a UFC event goes live (verified 365-byte HLS manifest at 17:16 CT); before that it returns 200 with a 0-byte body.
+- EPG source "Curated M3U guide (epg6)" inserted in `lumora.db` (2026-11-07 15:11 CT, 7,715 programmes / 96 channels at first sync). After the build-7 install the guide re-synced under the new resolver: 19,563 programmes across 534 channels, auto-refreshes every 4h. The UFC channel's old 3-way name merge (ufc.us ¡Hola! data + ufc6.us "No EVENT Today" + 400000106 genuine UFC) is gone — verified in the DB (0 "No EVENT Today" rows) and on screen (UFC row shows "UFC Fight Flashback" / "UFC Main Event" only).
+- Favorites expanded 2026-11-07 ~17:15 CT from 46 URLs to **92 URLs** (84 distinct channels in the left rail after dedupe): all MMA/UFC/Bellator/PFL/ONE, F1/MotoGP/NASCAR/IndyCar/motorsports, NFL Channel + NFL Network, college football (ESPNU, ACC, Big 12, Pac-12), NBA Channel + NBA TV, MLB + MiLB, NHL Network, beIN XTRA + soccer, boxing (DAZN Ringside, Top Rank, Zuffa Boxing), WWE/TNA. Existing favorites kept, none orphaned. Dead-marks cleared with the push (10 new ones from the playback taps were in the old prefs; the new prefs carry none).
+- Pluto/Amagi playback mechanism: NOT established as a code issue. Pluto NFL and the Amagi channels (NHL, beIN XTRA) failed in build 6 with `UnrecognizedInputFormatException` on valid `.m3u8` manifests; a dedicated live investigation was blocked (TV unreachable at the time, no logcat). In build 7 they play (see above) — the Samsung probe fix plus the version-switching failover covers them. No code change was forced for them.
 
 ## Built-in IRC client (Modding Cartel fight chat)
 
@@ -54,9 +63,7 @@ not in this repo). obnoxious.lol integration research:
 
 ## Launcher wiring
 
-- `apps/home.conf`: `com.lumora` sits 5th in `apps.order`, after the four
-  renamed tiles (Movies and TV, Anime, YouTube, Twitch) and before the
-  webwrap tiles. No display rename — the tile reads Lumora.
+- `apps/home.conf`: `com.lumora` sits 2nd in `apps.order`, right after Movies and TV (`st.atlantic.app`), everything else after it in current order. Display-renamed to **Sports** (`name.com.lumora=Sports`) with a sports logo (football, basketball, baseball bat, boxing gloves) as `apps/art/com.lumora.png` (2026-11-07, NurTV `4c8dabc`).
 - The live TV push of this entry is done: pushed 2026-11-07, launcher restarted, Guard rebound.
 
 ## JS plugins (official store, 4 scripts only)
@@ -127,6 +134,14 @@ sports channel matcher is tuned against):
 Add as an EPG source. The sports board reads the guide for guide-only
 sports, so the channels carrying UFC/F1/MotoGP need to be in it.
 
+**Done 2026-11-07:** the epg6 source row was inserted directly in
+`lumora.db` (no sqlite3 on the TV, so the EPG agent did the insert with a
+pulled/pushed DB copy). First sync 15:11 CT: 7,715 programmes / 96
+channels. After the build-7 install it re-synced under the new resolver:
+19,563 programmes / 534 channels, auto-refresh every 4h. No upstream
+report was filed about the feed's UFC mapping, per his decision — the fix
+is fork-side only (see the build-7 note above).
+
 ## Debrid (built in — his account + key, never committed)
 
 Real-Debrid, AllDebrid, Premiumize, TorBox, Debrid-Link — all five in
@@ -164,9 +179,10 @@ either — there is no `MMA` entry in the `Sport` enum, and the guide keywords
 `motogp`/`motorsport` are mapped onto Formula 1. The patch in this folder
 adds them the same way the existing sports are wired:
 
-- `mma-motorsports-events-2026-11-07.patch` — 40 files, +1859/-48, against
+- `mma-motorsports-events-2026-11-07.patch` — 45 files, +2114/-63, against
   pristine v7.1 (`c0be28d`). Installed as versionCode 71001 on 2026-11-07
-  (see "Patched build installed" above). MMA reads
+  (build 6, then build 7 with the Samsung probe fix and EPG resolver — see
+  "Patched build installed" above). MMA reads
   API-Sports `/fights` (two fighters on a card, weight class, finish method
   instead of a score); Formula 1 reads `/races` by season, filtered to the
   day. MotoGP, NASCAR, IndyCar, WEC, WRC and Formula E join as guide-only
@@ -197,23 +213,22 @@ after its launcher restart step.
 
 Done live on 2026-11-07 and struck from this list: the 3 runnable JS plugins
 installed and enabled, the 9 Stremio add-ons installed and enabled
-(including ObnoxiousTV from his per-member manifest), home.conf pushed. What is left:
+(including ObnoxiousTV from his per-member manifest), home.conf pushed,
+the epg6 guide source inserted and synced (19,563 programmes / 534
+channels), the UFC HLS channel in Lumora and playing, favorites expanded
+to 92 URLs. What is left:
 
 1. Settings → Streaming sites → re-enable Pelota Libre TV, Tv Libre Futbol,
    TvporinternetHD (toggles live in the app DB, unconfirmed from the shell).
-2. Settings → Lists → EPG sources → add the epg6 guide URL (no sqlite3 on
-   the TV, so it could not be inserted from the shell).
-3. Settings → Providers → add Jellyfin `https://jellyfin.obnoxious.lol/`
+2. Settings → Providers → add Jellyfin `https://jellyfin.obnoxious.lol/`
    with his ModdingCartel media account; add Remux
    `https://remux.obnoxious.lol/` only if needed.
-4. Enter his debrid key in Settings (one of Real-Debrid / AllDebrid /
+3. Enter his debrid key in Settings (one of Real-Debrid / AllDebrid /
    Premiumize / TorBox / Debrid-Link).
-5. For AIOStreams, open the configure page and paste the manifest URL it
+4. For AIOStreams, open the configure page and paste the manifest URL it
    generates for his config.
-6. Sports tab → tick the sports wanted; check the board fills (no
+5. Sports tab → tick the sports wanted; check the board fills (no
    API-Sports keys in this build, so expect guide-only for MMA/F1 until a
    keyed build ships).
-7. Fight chat: open an MMA event → Fight chat, enter the channel name once
+6. Fight chat: open an MMA event → Fight chat, enter the channel name once
    (read it off The Lounge at chat.obnoxious.lol).
-8. Optional: open https://fight.nswfiles.com/ for live fights (web, not
-   in Lumora).
