@@ -44,7 +44,9 @@ recorded in the `tweaks` section of `golden-state.json`:
   the player's controls, the DPR scale fix.
 - **Plugins / add-ons:** the Watchbox extensions, CloudStream repos and
   plugins, Zangetsu's nine providers, Arvio/Lumera add-on manifests, and the
-  app-settings backup (`private/app-settings/app-settings.ab`).
+  app-settings backup (`private/app-settings/app-settings.ab`). Lumora's
+  plugins, add-ons and obnoxious.lol integration are in
+  `provision/lumora/README.md` (manual in-app steps, no credentials).
 - **Settings:** `home.conf`, wallpaper, the 39 disabled Amazon packages,
   the VPN/alarm/accessibility settings.
 
@@ -147,8 +149,11 @@ difference on every run.
 | Appstore ownership | Kick/Rumble/X are installed from their pulled APKs, so they run, but the Appstore will not offer updates for them as it does for a store-installed copy |
 
 Left for a human after a successful run: the sign-ins above and the Arvio and
-Lumera add-on lists in `provision/sources.json`. SmartTube/S0undTV settings and
-CloudStream/Zangetsu sources are manual unless the private backup is restored;
+Lumera add-on lists in `provision/sources.json`, plus the Lumora add-ons,
+plugins and obnoxious.lol integration in `provision/lumora/README.md`
+(manifest URLs in `provision/sources.json`, live steps in the Lumora README).
+SmartTube/S0undTV settings and CloudStream/Zangetsu sources are manual unless
+the private backup is restored;
 verify them afterward because that restore has not been tested. Run
 `python scripts/source-checklist.py` for the URLs and provider names.
 Confirm each installed source in its app and test playback: these third-party

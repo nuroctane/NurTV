@@ -63,7 +63,8 @@
       "what": [
         "Removed Nov 7, 2026 as deprecated (uninstalled from the TV): Watchbox plus its six Aniyomi extension APKs and the Watchbox repo deep link; CloudStream plus its phisher98/recloudstream extension repos; Arvio plus its add-ons (Torrentio, Comet, Flix-Streams Free, HdHub, OpenSubtitles v3); Lumera plus its add-ons (Cinemeta, Torrentio, Comet, OpenSubtitles v3, MediaFusion, Flix-Streams Free, HdHub).",
         "Zangetsu: nine installed providers (AniKoto, 4K HDHub, UHD Movies, HDHub4u, HiAnime, VegaMovies, MultiMovies, AnimeCube, TorBox) from the zangetsu-providers index; TorBox needs its key re-entered.",
-        "Atlantic: content plugin is built into the APK, nothing to provision."
+        "Atlantic: content plugin is built into the APK, nothing to provision.",
+        "Lumora: live-TV/plugin shell (com.lumora 7.1). 5th tile in home.conf. JS plugins (Anime Senshi, Torrent Search, Reddit IPTV Scanner, Streaming Site List), Stremio add-ons (Cinemeta, WatchHub, OpenSubtitles v3, Torrentio, MediaFusion, Comet, AIOStreams), the epg6 guide, and the obnoxious.lol Jellyfin/ObnoxiousTV integration are manual in-app steps \u2014 full list in provision/lumora/README.md. Debrid keys, the Jellyfin account and the ObnoxiousTV manifest are his to supply, never committed. MMA/motorsports sports-tab code change is a patch in provision/lumora/ (BUILD.md); the live TV still runs stock v7.1 until a patched build ships."
       ],
       "sources": "provision/sources.json",
       "settings_source": "private/app-settings/app-settings.ab"
@@ -209,6 +210,20 @@
       ],
       "sha256": [
         "b9905cb0643d8f386bff5a914d5936b7a32b64802d508f57c1b72f955e1b86e4"
+      ],
+      "role": "app",
+      "check": "presence"
+    },
+    {
+      "package": "com.lumora",
+      "versionName": "7.1",
+      "versionCode": 71,
+      "install": "install",
+      "apk": [
+        "apps/lumora-7.1.apk"
+      ],
+      "sha256": [
+        "5c66032eb9053e0c9e0a31e9e4ace9debbe4ee77f89eb4266467b474408a204a"
       ],
       "role": "app",
       "check": "presence"

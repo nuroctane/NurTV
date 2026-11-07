@@ -23,6 +23,20 @@
       "app": "Atlantic",
       "package": "st.atlantic.app",
       "why": "Content plugin is built into the APK. Nothing to provision."
+    },
+    {
+      "app": "Lumora",
+      "package": "com.lumora",
+      "why": "JS plugins and Stremio add-ons live in Lumora's private data dir (allowBackup off); they are entered in Settings -> Plugins, not provisioned by APK. Full list, hashes and live steps in provision/lumora/README.md. Debrid key, Jellyfin account and ObnoxiousTV manifest are his to supply.",
+      "urls": [
+        "https://v3-cinemeta.strem.io/manifest.json",
+        "https://watchhub.strem.io/manifest.json",
+        "https://opensubtitles-v3.strem.io/manifest.json",
+        "https://torrentio.strem.fun/manifest.json",
+        "https://mediafusion.elfhosted.com/manifest.json",
+        "https://comet.elfhosted.com/manifest.json",
+        "https://aiostreams.elfhosted.com/stremio/configure"
+      ]
     }
   ]
 }
