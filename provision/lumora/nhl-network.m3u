@@ -1,0 +1,3 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="NHL Network" tvg-name="NHL Network" group-title="Sports",NHL Network
+https://nhl-firetv.amagi.tv/playlist.m3u8
