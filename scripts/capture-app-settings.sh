@@ -32,7 +32,7 @@ win() { if command -v cygpath >/dev/null 2>&1; then cygpath -w "$1"; else printf
 "$ADB_BIN" connect "$S" >/dev/null 2>&1
 "$ADB_BIN" -s "$S" get-state >/dev/null 2>&1 || { echo "TV $S is not reachable over adb" >&2; exit 1; }
 
-WORK=$(mktemp -d "${TMPDIR:-/tmp}/firetv-appsettings.XXXXXX") || exit 1
+WORK=$(mktemp -d "${TMPDIR:-/tmp}/nurtv-appsettings.XXXXXX") || exit 1
 trap 'rm -rf "$WORK"' EXIT
 
 echo "== backup ${PKGS[*]} =="

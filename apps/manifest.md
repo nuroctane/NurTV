@@ -485,7 +485,7 @@ Everything on this TV is captured in `provision/`, so a second TV of the same mo
   `version.env` at it (`VERSION_CODE=5`, `APK_SHA256=87fbd89d…`) makes the HOME takeover
   install the CleanTV build offline, still checksum-verified.
 - **The launcher signing key is gone.** `apps/cleantv-home.apk` is signed `CN=CleanTV`
-  (`8E:11:E2:CE…`); there is no keystore anywhere under `firetv/`, `%USERPROFILE%\.android`
+  (`8E:11:E2:CE…`); there is no keystore anywhere under `NurTV/` (then `firetv/`), `%USERPROFILE%\.android`
   holds only the stock debug key, and `.gitignore` excludes `*.keystore`. Importing the
   existing APK is unaffected; rebuilding it is — see private/README.md. (Superseded the same
   day: the launcher was renamed to its own application id with a fresh key, below.)

@@ -47,7 +47,7 @@ S="$IP:5555"
 EXCLUDE='^(com\.amazon\..*overlay.*|com\.netflix\.ninja|com\.android\..*|com\.google\..*|android|.*\.household)$'
 
 STAMP=$(date +%Y-%m-%d_%H%M%S)
-WORK=$(mktemp -d "${TMPDIR:-/tmp}/firetv-capture.XXXXXX") || exit 1
+WORK=$(mktemp -d "${TMPDIR:-/tmp}/nurtv-capture.XXXXXX") || exit 1
 trap 'rm -rf "$WORK"' EXIT
 mkdir -p "$WORK/apk" "$WORK/art"
 

@@ -1,4 +1,4 @@
-# firetv — living-room TV project
+# NurTV (formerly firetv): living-room TV project
 
 TCL Q6 Fire TV, Fire OS 7 / Android 9 (SDK 28). The setup uses reversible ADB
 changes, CleanTV HOME, personalDNSfilter, native TV clients, and six website

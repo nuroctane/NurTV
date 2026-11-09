@@ -170,7 +170,7 @@ That key exists, so a rebuild upgrades in place. Keep it backed up: a different 
 upgrade an installed launcher, only replace it via uninstall/reinstall.
 
 The **previous** launcher (`tv.dumbtv.home` v1.3, versionCode 5) was signed by a key that is
-gone — not under `firetv/`, and `%USERPROFILE%\.android` holds only the stock debug
+gone — not under `NurTV/` (then `firetv/`), and `%USERPROFILE%\.android` holds only the stock debug
 certificate. That is why the rename to a new application id came with a new key rather than
 an in-place upgrade. Its APK is kept for rollback:
 `provision/apk/legacy-launcher-v1.3-code5-tv.dumbtv.home.apk` (sha256 `87fbd89d…`) — pull it

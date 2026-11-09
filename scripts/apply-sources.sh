@@ -49,7 +49,7 @@ sha() { sha256sum "$1" | awk '{print $1}'; }
 win() { if command -v cygpath >/dev/null 2>&1; then cygpath -w "$1"; else printf '%s' "$1"; fi; }
 vcode() { sh_ "dumpsys package $1" | sed -n 's/.*versionCode=\([0-9]*\).*/\1/p' | head -1; }
 
-WORK=$(mktemp -d "${TMPDIR:-/tmp}/firetv-sources.XXXXXX") || exit 1
+WORK=$(mktemp -d "${TMPDIR:-/tmp}/nurtv-sources.XXXXXX") || exit 1
 trap 'rm -rf "$WORK"' EXIT
 
 python - "$(win "$STATE")" "$(win "$WORK/ext.tsv")" <<'PY'

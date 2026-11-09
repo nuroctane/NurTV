@@ -75,7 +75,7 @@ rel() { printf '%s' "${1#"$ROOT"/}"; }
 # explicitly, so the script behaves the same either way.
 win() { if command -v cygpath >/dev/null 2>&1; then cygpath -w "$1"; else printf '%s' "$1"; fi; }
 
-WORK=$(mktemp -d "${TMPDIR:-/tmp}/firetv-provision.XXXXXX") || exit 1
+WORK=$(mktemp -d "${TMPDIR:-/tmp}/nurtv-provision.XXXXXX") || exit 1
 trap 'rm -rf "$WORK"' EXIT
 # Packages whose installed APK the app layer already pulled and hashed. Nothing in
 # the system pass replaces an app APK, so they are not downloaded twice.
