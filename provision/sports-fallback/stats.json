@@ -1,15 +1,15 @@
 {
-  "generated_utc": "2026-11-08T21:00:26.698214+00:00",
+  "generated_utc": "2026-11-10T00:37:45.567910+00:00",
   "sources": {
     "tubi": {
       "status": "ok",
-      "fetched": 177,
+      "fetched": 179,
       "kept": 25
     },
     "roku": {
       "status": "ok",
       "fetched": 251,
-      "kept": 47
+      "kept": 46
     },
     "atlas-eng-sports": {
       "status": "ok",
@@ -17,5 +17,5 @@
       "kept": 332
     }
   },
-  "total": 404
+  "total": 403
 }
