@@ -16,7 +16,7 @@ boundaries; none by itself proves that an app is free of telemetry.
 | App | ASIN | Package (verify after install) | Ad blocking |
 |---|---|---|---|
 | YouTube | — | `org.smarttube.stable` (SmartTube 32.56) | **Real.** No ad code at all |
-| Twitch | — | `com.s0und.s0undtv` (S0undTV beta_146) | **Real.** Playlist proxy (see below) |
+| Twitch | — | `com.s0und.s0undtv` (S0undTV beta_147) | **Real.** Playlist proxy (see below) |
 | Kick | `B0DNRNVYDQ` | `tv.kick.live` (confirm) | Partial at best |
 | Rumble | `B08K9FXY9B` | `com.rumble.battles` | Partial at best |
 | frameXTV | — | `tv.framextv.web` (own wrapper) | n/a — website |
@@ -345,7 +345,7 @@ All six shells: versionCode 20 / versionName 2.9, one shared dex.
 
 | App | Package | Version | Artifact |
 |---|---|---|---|
-| S0undTV | `com.s0und.s0undtv` | `beta_146` | GitHub `S0und/S0undTV` release, sha256 `8b353200…` ✓ |
+| S0undTV | `com.s0und.s0undtv` | `beta_147` | GitHub `S0und/S0undTV` release, sha256 `e191495d…` ✓ (self-updated from beta_146 on 2026-11-04) |
 | Sozo TV | `com.saikou.sozo_tv` | 1.0.2 | `apisozo.azamov.me` 302 -> `sozo.cdn.azamov.me/.../sozo-tv-1.0.2.apk` (45.2 MB) |
 | Atlantic | `st.atlantic.app` | v1.0.6 | `atlantic.st/dl/app/latest.apk`, sha256 `fa896541…` ✓ (from its own manifest.json) |
 
@@ -360,7 +360,7 @@ name.com.s0und.s0undtv=Twitch
 Same mechanism as SmartTube -> YouTube: the tile says Twitch, the package and any Settings
 entry still say S0undTV. Enabling S0undTV needs a Twitch login (Preferred / LAN / Web tiles).
 
-### S0undTV ad-free via Luminous proxy (2026-10-29)
+### S0undTV ad-free via Luminous proxy (2026-10-29, fixed 2026-11-10)
 
 S0undTV's old built-in ad block stopped working; beta_144 replaced it with three
 custom **Proxy URL** slots (changelog bundled in the APK at
@@ -369,13 +369,27 @@ custom **Proxy URL** slots (changelog bundled in the APK at
 | S0undTV setting (Settings → Proxy server) | Value |
 |---|---|
 | Active proxy server | Custom server 1 |
-| Custom server 1 | `https://eu.luminous.dev/live/${channel}?allow_source=true&allow_audio_only=true` |
+| Custom server 1 | `https://eu.luminous.dev/live/${channel}?allow_source=true&allow_audio_only=true&fast_bread=true` |
 | Custom server 2 | same path on `eu2.luminous.dev` |
 | Custom server 3 | same path on `as.luminous.dev` (exits in UZ) |
 | Network proxy → Route streams through proxy | OFF (unused) |
 
-`${channel}` is typed literally; the app substitutes it. Do not add `fast_bread=true`
-(unsupported). Restart the app after changing proxy settings.
+`${channel}` is typed literally; the app substitutes it. **Since beta_147,
+`fast_bread=true` is REQUIRED, not optional**: the beta_147 changelog says
+"you MUST use it, otherwise low latency stream won't work", and without it the
+app falls back to direct Twitch playlists, which carry the stitched SSAI ads.
+The earlier "do not add `fast_bread=true`" guidance was beta_144-era and is now
+wrong. Restart the app after changing proxy settings.
+
+**2026-11-04: S0undTV self-updated beta_146 → beta_147 on the TV** (versionCode
+147, firstInstallTime still 2026-10-25, settings preserved). The proxy URLs were
+not migrated, so ads came back. **2026-11-10 fix:** appended
+`&fast_bread=true` to all three custom-server URLs in the app UI (Settings →
+Proxy server), restarted the app, and verified live: personalDNSfilter logged
+`ALLOWED:eu.luminous.dev`, KaiCenat opened at 1080p60 with live chat and no
+pre-roll ad. Mid-roll ads cannot be fully verified in a short test; the proxy
+can rarely return a playlist with ads anyway, in which case restart the stream
+or switch Active proxy server to 2 or 3.
 
 Verified: `curl` against all three returns a master playlist for a live channel (404
 just means offline). On the TV, `s0undtv://stream/shroud` played at source (~7.5 Mbps
@@ -385,7 +399,7 @@ use `MediaCodecLogger` lines in logcat to confirm playback instead.
 
 Entering it over ADB (app is not debuggable, so `run-as`/prefs editing is out):
 uiautomator dump to find rows, `input tap` the row, then
-`input text 'https://eu.luminous.dev/live/\${channel}?allow_source=true&allow_audio_only=true'`
+`input text 'https://eu.luminous.dev/live/\${channel}?allow_source=true&allow_audio_only=true&fast_bread=true'`
 inside a double-quoted `adb shell "…"`, with `MSYS2_ARG_CONV_EXCL='*'` in Git Bash.
 
 If a stream won't start: switch Active proxy server to 2 or 3. If ads come back:
