@@ -422,6 +422,22 @@ same way, the other healthy no-ads exit measured 2026-11-11 is
 `twitch.nadeko.net` (exits in AL, Albania, `/ping` online). `bg.luminous.dev`
 is dead (HTTP 525) and `lb-eu` / `lb-eu3.cdn-perfprod.com` did not connect.
 
+**Verification 2026-11-11 (second agent, same day):** opened a followed live
+channel through the app UI at 13:33 CT; personalDNSfilter logged
+`ALLOWED:lb-as.cdn-perfprod.com` x4 at stream start, then variant
+`euw11/euw13.playlist.ttvnw.net` and cloudfront segment hosts; stream playing
+with live chat, no pre-roll, no ad UI at 30s in. Variant playlists fetched
+through lb-as for hasanabi stayed clean (0 `stitched-ad` segments) across 15
+checks over 16 minutes (13:39-13:55 CT); a mid-roll break may not have fired
+inside that window, so this is clean-playlist evidence, not a caught break.
+`as.luminous.dev` still `/ping` 503 offline at 13:35 CT. **Trap:** launching
+the player with `adb shell am start -a android.intent.action.VIEW -d
+https://www.twitch.tv/<channel>` does NOT use the proxy (no proxy DNS lookup
+at all; the player opens to a black screen and BACK will not exit it, needs
+force-stop). The 12:27 test stream was launched that way, so it played direct
+with ads even after the lb-as fix, which is why ads were still reported at
+13:14. Always open test streams through the app UI.
+
 Verified: `curl` against all three returns a master playlist for a live channel (404
 just means offline). On the TV, `s0undtv://stream/shroud` played at source (~7.5 Mbps
 HW AVC), personalDNSfilter logged `ALLOWED:eu.luminous.dev`, and no ads were seen.
