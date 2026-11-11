@@ -403,7 +403,7 @@ KaiCenat playing at 1080p (HW AVC, MediaCodec logcat), live chat scrolling, no
 ad markers in logcat. Server 2 (eu2/LV) is NOT a fallback for ads, it is an EU
 ads country too. If ads ever come back on server 3, the proxy method itself is
 dead for that market and the next step is self-hosting luminous-ttv behind a
-proxy in a no-ads country, or Twitch Turbo / a Prime sub.
+proxy in a no-ads country, or Twitch Turbo / a Prime sub. (Superseded 2026-11-11: ads did come back on server 3, the cause was the as host degrading, and repointing server 3 to lb-as fixed it, so a host swap comes before self-hosting.)
 
 **2026-11-11 fix:** pre-rolls and mid-rolls came back overnight on server 3
 even though the settings were untouched: all three URLs still intact with
@@ -438,9 +438,7 @@ force-stop). The 12:27 test stream was launched that way, so it played direct
 with ads even after the lb-as fix, which is why ads were still reported at
 13:14. Always open test streams through the app UI.
 
-Verified: `curl` against all three returns a master playlist for a live channel (404
-just means offline). On the TV, `s0undtv://stream/shroud` played at source (~7.5 Mbps
-HW AVC), personalDNSfilter logged `ALLOWED:eu.luminous.dev`, and no ads were seen.
+**2026-10-29 check (before the exit-geography finding):** `curl` against all three returns a master playlist for a live channel (404 just means offline). On the TV, `s0undtv://stream/shroud` played at source (~7.5 Mbps HW AVC), personalDNSfilter logged `ALLOWED:eu.luminous.dev`, and no ads were seen. That only proved the proxy was in the path. It did not prove ads were blocked, since eu exits in BG and serves mid-rolls.
 `screencap` shows a black video area while playing — the video layer isn't captured;
 use `MediaCodecLogger` lines in logcat to confirm playback instead.
 
