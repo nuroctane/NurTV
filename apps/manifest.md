@@ -368,10 +368,10 @@ custom **Proxy URL** slots (changelog bundled in the APK at
 
 | S0undTV setting (Settings → Proxy server) | Value |
 |---|---|
-| Active proxy server | Custom server 1 |
+| Active proxy server | Custom server 3 |
 | Custom server 1 | `https://eu.luminous.dev/live/${channel}?allow_source=true&allow_audio_only=true&fast_bread=true` |
 | Custom server 2 | same path on `eu2.luminous.dev` |
-| Custom server 3 | same path on `as.luminous.dev` (exits in UZ) |
+| Custom server 3 | same path on `as.luminous.dev` (exits in VN) |
 | Network proxy → Route streams through proxy | OFF (unused) |
 
 `${channel}` is typed literally; the app substitutes it. **Since beta_147,
@@ -387,9 +387,23 @@ not migrated, so ads came back. **2026-11-10 fix:** appended
 `&fast_bread=true` to all three custom-server URLs in the app UI (Settings →
 Proxy server), restarted the app, and verified live: personalDNSfilter logged
 `ALLOWED:eu.luminous.dev`, KaiCenat opened at 1080p60 with live chat and no
-pre-roll ad. Mid-roll ads cannot be fully verified in a short test; the proxy
-can rarely return a playlist with ads anyway, in which case restart the stream
-or switch Active proxy server to 2 or 3.
+pre-roll ad.
+
+**2026-11-10 mid-roll fix:** the pre-roll fix worked but frequent mid-roll ads
+appeared, which he never got before the beta_147 breakage. Root cause: the
+Luminous proxy blocks ads ONLY by geography, it passes the playlist through
+untouched and never strips ad segments. Measured live 2026-11-10 from the
+master playlist `USER-COUNTRY`: `eu.luminous.dev` exits in BG (Bulgaria) and
+`eu2.luminous.dev` exits in LV (Latvia), both EU countries where Twitch sells
+ads, so mid-rolls were served through the proxy. `as.luminous.dev` exits in VN
+(Vietnam), which is not a Twitch ads market. **Fix: Active proxy server switched
+to Custom server 3 (`as.luminous.dev`)** in the app UI, app restarted, verified
+live: personalDNSfilter logged `ALLOWED:as.luminous.dev` at stream start,
+KaiCenat playing at 1080p (HW AVC, MediaCodec logcat), live chat scrolling, no
+ad markers in logcat. Server 2 (eu2/LV) is NOT a fallback for ads, it is an EU
+ads country too. If ads ever come back on server 3, the proxy method itself is
+dead for that market and the next step is self-hosting luminous-ttv behind a
+proxy in a no-ads country, or Twitch Turbo / a Prime sub.
 
 Verified: `curl` against all three returns a master playlist for a live channel (404
 just means offline). On the TV, `s0undtv://stream/shroud` played at source (~7.5 Mbps
@@ -402,7 +416,8 @@ uiautomator dump to find rows, `input tap` the row, then
 `input text 'https://eu.luminous.dev/live/\${channel}?allow_source=true&allow_audio_only=true&fast_bread=true'`
 inside a double-quoted `adb shell "…"`, with `MSYS2_ARG_CONV_EXCL='*'` in Git Bash.
 
-If a stream won't start: switch Active proxy server to 2 or 3. If ads come back:
+If a stream won't start: switch Active proxy server to 1 or 2 (both are EU
+exits, so they are NOT ad-free fallbacks, only connectivity fallbacks). If ads come back:
 check the public list at github.com/2bc4/streamlink-ttvlol, or self-host
 luminous-ttv. Trade-off: the proxy operator sees which channels are watched and
 the TV's IP. Never block `luminous.dev`, `s0und.github.io` or
