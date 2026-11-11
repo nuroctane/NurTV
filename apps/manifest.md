@@ -360,7 +360,7 @@ name.com.s0und.s0undtv=Twitch
 Same mechanism as SmartTube -> YouTube: the tile says Twitch, the package and any Settings
 entry still say S0undTV. Enabling S0undTV needs a Twitch login (Preferred / LAN / Web tiles).
 
-### S0undTV ad-free via Luminous proxy (2026-10-29, fixed 2026-11-10)
+### S0undTV ad-free via Luminous proxy (2026-10-29, fixed 2026-11-10, 2026-11-11)
 
 S0undTV's old built-in ad block stopped working; beta_144 replaced it with three
 custom **Proxy URL** slots (changelog bundled in the APK at
@@ -371,7 +371,7 @@ custom **Proxy URL** slots (changelog bundled in the APK at
 | Active proxy server | Custom server 3 |
 | Custom server 1 | `https://eu.luminous.dev/live/${channel}?allow_source=true&allow_audio_only=true&fast_bread=true` |
 | Custom server 2 | same path on `eu2.luminous.dev` |
-| Custom server 3 | same path on `as.luminous.dev` (exits in VN) |
+| Custom server 3 | same path on `lb-as.cdn-perfprod.com` (exits in MU, Mauritius) |
 | Network proxy → Route streams through proxy | OFF (unused) |
 
 `${channel}` is typed literally; the app substitutes it. **Since beta_147,
@@ -404,6 +404,23 @@ ad markers in logcat. Server 2 (eu2/LV) is NOT a fallback for ads, it is an EU
 ads country too. If ads ever come back on server 3, the proxy method itself is
 dead for that market and the next step is self-hosting luminous-ttv behind a
 proxy in a no-ads country, or Twitch Turbo / a Prime sub.
+
+**2026-11-11 fix:** pre-rolls and mid-rolls came back overnight on server 3
+even though the settings were untouched: all three URLs still intact with
+`fast_bread=true`, active still server 3, and the TV was still using
+`as.luminous.dev` at stream start. Root cause was the as host itself degrading.
+Its own deep health check (`/ping`) returned `{"online": false}` HTTP 503 all
+morning, and playlist fetches through it flaked intermittently, so streams fell
+back to direct Twitch playlists with ads. The host still exits in VN, so the
+country did not change, the host did. **Fix: Custom server 3 URL repointed to
+`lb-as.cdn-perfprod.com`** (same path and query, LuminousTTV backend, exits in
+MU, Mauritius, not a Twitch ads market, `/ping` online). Verified live:
+personalDNSfilter logged `ALLOWED:lb-as.cdn-perfprod.com` at stream start,
+hutchmf playing with live chat and no pre-roll, media playlist through lb-as
+clean (0 ad markers). `as.luminous.dev` is out, no slot. If lb-as degrades the
+same way, the other healthy no-ads exit measured 2026-11-11 is
+`twitch.nadeko.net` (exits in AL, Albania, `/ping` online). `bg.luminous.dev`
+is dead (HTTP 525) and `lb-eu` / `lb-eu3.cdn-perfprod.com` did not connect.
 
 Verified: `curl` against all three returns a master playlist for a live channel (404
 just means offline). On the TV, `s0undtv://stream/shroud` played at source (~7.5 Mbps
