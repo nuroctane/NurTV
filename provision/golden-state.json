@@ -44,11 +44,11 @@
     },
     "ad_blocking": {
       "what": [
-        "SmartTube (org.smarttube.stable): a reimplementation with no ad code, ads are never requested. DNS filtering cannot block YouTube ads (same hosts as video).",
-        "S0undTV / Twitch: Server-Side Ad Insertion stitches ads into the playlist, so DNS blocking shows a purple/black screen. The fix is the S0undTV Proxy URL (Luminous proxy): only the playlist request goes through the proxy, video segments come straight from Twitch's CDN. Since S0undTV beta_147 (self-updated 2026-11-04), the proxy URLs MUST end with &fast_bread=true or low-latency streams fall back to direct Twitch playlists with ads. The proxy blocks ads ONLY by exit-country geography, it never strips ad segments: eu exits in BG and eu2 in LV, both EU countries where Twitch sells ads, so the active server must be Custom server 3. 2026-11-10 it was as.luminous.dev (exits in VN, not a Twitch ads market); 2026-11-11 the as host degraded (its /ping health check returned offline all morning and playlist fetches flaked), so server 3 was repointed to lb-as.cdn-perfprod.com (LuminousTTV backend, exits in MU, Mauritius, not a Twitch ads market); verified ALLOWED:lb-as.cdn-perfprod.com in the DNS filter log. Backup exit measured healthy 2026-11-11: twitch.nadeko.net (exits in AL, Albania, /ping online), use it if lb-as degrades the same way. Independent verification 2026-11-11: UI-path stream at 13:33 CT with no pre-roll, and variant playlists through lb-as stayed clean (0 stitched-ad segments) across 15 checks over 16 minutes (13:39-13:55 CT); no live mid-roll break was observed in that window, so mid-roll proof is clean-playlist evidence plus the proxy being in the path, not a caught break.",
+        "SmartTube (org.smarttube.stable): a reimplementation with no ad code, ads are never requested. DNS filtering cannot block YouTube ads (same hosts as video). 2026-11-18 fixed2/fixed3/fixed4/fixed5: a mid-roll freeze recurred (variant playlist nearly all ad segments; stripping left ~0 segments and the player stalled and looped). fixed2 served the original variant when stripping left <3 segments (ads played instead of freezing). fixed3 swaps ad segments for an embedded 2s blank segment (black/silent) instead. fixed4 adds a variant-level playerType fallback: when the current variant strips to <3 segments it tries every playerType for a clean variant first, blank is the last resort. fixed5 (2026-11-18, sha256 c608b428...) authenticates the GQL token request with his Twitch OAuth token (Bearer), so Twitch honors his subscriptions: subbed channels get clean masters with no stripping or blanking. The token is embedded in the fixed5 build only and is never committed to this repo; the fixed5 APK is not in apps/ for that reason.",
+        "S0undTV / Twitch (PATCHED BUILD, 2026-11-11, supersedes the Luminous proxy): the app is now a patched build (patched2) with in-app ad blocking. A TtvAbProxy HTTP server runs inside the app on 127.0.0.1 (first free port 8901-8910); a smali hook at the top of G6/e.m() (the live URL builder) routes live streams through it. It is a faithful port of the Zen extension TTV AB v26.0.3: per playerType (site, embed, popout, mobile_web, autoplay) it fetches an anonymous GQL PlaybackAccessToken, gets the usher master playlist, serves the first master with 0 ad markers, and rewrites variant URLs through itself, stripping stitched-ad segments from variants. No proxy, no tunnel, no VM service, no PC in the chain. The update feature was deleted in smali the same day (UpdateHelper constructor, helpers/a.b(), UpdateHelper.d() all return immediately; no update.json fetch, UpdateActivity can never launch), so the app never nags about new versions and never shows the red update screen. Custom signature; keystore is NOT in the repo (kept on the VM at ~/workspace/twitch-proxy/patch/s0undtv-patch.keystore). Live ad-block CONFIRMED 2026-11-11 ~21:09 CT by him (\"I haven't seen an ad in ages\"): no pre-rolls or mid-rolls over his watching session. Fragility: if Twitch ever kills the anonymous token request the server uses, live streams fail to load instead of falling back to ads; if the server fails to start, the hook falls through to the app's original proxy/GQL logic (playback works, no blocking). HISTORICAL (superseded): the Luminous proxy method. It blocked pre-rolls ONLY, not mid-rolls. The proxy carries only the master playlist fetch; variant playlists are fetched direct from the TV's US IP, and Twitch stitches mid-roll pods into the variant playlist, so mid-rolls leak even when the master went through a no-ads exit. The earlier adb VIEW-intent trap claim is doubtful: a traffic log showed lb-as WAS resolved during an adb test launch. The Luminous proxy settings in the app are stale (server 3 was lb-as.cdn-perfprod.com) and are now ignored by the patched build; do not restore them. Chat settings (restored 2026-11-11 from the Oct 30 backup, then corrected to his explicit preference): position Top center + height Horizontal mode (a single horizontal bar across the top, messages scrolling across; the Oct 30 backup's Right bottom + 50% was stale), background opacity 60%, font 14, width Auto, emote bigger, background Default, input box Default, GIFs/sub messages/Prime/gifted/timestamp/keyboard/recent messages all on.",
         "Kick / Rumble ads come from their own CDNs alongside content: blocking is partial and frequently breaks playback, not worth the fragility."
       ],
-      "settings_source": "private/app-settings/app-settings.ab (SmartTube ad/SponsorBlock/shorts settings, S0undTV Luminous proxy slots) \u2014 restore is opt-in, unverified on another TV",
+      "settings_source": "private/app-settings/app-settings.ab (Oct 30, 2026, sha256-verified; SmartTube ad/SponsorBlock/shorts settings, S0undTV chat settings) \u2014 used 2026-11-11 to restore S0undTV chat settings after the reinstall wipe; chat position corrected to Top center per his explicit preference (backup said Right bottom, stale). Restore is opt-in, unverified on another TV",
       "notes": "apps/manifest.md"
     },
     "video_player_browser_wrappers": {
@@ -158,13 +158,14 @@
       "package": "com.s0und.s0undtv",
       "install": "install",
       "apk": [
-        "apps/s0undtv-beta147.apk"
+        "apps/s0undtv-patched2.apk"
       ],
       "sha256": [
-        "e191495df5e9f50216d89eab29d4bb6d30f9fa7dccb8e551bc9437ac79ef0973"
+        "a3d6b7d188829b5e28a9406fbbf053bc6a2266d21775e40c182b9acb9ebeff9b"
       ],
       "role": "app",
-      "check": "presence"
+      "check": "presence",
+      "note": "Installed build is fixed5 (2026-11-18, sha256 c608b4280eac12f967024f8a6f973a8a2fa711cd1815999ec84ca7855607803c): TtvAbProxy now authenticates its GQL PlaybackAccessToken requests with his Twitch OAuth token (Bearer), so Twitch honors his subscriptions and serves clean masters on subbed channels; keeps fixed4's variant-level playerType fallback and the blank-segment safety net from fixed3. The fixed5 APK is intentionally NOT in this repo: it embeds his OAuth token. The apk/sha256 below point to patched2, the last credential-free build in the repo, as the install source. Stock beta_147 (apps/s0undtv-beta147.apk, sha256 e191495df5e9f50216d89eab29d4bb6d30f9fa7dccb8e551bc9437ac79ef0973) is the rollback; reinstalling it restores stock but wipes data (different signature)."
     },
     {
       "package": "com.spyou.watch_app",
@@ -206,27 +207,29 @@
       "package": "st.atlantic.app",
       "install": "install",
       "apk": [
-        "apps/atlantic-v1.0.9.apk"
+        "apps/atlantic-v1.0.11.apk"
       ],
       "sha256": [
-        "b9905cb0643d8f386bff5a914d5936b7a32b64802d508f57c1b72f955e1b86e4"
+        "1336d0dc4b3f7dd52184db6c7454fb682f4193d4c1bbac5d264b7bd389641eab"
       ],
       "role": "app",
-      "check": "presence"
+      "check": "presence",
+      "note": "v1.0.11 (2026-11-07, in-place update, profile/settings preserved). Rollback 1.0.10 in apps/atlantic-1.0.10.apk."
     },
     {
       "package": "com.lumora",
-      "versionName": "7.1",
-      "versionCode": 71,
+      "versionName": "7.4",
+      "versionCode": 74,
       "install": "install",
       "apk": [
-        "apps/lumora-7.1.apk"
+        "apps/lumora-7.4.apk"
       ],
       "sha256": [
-        "5c66032eb9053e0c9e0a31e9e4ace9debbe4ee77f89eb4266467b474408a204a"
+        "ba463c93bf75800a421acd8b8f606ec2e6d999eadd4793d6a613f241c7f91c56"
       ],
       "role": "app",
-      "check": "presence"
+      "check": "presence",
+      "note": "Upstream v7.4 (2026-11-15, replaces the 7.1 fork build; fork features gone). Providers live in iptv_prefs.xml; 2 of 13 in and green as of 2026-11-18: Rebel Live (self-hosted rebeliptv v1.5.2, key-authenticated playlist via localhost.run tunnel) and Sports Fallback. The Rebel Live API key and the full playlist URL are never committed. 11 providers + 101 favorites still to restore; v7.5 update pending until the restore verifies."
     },
     {
       "package": "tv.framextv.web",
