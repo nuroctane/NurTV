@@ -1,5 +1,5 @@
 #EXTM3U
-# Generated 2026-11-17 23:47 UTC — Sports fallback M3U
+# Generated 2026-11-18 23:19 UTC — Sports fallback M3U
 # Primary is the VM rebeliptv aggregator; use this only if the VM is down.
 # Open TV Atlas entries are unofficial restreams: they may carry live
 # games but die mid-game. Tubi/Roku entries are FAST shoulder programming.
@@ -255,8 +255,8 @@ http://85.237.89.160:9590/usa-s/ESPN-U-HD/index.m3u8
 http://103.253.74.210:7070/stream/122/index.m3u8
 #EXTINF:-1 tvg-id="Eurosport.in" tvg-name="Eurosport" group-title="Sports" tvg-language="eng" tvg-quality="1080p",Eurosport
 https://livetv.shamon-cable.net:8443/Eurosport-HD/index.m3u8
-#EXTINF:-1 tvg-id="Eurosport1.fr" tvg-name="Eurosport 1" group-title="Sports" tvg-language="eng" tvg-quality="1080p",Eurosport 1
-http://85.117.37.43/eurosport1/index.m3u8
+#EXTINF:-1 tvg-id="Eurosport1.fr" tvg-name="Eurosport 1" group-title="Sports" tvg-language="eng" tvg-quality="720p",Eurosport 1
+https://r.eu.cdn-redge.media/livehls/oeu/mt/live/eurosport_1_en/live.livx/playlist.m3u8
 #EXTINF:-1 tvg-id="Eurosport2.fr" tvg-name="Eurosport 2" group-title="Sports" tvg-language="eng" tvg-quality="576i",Eurosport 2
 https://r.eu.cdn-redge.media/livehls/oeu/mt/live/eurosport_2_en/live.livx/playlist.m3u8
 #EXTINF:-1 tvg-id="Eurosport4K.fr" tvg-name="Eurosport 4K" group-title="Sports" tvg-language="eng;ron" tvg-quality="2160p",Eurosport 4K
@@ -267,7 +267,7 @@ https://amg26268-amg26268c34-amgplt0018.playout.now3.amagi.tv/ts-us-e2-n1/playli
 https://amg12058-c15studio-amg12058c1-lg-us-5787.playouts.now.amagi.tv/playlist.m3u8
 #EXTINF:-1 tvg-id="FastFunBox.nl" tvg-name="Fast&FunBox" group-title="Sports" tvg-language="eng" tvg-quality="576i",Fast&FunBox
 https://dash3.antik.sk/live/test_fast_and_funbox_medium_atk/playlist.m3u8
-#EXTINF:-1 tvg-id="FBTV.tr" tvg-name="FB TV" group-title="Sports" tvg-language="eng;tur" tvg-quality="576i",FB TV
+#EXTINF:-1 tvg-id="FBTV.tr" tvg-name="FB TV" group-title="Sports" tvg-language="eng;tur" tvg-quality="720p",FB TV
 http://1hskrdto.rocketcdn.com/fenerbahcetv.smil/playlist.m3u8
 #EXTINF:-1 tvg-id="FCKLovinderne.se" tvg-name="FCK Lovinderne" group-title="Sports" tvg-language="dan;eng" tvg-quality="720p",FCK Lovinderne
 https://jmp2.uk/plu-68ac5403de4a734954b5ab75.m3u8
@@ -309,7 +309,7 @@ https://a-cdn.klowdtv.com/live2/fight_720p/playlist.m3u8
 https://d12a2vxqkkh1bo.cloudfront.net/hls/main.m3u8
 #EXTINF:-1 tvg-id="FightBox.nl" tvg-name="FightBox" group-title="Sports" tvg-language="eng" tvg-quality="1080i",FightBox
 https://nosignal1.antenaplay.ro/hls/fightbox-hd/index.m3u8
-#EXTINF:-1 tvg-id="FightBox.nl" tvg-name="FightBox" group-title="Sports" tvg-language="eng" tvg-quality="576i",FightBox
+#EXTINF:-1 tvg-id="FightBox.nl" tvg-name="FightBox" group-title="Sports" tvg-language="eng" tvg-quality="720p",FightBox
 https://webtvstream.bhtelecom.ba/fightbox.m3u8
 #EXTINF:-1 tvg-id="FITE247.us" tvg-name="FITE 24/7" group-title="Sports" tvg-language="eng" tvg-quality="720p",FITE 24/7
 https://a-cdn.klowdtv.com/live2/fite247_720p/playlist.m3u8
