@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-19T23:27:38.643735+00:00",
+  "generated_utc": "2026-11-20T23:00:00.331138+00:00",
   "sources": {
     "tubi": {
       "status": "ok",
@@ -13,9 +13,9 @@
     },
     "atlas-eng-sports": {
       "status": "ok",
-      "fetched": 337,
-      "kept": 337
+      "fetched": 351,
+      "kept": 351
     }
   },
-  "total": 410
+  "total": 424
 }
