@@ -31,3 +31,11 @@
 # Local device addresses and machine paths never get committed.
 /.tv-ip
 *.local.env
+
+# Device backups and private service or authentication material.
+*.ab
+**/api-key.txt
+**/keystore-pass.txt
+**/tunnel-url.txt
+**/iptv_prefs.restore.xml
+/notes/screens.txt
