@@ -19,7 +19,8 @@
     "Samsung TV Plus GB",
     "Tubi US",
     "Roku",
-    "Free-TV USA"
+    "Free-TV USA",
+    "Rebel Live (PC)"
   ],
   "min_favorites": 101,
   "favorites": [
@@ -38,11 +39,13 @@
     "assets/household-plugins/redditscan.js",
     "assets/household-plugins/scraper-sites.js",
     "assets/household-plugins/torrent-search.js",
-    "assets/household-nfl.json"
+    "assets/household-nfl.json",
+    "assets/household-rebel-pc.json"
   ],
   "flags": [
     "household_seed_v1",
-    "household_nfl_v1"
+    "household_nfl_v1",
+    "household_rebel_pc_v1"
   ],
   "first_provider": "NFL"
 }

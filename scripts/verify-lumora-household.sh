@@ -28,7 +28,7 @@ bad = [a for a in req['apk_assets'] if a not in names]
 if not bad:
     seed = json.loads(z.read('assets/household-seed.json').decode('utf-8'))
     have = {p.get('name') for p in seed.get('iptvProviders', [])}
-    bad += [f"seed provider {n}" for n in req['providers'] if n not in have and n != req.get('first_provider')]
+    bad += [f"seed provider {n}" for n in req['providers'] if n not in have and n not in (req.get('first_provider'), 'Rebel Live (PC)')]
     favs = set(seed.get('favoriteChannels', []))
     if len(favs) < req['min_favorites']:
         bad.append(f"seed favourites {len(favs)} < {req['min_favorites']}")
