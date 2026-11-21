@@ -174,7 +174,7 @@ the app dying during a full provider refresh on the TV).
 git clone https://github.com/LumoraPlayer/Lumora custom-lumora75 && cd custom-lumora75
 git checkout 268a9d2 && git apply ../lumora/household-7.5.patch
 # private, not in Git: app/src/main/assets/household-seed.json and household-plugins/*.js
-cp ../../provision/sports-fallback/scripts/../../lumora/plugins/*.js app/src/main/assets/household-plugins/
+mkdir -p app/src/main/assets/household-plugins && cp ../lumora/plugins/*.js app/src/main/assets/household-plugins/
 ```
 
 `household-nfl.json` (assets) names the NFL provider
