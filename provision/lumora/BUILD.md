@@ -160,3 +160,24 @@ fails unless the TV shows every provider, favourite and plugin listed in
 `provision/lumora/household-required.json`. `provision-tv.sh` runs both and
 never uninstalls or clears the app. This gate covers the repo's tooling; a
 person or agent with raw ADB access can still bypass it.
+
+### Rebuilding it from the repo
+
+`provision/lumora/household-7.5.patch` is the whole household change set
+against upstream Lumora `268a9d2` (v7.5): the MMA/motorsports patch ported to
+7.5, the seed and NFL stages (`HouseholdSeed.kt`), the behind-live-window
+recovery, and a fix for an Android 9 crash (libwebp is not thread-safe there;
+`PosterDiskCache` now encodes one image at a time below API 30, which stopped
+the app dying during a full provider refresh on the TV).
+
+```sh
+git clone https://github.com/LumoraPlayer/Lumora custom-lumora75 && cd custom-lumora75
+git checkout 268a9d2 && git apply ../lumora/household-7.5.patch
+# private, not in Git: app/src/main/assets/household-seed.json and household-plugins/*.js
+cp ../../provision/sports-fallback/scripts/../../lumora/plugins/*.js app/src/main/assets/household-plugins/
+```
+
+`household-nfl.json` (assets) names the NFL provider
+(`provision/sports-fallback/nfl.m3u`, rebuilt daily) and the national NFL
+channels to favourite. The NFL stage runs once, adds only, and puts the NFL
+provider first.
