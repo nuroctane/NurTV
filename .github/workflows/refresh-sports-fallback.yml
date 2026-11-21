@@ -28,10 +28,14 @@ jobs:
       - name: Build merged M3U
         working-directory: provision/sports-fallback
         run: python3 scripts/build-fallback-m3u.py
+      - name: Build NFL M3U
+        working-directory: provision/sports-fallback
+        continue-on-error: true
+        run: python3 scripts/build-nfl-m3u.py
       - name: Commit if changed
         run: |
           git config user.name "sports-fallback-bot"
           git config user.email "sports-fallback-bot@users.noreply.github.com"
-          git add provision/sports-fallback/sports-fallback.m3u provision/sports-fallback/stats.json provision/sports-fallback/source-cache.json
+          git add provision/sports-fallback/sports-fallback.m3u provision/sports-fallback/stats.json provision/sports-fallback/source-cache.json provision/sports-fallback/nfl.m3u
           git diff --cached --quiet || git commit -m "refresh sports fallback M3U $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push

@@ -28,7 +28,7 @@ bad = [a for a in req['apk_assets'] if a not in names]
 if not bad:
     seed = json.loads(z.read('assets/household-seed.json').decode('utf-8'))
     have = {p.get('name') for p in seed.get('iptvProviders', [])}
-    bad += [f"seed provider {n}" for n in req['providers'] if n not in have]
+    bad += [f"seed provider {n}" for n in req['providers'] if n not in have and n != req.get('first_provider')]
     favs = set(seed.get('favoriteChannels', []))
     if len(favs) < req['min_favorites']:
         bad.append(f"seed favourites {len(favs)} < {req['min_favorites']}")
@@ -59,11 +59,16 @@ bad = []
 if iptv is None:
     bad.append("iptv_prefs.xml unreadable (app never launched, or not the debuggable household build)")
 else:
-    flag = iptv.find(f"boolean[@name='{req['seed_flag']}']")
-    if flag is None or flag.get('value') != 'true':
-        bad.append(f"seed flag {req['seed_flag']} not set (seed did not fully apply)")
+    for f in req.get('flags', [req['seed_flag']]):
+        flag = iptv.find(f"boolean[@name='{f}']")
+        if flag is None or flag.get('value') != 'true':
+            bad.append(f"seed flag {f} not set (seed did not fully apply)")
     pj = iptv.find("string[@name='iptv_providers_json']")
-    names = {p.get('name') for p in json.loads(pj.text)} if pj is not None and pj.text else set()
+    plist = json.loads(pj.text) if pj is not None and pj.text else []
+    names = {p.get('name') for p in plist}
+    first = req.get('first_provider')
+    if first and (not plist or plist[0].get('name') != first):
+        bad.append(f"{first} is not the first provider")
     bad += [f"provider {n}" for n in req['providers'] if n not in names]
     fs = iptv.find("set[@name='favorite_channel_ids']")
     favs = {e.text for e in fs.findall('string')} if fs is not None else set()

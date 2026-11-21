@@ -30,6 +30,9 @@ from datetime import datetime, timezone
 from urllib.parse import urlsplit, parse_qsl
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from nfl import nfl_rank, display_name  # noqa: E402
+
 SOURCES = [
     {
         "name": "tubi",
@@ -178,6 +181,10 @@ def main():
                                           'last_good_utc': next_cache[src['name']]['updated_utc']}
         print(f"[{status}] {src['name']}: {len(entries)} available, {kept} kept")
 
+    # NFL carriers lead the playlist (national first, then local network stations);
+    # everything else keeps its source order behind them.
+    merged.sort(key=lambda e: nfl_rank(display_name(e[0])) or (9, 0))
+    stats["nfl"] = sum(1 for e in merged if nfl_rank(display_name(e[0])))
     stats["total"] = len(merged)
     if incomplete or not merged:
         print("[error] incomplete sources; current published files left unchanged", file=sys.stderr)
