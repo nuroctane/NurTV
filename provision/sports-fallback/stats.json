@@ -1,23 +1,23 @@
 {
-  "generated_utc": "2026-11-20T18:10:27.643930+00:00",
+  "generated_utc": "2026-11-21T16:07:51.647908+00:00",
   "sources": {
     "tubi": {
       "status": "ok",
       "available": 25,
       "kept": 25,
-      "last_good_utc": "2026-11-20T18:10:27.643930+00:00"
+      "last_good_utc": "2026-11-21T16:07:51.647908+00:00"
     },
     "roku": {
       "status": "ok",
       "available": 48,
       "kept": 48,
-      "last_good_utc": "2026-11-20T18:10:27.643930+00:00"
+      "last_good_utc": "2026-11-21T16:07:51.647908+00:00"
     },
     "atlas-eng-sports": {
       "status": "ok",
       "available": 349,
       "kept": 349,
-      "last_good_utc": "2026-11-20T18:10:27.643930+00:00"
+      "last_good_utc": "2026-11-21T16:07:51.647908+00:00"
     }
   },
   "total": 422
