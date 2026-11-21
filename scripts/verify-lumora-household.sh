@@ -8,6 +8,7 @@
 # favourites (count plus the UFC streams), enabled plugins, and the seed-done flag.
 # Exit 0 only when every item is present. Anything missing prints and exits 1.
 set -euo pipefail
+export MSYS_NO_PATHCONV=1   # keep /sdcard paths intact under Git Bash
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 . "$ROOT/scripts/_adb.sh"
 REQ="$ROOT/provision/lumora/household-required.json"
@@ -46,6 +47,14 @@ PY
     tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
     "$ADB_BIN" -s "$S" shell "pm list packages $pkg" | tr -d '\r' | grep -qx "package:$pkg" \
       || { echo "FAIL: $pkg is not installed on $S" >&2; exit 1; }
+    # Front end is golden state: the household tile must wear the same art the stock
+    # Lumora tile had (apps/art/com.lumora.png), byte for byte, and keep its "Sports" name.
+    art=/sdcard/Android/data/tv.cleantv.home/files/art/$pkg.png
+    "$ADB_BIN" -s "$S" pull "$art" "$(win "$tmp/art.png")" >/dev/null 2>&1 || true
+    if ! cmp -s "$tmp/art.png" "$ROOT/apps/art/com.lumora.png" || ! cmp -s "$ROOT/apps/art/$pkg.png" "$ROOT/apps/art/com.lumora.png"; then
+      echo "FAIL: launcher art for $pkg differs from the golden Sports art" >&2; exit 1
+    fi
+    grep -qx "name.$pkg=Sports" "$ROOT/apps/home.conf" || { echo "FAIL: home.conf must name $pkg 'Sports'" >&2; exit 1; }
     "$ADB_BIN" -s "$S" exec-out run-as "$pkg" cat shared_prefs/iptv_prefs.xml > "$tmp/iptv.xml" 2>/dev/null || true
     "$ADB_BIN" -s "$S" exec-out run-as "$pkg" cat shared_prefs/plugin_prefs.xml > "$tmp/plugin.xml" 2>/dev/null || true
     python -I - "$(win "$REQ")" "$(win "$tmp/iptv.xml")" "$(win "$tmp/plugin.xml")" <<'PY'
