@@ -172,6 +172,15 @@ have() { sh_ "pm list packages | grep -c '^package:$1\$'" | head -1; }
 vcode() { sh_ "dumpsys package $1" | sed -n 's/.*versionCode=\([0-9]*\).*/\1/p' | head -1; }
 front_activity() { sh_ "dumpsys activity activities" | sed -n 's/.* u0 \([^ ]*\)\/.*/\1/p' | head -1; }
 
+# Do not start a mutating provision if it would need to install Lumora. A fresh
+# APK alone cannot prove that the user's UFC, provider and favorite state exists.
+if [ "$VERIFY_ONLY" = 0 ] && [ "$DRY" = 0 ] &&
+   awk -F '\t' '$1 == "com.lumora" {found=1} END {exit !found}' "$WORK/packages.tsv" &&
+   [ "$(have com.lumora)" != 1 ]; then
+  echo "refusing provisioning: Lumora is missing and its sports state cannot be verified" >&2
+  exit 1
+fi
+
 if [ "$VERIFY_ONLY" = 0 ] && [ "$DRY" = 0 ]; then
   step "backup of the target TV"
   "$ROOT/scripts/backup-packages.sh" "$IP" | sed 's/^/   /'
@@ -234,6 +243,10 @@ while IFS=$'\t' read -r pkg mode role apks hashes check code; do
       note "install   $pkg  code=$code  from ${files[0]}"
       continue
     fi
+  fi
+  if [ "$pkg" = com.lumora ]; then
+    fail "Lumora installation blocked: favorites, providers, plugins and UFC preservation have not been verified. Configure and verify the target manually."
+    continue
   fi
   args=(); for f in "${files[@]}"; do args+=("$ROOT/$f"); done
   out=$("$ADB_BIN" -s "$S" "$mode" -r "${args[@]}" 2>&1 | grep -m1 -E 'Success|Failure|failed' || true)
@@ -337,6 +350,31 @@ if [ "$VERIFY_ONLY" = 0 ]; then
   fi
 fi
 
+# Household Lumora: one APK that carries providers, favourites and plugins and seeds
+# them on first launch. Gate before and after: an APK missing any required piece is
+# never installed, and the run fails unless the TV then shows the full setup.
+# Install is `install -r` only; this step never uninstalls or clears anything.
+step "household Lumora (providers, favourites, plugins)"
+HH_APK=$ROOT/provision/apk/lumora-household.apk
+HH_PKG=com.lumora.debug
+if [ ! -f "$HH_APK" ]; then
+  fail "household Lumora APK missing: $HH_APK (build it per provision/lumora/BUILD.md)"
+elif ! "$ROOT/scripts/verify-lumora-household.sh" apk "$HH_APK"; then
+  fail "household Lumora APK refused: it does not carry the full setup"
+elif [ "$DRY" = 1 ]; then
+  note "[dry-run] install -r $HH_APK, launch once, verify setup"
+elif [ "$VERIFY_ONLY" = 0 ]; then
+  out=$("$ADB_BIN" -s "$S" install -r "$HH_APK" 2>&1 | grep -m1 -E 'Success|Failure|failed' || true)
+  case $out in
+    *Success*)
+      if ! "$ROOT/scripts/verify-lumora-household.sh" tv "$S" >/dev/null 2>&1; then
+        sh_ "am start -n $HH_PKG/com.lumora.MainActivity" >/dev/null
+        sleep 20
+      fi ;;
+    *) fail "household Lumora install failed (nothing removed): ${out:-no output}" ;;
+  esac
+fi
+
 step "media sources"
 src_args=("$IP")
 [ "$DRY" = 1 ] && src_args+=(--dry-run)
@@ -361,6 +399,18 @@ elif [ "$(sha "$APPSET")" != "$(cat "$APPSET.sha256" 2>/dev/null)" ]; then
   fail "private/app-settings/app-settings.ab does not match its .sha256; capture it again"
 elif [ "$DRY" = 1 ] || [ "$VERIFY_ONLY" = 1 ]; then
   note "would restore $(rel "$APPSET") (one 'Restore my data' press on the TV)"
+elif ! python -I - "$(win "$ROOT/scripts/app_settings.py")" "$(win "$APPSET")" <<'PY'
+import importlib.util, io, sys, tarfile
+spec = importlib.util.spec_from_file_location('backup_reader', sys.argv[1])
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+_, body = module.read_ab(sys.argv[2])
+with tarfile.open(fileobj=io.BytesIO(body)) as archive:
+    if any(m.name.startswith('apps/com.lumora/') for m in archive):
+        sys.exit(1)
+PY
+then
+  fail "app-settings restore blocked: archive contains Lumora or could not be inspected safely"
 else
   note "On the TV: press 'Restore my data' (no password). Waiting up to 2 minutes."
   if timeout 150 "$ADB_BIN" -s "$S" restore "$(win "$APPSET")" </dev/null >/dev/null 2>&1; then
@@ -371,6 +421,11 @@ else
 fi
 
 step "verify"
+if [ "$DRY" = 0 ]; then
+  if "$ROOT/scripts/verify-lumora-household.sh" tv "$S"; then :; else
+    fail "household Lumora setup incomplete on the TV (see FAIL lines above)"
+  fi
+fi
 while IFS=$'\t' read -r pkg mode role apks hashes check code; do
   [ -n "$pkg" ] || continue
   [ -n "$check" ] || check=presence

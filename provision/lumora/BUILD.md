@@ -125,3 +125,38 @@ first patched build is a fresh install and the app private data is wiped.
 Provision afterwards from `provision/lumora/README.md` again (plugins/add-ons
 live in the app private data dir, which an uninstall wipes). Later builds
 signed with the same local key upgrade in place with `install -r`.
+
+## Household 7.5 build (one APK with everything)
+
+Since 2026-11-21 the TV runs a single household APK built from Lumora 7.5
+(`provision/custom-lumora75`, gitignored, upstream `268a9d2` plus the
+MMA/motorsports patch). It installs as `com.lumora.debug` next to the official
+`com.lumora`, because the official app is signed with upstream's key and no
+local build can replace it in place without wiping its data. The launcher's
+"Sports" tile points at the household build; the official app stays installed,
+hidden, as a fallback.
+
+What the APK carries (private, never committed):
+
+- `app/src/main/assets/household-seed.json`: a Lumora backup document with the
+  16 providers (Sports Fallback, Rebel Live, UFC and the rest) and the 101
+  favourites, including both UFC streams.
+- `app/src/main/assets/household-plugins/*.js`: the four plugins from
+  `provision/lumora/plugins/`.
+
+On first launch `HouseholdSeed.kt` applies the seed through the app's own
+restore path, installs and enables the plugins, and only then sets
+`household_seed_v1`. A partial seed retries on the next launch.
+
+Build: `gradlew.bat :app:assembleDebug --max-workers=4 --no-parallel` (through
+`lowcpu.ps1`), then copy `app/build/outputs/apk/debug/app-debug.apk` to
+`provision/apk/lumora-household.apk`. Keep the same debug keystore
+(`%USERPROFILE%\.android\debug.keystore`) so later builds update in place;
+back it up with the private files.
+
+Hard gate: `scripts/verify-lumora-household.sh apk <file>` refuses an APK that
+lacks any required piece, and `scripts/verify-lumora-household.sh tv <ip>`
+fails unless the TV shows every provider, favourite and plugin listed in
+`provision/lumora/household-required.json`. `provision-tv.sh` runs both and
+never uninstalls or clears the app. This gate covers the repo's tooling; a
+person or agent with raw ADB access can still bypass it.

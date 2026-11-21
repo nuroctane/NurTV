@@ -121,11 +121,11 @@ var SITES = [
     { name: "TvporinternetHD", language: "es", enabled: false, note: "Live TV channels only - cannot source a film or episode.", baseUrl: "https://www.tvporinternet2.com", extra: { mirrorReferer: "https://www.tvporinternet2.com/" } },
     { name: "Wiflix", language: "fr", enabled: true, baseUrl: "https://flemmix.team/", extra: { portalUrl: "https://ww1.wiflix-adresses.fun/" } },
     { name: "Zaluknij", language: "pl", enabled: true, baseUrl: "https://zaluknij.cc", heavy: true },
-    { name: NetPrime, language: en, enabled: true, baseUrl: https://netprime.gd },
-    { name: euroStreaming, language: it, enabled: true, baseUrl: https://eurostream.fun },
-    { name: Filmo, language: de, enabled: true, baseUrl: https://filmo.to },
-    { name: Kellerkino, language: de, enabled: true, baseUrl: https://www.kellerkino.com },
-    { name: KinoGer, language: de, enabled: true, baseUrl: https://kinoger.beer },
+    { name: "NetPrime", language: "en", enabled: true, baseUrl: "https://netprime.gd" },
+    { name: "euroStreaming", language: "it", enabled: true, baseUrl: "https://eurostream.fun" },
+    { name: "Filmo", language: "de", enabled: true, baseUrl: "https://filmo.to" },
+    { name: "Kellerkino", language: "de", enabled: true, baseUrl: "https://www.kellerkino.com" },
+    { name: "KinoGer", language: "de", enabled: true, baseUrl: "https://kinoger.beer" },
 ];
 
 // The host reads this back as a JSON string: it crosses the bridge once, deterministically,

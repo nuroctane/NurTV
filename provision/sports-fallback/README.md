@@ -35,6 +35,24 @@ It cannot reliably deliver live games: the primary aggregator does that
 by proxying and re-resolving streams live; a once-a-day static file
 cannot. The committed playlist contains unofficial restream URLs.
 
+## Failure handling
+
+The builder keeps a last-good snapshot for each source in `source-cache.json`.
+If a source fails or suddenly falls below half its previous channel count, its
+snapshot is reused and `stats.json` marks it `cached`. On the first run, every
+source must succeed before the cache can be established; otherwise the existing
+published playlist is left unchanged. Cached entries can themselves expire, so
+`last_good_utc` is a warning signal, not evidence of playback. The builder
+preserves per-stream M3U directives and rejects URLs with obvious credentials.
+The workflow publishes the cache, playlist and stats to this public repository;
+never feed it personal provider URLs or authentication headers.
+
+`python scripts/audit-guide.py sports-fallback.m3u <guide.xml.gz> [more-guides...]`
+compares channel IDs with local XMLTV files and counts rows with current or
+future programmes. It does not guess matches by channel name or alter the TV.
+On 2026-11-20 the curated epg6 feed matched 87 of 422 generated entries by exact
+ID; most fallback entries still need a matching source or verified mapping.
+
 Note: this lives in NurTV because the GitHub App cannot create a new
 repo on its own. The safer long-term home is a separate repo
 (e.g. `nuroctane/sports-fallback`), so a takedown — if one ever comes

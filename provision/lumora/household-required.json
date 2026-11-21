@@ -1,0 +1,10 @@
+{
+  "_comment": "What the household Lumora build must carry and what the TV must show after it is installed. scripts/verify-lumora-household.sh fails on any missing item. No URLs with keys belong here: providers are checked by name only.",
+  "package": "com.lumora.debug",
+  "seed_flag": "household_seed_v1",
+  "providers": ["Sports Fallback", "Rebel Live", "UFC", "Sports (iptv-org)", "Samsung TV Plus", "Pluto TV", "NHL Network", "beIN XTRA", "Plex US", "Open TV Atlas", "iptv-org USA", "Samsung TV Plus Canada", "Samsung TV Plus GB", "Tubi US", "Roku", "Free-TV USA"],
+  "min_favorites": 101,
+  "favorites": ["https://fight.nswfiles.com/stream/ufc.m3u8", "https://live.obnoxious.lol/stream/ufc.m3u8"],
+  "plugins": ["anime.senshi", "reddit.iptvscan", "scraper.sites", "torrent.search"],
+  "apk_assets": ["assets/household-seed.json", "assets/household-plugins/anime-senshi.js", "assets/household-plugins/redditscan.js", "assets/household-plugins/scraper-sites.js", "assets/household-plugins/torrent-search.js"]
+}

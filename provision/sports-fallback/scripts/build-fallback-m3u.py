@@ -16,14 +16,19 @@ Deliberately NOT included: Samsung TV Plus and Pluto TV (already separate
 providers in Lumora on the TV) and iptv-org sports (already a provider).
 Duplicating them here would add nothing when flipping to this fallback.
 
-Exit 0 if at least one entry was written, 1 if the merged playlist is empty.
-A single source failing does not fail the run; it is logged and skipped.
+Every source must have a valid current or cached copy before publishing. A
+partial first run leaves the previous output intact; later failures reuse the
+last good source snapshot and are reported as degraded.
 """
 import json
 import re
 import sys
+import os
+import tempfile
 import urllib.request
 from datetime import datetime, timezone
+from urllib.parse import urlsplit, parse_qsl
+from pathlib import Path
 
 SOURCES = [
     {
@@ -55,22 +60,60 @@ def fetch(url):
 
 
 def parse_m3u(text):
-    """Return list of (extinf_line, url) pairs."""
+    """Return (metadata, directives, URL), preserving per-stream directives."""
     entries = []
-    lines = [ln.strip() for ln in text.splitlines()]
+    lines = [ln.strip().lstrip('\ufeff') for ln in text.splitlines()]
+    if not lines or not re.match(r'^#EXTM3U(?:\s|$)', lines[0]):
+        raise ValueError('not an extended M3U playlist')
     i = 0
     while i < len(lines):
         if lines[i].startswith("#EXTINF"):
             extinf = lines[i]
             j = i + 1
+            directives = []
             while j < len(lines) and (not lines[j] or lines[j].startswith("#")):
+                if lines[j].startswith('#EXTINF'):
+                    break
+                if lines[j]:
+                    directives.append(lines[j])
                 j += 1
-            if j < len(lines):
-                entries.append((extinf, lines[j]))
+            if j < len(lines) and not lines[j].startswith('#'):
+                entries.append((extinf, directives, lines[j]))
                 i = j + 1
                 continue
         i += 1
     return entries
+
+
+def public_url(url):
+    """Reject URLs containing obvious credentials before writing public files."""
+    parsed = urlsplit(url)
+    if parsed.scheme not in ('http', 'https') or not parsed.hostname or parsed.username or parsed.password:
+        return False
+    forbidden = {'key', 'api_key', 'apikey', 'token', 'access_token', 'auth', 'authorization', 'password', 'secret'}
+    return not any(k.lower() in forbidden for k, _ in parse_qsl(parsed.query, keep_blank_values=True))
+
+
+def public_entry(entry):
+    metadata, directives, url = entry
+    # Headers and metadata are published too; do not expose obvious secrets.
+    if re.search(r'(?i)(?:authorization\s*[:=]|(?:access[_-]?token|api[_-]?key|password|secret|[?&]key)\s*=)',
+                 '\n'.join([metadata, *directives])):
+        return False
+    return public_url(url)
+
+
+def write_atomic(path, content):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix='.' + path.name, dir=path.parent)
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8', newline='\n') as stream:
+            stream.write(content)
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
 
 
 def is_sports(extinf):
@@ -87,34 +130,57 @@ def is_sports(extinf):
 
 def main():
     now = datetime.now(timezone.utc)
-    merged = []  # (extinf, url, source)
+    merged = []
     seen_urls = set()
     stats = {"generated_utc": now.isoformat(), "sources": {}, "total": 0}
+    cache_path = Path('source-cache.json')
+    try:
+        cache = json.loads(cache_path.read_text(encoding='utf-8')) if cache_path.exists() else {}
+        if not isinstance(cache, dict):
+            raise ValueError('cache must be an object')
+    except (ValueError, OSError) as exc:
+        print(f'[error] invalid source cache: {exc}', file=sys.stderr)
+        return 1
+    next_cache = dict(cache)
+    incomplete = False
 
     for src in SOURCES:
         try:
             text = fetch(src["url"])
-            entries = parse_m3u(text)
+            entries = [entry for entry in parse_m3u(text)
+                       if (not src['sports_only'] or is_sports(entry[0])) and public_entry(entry)]
+            prior = cache.get(src['name'], {})
+            prior_count = len(prior.get('entries', []))
+            if not entries or (prior_count >= 10 and len(entries) * 2 < prior_count):
+                raise ValueError(f'empty or unexpectedly small source ({len(entries)} vs {prior_count})')
+            next_cache[src['name']] = {'updated_utc': now.isoformat(), 'entries': entries}
+            status = 'ok'
         except Exception as exc:  # noqa: BLE001 - one bad source must not kill the run
-            print(f"[warn] {src['name']}: fetch/parse failed: {exc}", file=sys.stderr)
-            stats["sources"][src["name"]] = {"status": "failed", "error": str(exc), "kept": 0}
-            continue
+            # Do not log URLs or exception text, which can contain credentials.
+            entries = cache.get(src['name'], {}).get('entries', [])
+            if not entries:
+                print(f"[error] {src['name']}: unavailable and no cached copy; keeping current playlist", file=sys.stderr)
+                incomplete = True
+                continue
+            print(f"[warn] {src['name']}: using last good cached copy", file=sys.stderr)
+            status = 'cached'
         kept = 0
-        for extinf, url in entries:
-            if src["sports_only"] and not is_sports(extinf):
+        for extinf, directives, url in entries:
+            if not public_entry((extinf, directives, url)):
+                incomplete = True
                 continue
             if url in seen_urls:
                 continue
             seen_urls.add(url)
-            merged.append((extinf, url, src["name"]))
+            merged.append((extinf, directives, url))
             kept += 1
-        stats["sources"][src["name"]] = {"status": "ok", "fetched": len(entries), "kept": kept}
-        print(f"[ok] {src['name']}: {len(entries)} fetched, {kept} kept")
+        stats['sources'][src['name']] = {'status': status, 'available': len(entries), 'kept': kept,
+                                          'last_good_utc': next_cache[src['name']]['updated_utc']}
+        print(f"[{status}] {src['name']}: {len(entries)} available, {kept} kept")
 
     stats["total"] = len(merged)
-    if not merged:
-        print("[error] merged playlist is empty", file=sys.stderr)
-        json.dump(stats, open("stats.json", "w"), indent=2)
+    if incomplete or not merged:
+        print("[error] incomplete sources; current published files left unchanged", file=sys.stderr)
         return 1
 
     out = ["#EXTM3U"]
@@ -122,11 +188,13 @@ def main():
     out.append("# Primary is the VM rebeliptv aggregator; use this only if the VM is down.")
     out.append("# Open TV Atlas entries are unofficial restreams: they may carry live")
     out.append("# games but die mid-game. Tubi/Roku entries are FAST shoulder programming.")
-    for extinf, url, _src in merged:
+    for extinf, directives, url in merged:
         out.append(extinf)
+        out.extend(directives)
         out.append(url)
-    open("sports-fallback.m3u", "w").write("\n".join(out) + "\n")
-    json.dump(stats, open("stats.json", "w"), indent=2)
+    write_atomic('source-cache.json', json.dumps(next_cache, indent=2) + '\n')
+    write_atomic('sports-fallback.m3u', '\n'.join(out) + '\n')
+    write_atomic('stats.json', json.dumps(stats, indent=2) + '\n')
     print(f"[done] {len(merged)} entries -> sports-fallback.m3u")
     return 0
 
