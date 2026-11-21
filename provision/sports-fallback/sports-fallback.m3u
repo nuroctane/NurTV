@@ -1,5 +1,5 @@
 #EXTM3U
-# Generated 2026-11-21 16:28 UTC — Sports fallback M3U
+# Generated 2026-11-21 22:05 UTC — Sports fallback M3U
 # Primary is the VM rebeliptv aggregator; use this only if the VM is down.
 # Open TV Atlas entries are unofficial restreams: they may carry live
 # games but die mid-game. Tubi/Roku entries are FAST shoulder programming.
@@ -87,8 +87,6 @@ https://jmp2.uk/rok-0b8a86b44ef0780c3b3226a63be07e0f.m3u8
 https://jmp2.uk/rok-a361d429db9e46665be277da42af89a4.m3u8
 #EXTINF:-1 channel-id="ca25dfba8ba45a1bb277c8b0ca8f56c4" tvg-id="ca25dfba8ba45a1bb277c8b0ca8f56c4" tvg-chno="4817" tvg-name="POWERNATION" tvg-logo="https://images.sr.roku.com/idType/roku-trc/context/trc/id/ca25dfba8ba45a1bb277c8b0ca8f56c4/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1657584189840_260x147.png" group-title="Auto & Motorsports",POWERNATION
 https://jmp2.uk/rok-ca25dfba8ba45a1bb277c8b0ca8f56c4.m3u8
-#EXTINF:-1 channel-id="04be54c79d1f55d0909e684f64f9fb57" tvg-id="04be54c79d1f55d0909e684f64f9fb57" tvg-chno="5046" tvg-name="Azteca Deportes Network LITE 3" tvg-logo="https://images.sr.roku.com/idType/roku-trc/context/trc/id/04be54c79d1f55d0909e684f64f9fb57/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1718994621239_AI_Roku_260x147_Mono_DEPORTES_TB_Oct23.png" group-title="Sports",Azteca Deportes Network LITE 3
-https://jmp2.uk/rok-04be54c79d1f55d0909e684f64f9fb57.m3u8
 #EXTINF:-1 channel-id="9210a8fbeab66e9d1ce20c187804ee7d" tvg-id="9210a8fbeab66e9d1ce20c187804ee7d" tvg-chno="1209" tvg-name="Bassmaster" tvg-logo="https://images.sr.roku.com/idType/roku-trc/context/trc/id/9210a8fbeab66e9d1ce20c187804ee7d/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1749678868866_BassmasterChannel_InfoHUDChannelIdentifier_260x147.png" group-title="Sports",Bassmaster
 https://jmp2.uk/rok-9210a8fbeab66e9d1ce20c187804ee7d.m3u8
 #EXTINF:-1 channel-id="ab47c5037be851e6a929a4d09daafeac" tvg-id="ab47c5037be851e6a929a4d09daafeac" tvg-chno="1720" tvg-name="Baywatch" tvg-logo="https://images.sr.roku.com/idType/roku-trc/context/trc/id/ab47c5037be851e6a929a4d09daafeac/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1669077442140_Baywatch-HUDLOGO-CENTER-260x147-ROKU.png" group-title="Sports",Baywatch

@@ -130,7 +130,7 @@
     ]
   },
   "roku": {
-    "updated_utc": "2026-11-21T16:28:20.532611+00:00",
+    "updated_utc": "2026-11-21T22:05:57.095683+00:00",
     "entries": [
       [
         "#EXTINF:-1 channel-id=\"98cafb7f4b01848a967fda4bd2225bd7\" tvg-id=\"98cafb7f4b01848a967fda4bd2225bd7\" tvg-chno=\"1219\" tvg-name=\"Unbeaten Sports\" tvg-logo=\"https://images.sr.roku.com/idType/roku-trc/context/trc/id/98cafb7f4b01848a967fda4bd2225bd7/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1783443201350_unbeaten_sports_logo_hud.png\" group-title=\"3X3 Basketball\",Unbeaten Sports",
@@ -156,11 +156,6 @@
         "#EXTINF:-1 channel-id=\"ca25dfba8ba45a1bb277c8b0ca8f56c4\" tvg-id=\"ca25dfba8ba45a1bb277c8b0ca8f56c4\" tvg-chno=\"4817\" tvg-name=\"POWERNATION\" tvg-logo=\"https://images.sr.roku.com/idType/roku-trc/context/trc/id/ca25dfba8ba45a1bb277c8b0ca8f56c4/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1657584189840_260x147.png\" group-title=\"Auto & Motorsports\",POWERNATION",
         [],
         "https://jmp2.uk/rok-ca25dfba8ba45a1bb277c8b0ca8f56c4.m3u8"
-      ],
-      [
-        "#EXTINF:-1 channel-id=\"04be54c79d1f55d0909e684f64f9fb57\" tvg-id=\"04be54c79d1f55d0909e684f64f9fb57\" tvg-chno=\"5046\" tvg-name=\"Azteca Deportes Network LITE 3\" tvg-logo=\"https://images.sr.roku.com/idType/roku-trc/context/trc/id/04be54c79d1f55d0909e684f64f9fb57/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1718994621239_AI_Roku_260x147_Mono_DEPORTES_TB_Oct23.png\" group-title=\"Sports\",Azteca Deportes Network LITE 3",
-        [],
-        "https://jmp2.uk/rok-04be54c79d1f55d0909e684f64f9fb57.m3u8"
       ],
       [
         "#EXTINF:-1 channel-id=\"9210a8fbeab66e9d1ce20c187804ee7d\" tvg-id=\"9210a8fbeab66e9d1ce20c187804ee7d\" tvg-chno=\"1209\" tvg-name=\"Bassmaster\" tvg-logo=\"https://images.sr.roku.com/idType/roku-trc/context/trc/id/9210a8fbeab66e9d1ce20c187804ee7d/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1749678868866_BassmasterChannel_InfoHUDChannelIdentifier_260x147.png\" group-title=\"Sports\",Bassmaster",
@@ -375,7 +370,7 @@
     ]
   },
   "atlas-eng-sports": {
-    "updated_utc": "2026-11-21T16:28:20.532611+00:00",
+    "updated_utc": "2026-11-21T22:05:57.095683+00:00",
     "entries": [
       [
         "#EXTINF:-1 tvg-id=\"30AGolfKingdom.us\" tvg-name=\"30A Golf Kingdom\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"720p\",30A Golf Kingdom",
