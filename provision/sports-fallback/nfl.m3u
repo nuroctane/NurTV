@@ -1,11 +1,9 @@
 #EXTM3U
-# Generated 2026-11-21 16:25 UTC: NFL-capable public channels that were streaming at build time.
+# Generated 2026-11-21 16:28 UTC: NFL-capable public channels that were streaming at build time.
 # National carriers first (NFL Network, ESPN, ESPN2, FS1, FOX Deportes), then local FOX/CBS/NBC/ABC.
 # Local stations' web streams can black out network games.
 #EXTINF:-1 tvg-id="NFLNetwork.us" tvg-name="NFL Network" group-title="NFL" tvg-language="eng" tvg-quality="576p",NFL Network
 https://tvsen6.aynaott.com/nfl/index.m3u8
-#EXTINF:-1 tvg-id="ESPN.us" tvg-name="ESPN" group-title="NFL" tvg-language="eng" tvg-quality="720p",ESPN
-http://212.5.144.156:8080/espn/index.m3u8
 #EXTINF:-1 tvg-id="ESPN.us" tvg-name="ESPN" group-title="NFL" tvg-language="eng" tvg-quality="720p",ESPN
 http://85.237.89.160:9590/usa-s/ESPN-HD/index.m3u8
 #EXTINF:-1 tvg-id="ESPN2.us" tvg-name="ESPN 2" group-title="NFL" tvg-language="eng" tvg-quality="720p",ESPN 2
