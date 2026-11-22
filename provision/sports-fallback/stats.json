@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-21T22:05:57.095683+00:00",
+  "generated_utc": "2026-11-22T22:22:01.398476+00:00",
   "sources": {
     "tubi": {
       "status": "cached",
@@ -11,15 +11,15 @@
       "status": "ok",
       "available": 47,
       "kept": 47,
-      "last_good_utc": "2026-11-21T22:05:57.095683+00:00"
+      "last_good_utc": "2026-11-22T22:22:01.398476+00:00"
     },
     "atlas-eng-sports": {
       "status": "ok",
-      "available": 349,
-      "kept": 349,
-      "last_good_utc": "2026-11-21T22:05:57.095683+00:00"
+      "available": 355,
+      "kept": 355,
+      "last_good_utc": "2026-11-22T22:22:01.398476+00:00"
     }
   },
-  "total": 421,
+  "total": 427,
   "nfl": 13
 }

@@ -1,5 +1,5 @@
 #EXTM3U
-# Generated 2026-11-21 22:05 UTC — Sports fallback M3U
+# Generated 2026-11-22 22:22 UTC — Sports fallback M3U
 # Primary is the VM rebeliptv aggregator; use this only if the VM is down.
 # Open TV Atlas entries are unofficial restreams: they may carry live
 # games but die mid-game. Tubi/Roku entries are FAST shoulder programming.
@@ -197,8 +197,6 @@ https://live77cdn2.antenaplay.ro/live2_sport07/live2_sport07_3500k.m3u8
 https://live77cdn2.antenaplay.ro/live2_srt/live2_srt_3000k.m3u8
 #EXTINF:-1 tvg-id="AntenaPlayEvents.ro" tvg-name="AntenaPlay Events" group-title="Sports" tvg-language="eng;ron" tvg-quality="576i",AntenaPlay Events
 https://live77cdn2.antenaplay.ro/live2_srt9/live2_srt9_3000k.m3u8
-#EXTINF:-1 tvg-id="BarcaTV.es" tvg-name="Barca TV" group-title="Sports" tvg-language="cat;eng;spa" tvg-quality="576i",Barca TV
-https://live20.bozztv.com/dvrfl06/astv/astv-barca/index.m3u8
 #EXTINF:-1 tvg-id="beINSportsUSA.us" tvg-name="beIN Sports USA" group-title="Sports" tvg-language="eng" tvg-quality="576p",beIN Sports USA
 https://tvsen6.aynaott.com/beinsports/index.m3u8
 #EXTINF:-1 tvg-id="beINSPORTSXTRA.us" tvg-name="beIN SPORTS XTRA" group-title="Sports" tvg-language="eng" tvg-quality="720p",beIN SPORTS XTRA
@@ -657,6 +655,14 @@ https://cdn.stmify.com/out/v1/SKY_SPORTS_PREMIER_LEAGUE/index.m3u8
 https://cdn.stmify.com/out/v1/SKY_SPORTS_ACTION/index.m3u8
 #EXTINF:-1 tvg-id="SlopesTV.us" tvg-name="Slopes TV" group-title="Sports" tvg-language="eng" tvg-quality="720p",Slopes TV
 https://stream-us-east-1.getpublica.com/playlist.m3u8?network_id=2241
+#EXTINF:-1 tvg-id="SonySportsTen1.in" tvg-name="Sony Sports Ten 1" group-title="Sports" tvg-language="eng;mal" tvg-quality="1080p",Sony Sports Ten 1
+http://116.90.120.149:8000/play/a11t/index.m3u8
+#EXTINF:-1 tvg-id="SonySportsTen1.in" tvg-name="Sony Sports Ten 1" group-title="Sports" tvg-language="eng" tvg-quality="576p",Sony Sports Ten 1
+http://116.90.120.149:8000/play/a126/index.m3u8
+#EXTINF:-1 tvg-id="SonySportsTen2.in" tvg-name="Sony Sports Ten 2" group-title="Sports" tvg-language="eng" tvg-quality="1080p",Sony Sports Ten 2
+http://116.90.120.149:8000/play/a137/index.m3u8
+#EXTINF:-1 tvg-id="SonySportsTen5.in" tvg-name="Sony Sports Ten 5" group-title="Sports" tvg-language="ben;eng;mal" tvg-quality="576p",Sony Sports Ten 5
+http://116.90.120.149:8000/play/a117/index.m3u8
 #EXTINF:-1 tvg-id="Sport.kg" tvg-name="Sport" group-title="Sports" tvg-language="eng;kir;rus" tvg-quality="480p",Sport
 https://st2.mediabay.tv/KG_KTRK-Sport/index.m3u8
 #EXTINF:-1 tvg-id="Sport1Baltic.ua" tvg-name="Sport 1 Baltic" group-title="Sports" tvg-language="eng;rus;ukr" tvg-quality="1080p",Sport 1 Baltic
@@ -683,6 +689,10 @@ https://aegis-cloudfront-1.tubi.video/74681dcc-e6d0-4add-ad67-a22ad9c152e6/playl
 https://wurl120sports.global.transmit.live/hls/679a907dce42a042c23ace37/v1/stadium_gracenote/samsung_us/latest/main/hls/playlist.m3u8
 #EXTINF:-1 tvg-id="Stadium.us" tvg-name="Stadium" group-title="Sports" tvg-language="eng" tvg-quality="1080p",Stadium
 https://wurl120sports.global.transmit.live/hls/6865b0ce3b41686108809e5a/v1/stadium_gracenote/vizio_us/latest/main/hls/playlist.m3u8
+#EXTINF:-1 tvg-id="StarSports1.in" tvg-name="Star Sports 1" group-title="Sports" tvg-language="eng;kan" tvg-quality="1080p",Star Sports 1
+http://116.90.120.149:8000/play/a11x/index.m3u8
+#EXTINF:-1 tvg-id="StarSports2.in" tvg-name="Star Sports 2" group-title="Sports" tvg-language="eng;hin;tam;tel" tvg-quality="1080p",Star Sports 2
+http://116.90.120.149:8000/play/a120/index.m3u8
 #EXTINF:-1 tvg-id="Strongman.us" tvg-name="Strongman" group-title="Sports" tvg-language="eng" tvg-quality="720p",Strongman
 https://rightsboosterltd-scl-1-eu.rakuten.wurl.tv/playlist.m3u8
 #EXTINF:-1 tvg-id="Strongman.us" tvg-name="Strongman" group-title="Sports" tvg-language="eng" tvg-quality="720p",Strongman
@@ -809,6 +819,8 @@ https://d1t5afz6qed3xk.cloudfront.net/Unbeaten.m3u8
 https://lukentvlive.vgcdn.net/v1/master/cef183924f24adfa3d5d7601c3a17769082c0c2b/UnbeatenSports-v2/playlist.m3u8
 #EXTINF:-1 tvg-id="Unbeaten.us" tvg-name="Unbeaten" group-title="Sports" tvg-language="eng" tvg-quality="1080p",Unbeaten
 https://unbeaten-tcl.amagi.tv/playlist.m3u8
+#EXTINF:-1 tvg-id="Unite8Sports2.in" tvg-name="Unite8 Sports 2" group-title="Sports" tvg-language="eng" tvg-quality="1080p",Unite8 Sports 2
+http://116.90.120.149:8000/play/a129/index.m3u8
 #EXTINF:-1 tvg-id="USANetwork.us" tvg-name="USA Network" group-title="Comedy;Movies;Series;Sports" tvg-language="eng" tvg-quality="720p",USA Network
 http://200.32.231.178/USA_NETWORK/index.m3u8
 #EXTINF:-1 tvg-id="VoyoEvents.ro" tvg-name="Voyo Events" group-title="Sports" tvg-language="eng;ron" tvg-quality="576i",Voyo Events

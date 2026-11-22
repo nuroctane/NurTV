@@ -1,5 +1,5 @@
 #EXTM3U
-# Generated 2026-11-21 22:06 UTC: NFL-capable public channels that were streaming at build time.
+# Generated 2026-11-22 22:22 UTC: NFL-capable public channels that were streaming at build time.
 # National carriers first (NFL Network, ESPN, ESPN2, FS1, FOX Deportes), then local FOX/CBS/NBC/ABC.
 # Local stations' web streams can black out network games.
 #EXTINF:-1 tvg-id="NFLNetwork.us" tvg-name="NFL Network" group-title="NFL" tvg-language="eng" tvg-quality="576p",NFL Network
