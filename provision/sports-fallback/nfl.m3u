@@ -1,11 +1,9 @@
 #EXTM3U
-# Generated 2026-11-22 22:22 UTC: NFL-capable public channels that were streaming at build time.
+# Generated 2026-11-24 03:12 UTC: NFL-capable public channels that were streaming at build time.
 # National carriers first (NFL Network, ESPN, ESPN2, FS1, FOX Deportes), then local FOX/CBS/NBC/ABC.
 # Local stations' web streams can black out network games.
 #EXTINF:-1 tvg-id="NFLNetwork.us" tvg-name="NFL Network" group-title="NFL" tvg-language="eng" tvg-quality="576p",NFL Network
 https://tvsen6.aynaott.com/nfl/index.m3u8
-#EXTINF:-1 tvg-id="ESPN.us" tvg-name="ESPN" group-title="NFL" tvg-language="eng" tvg-quality="720p",ESPN
-http://212.5.144.156:8080/espn/index.m3u8
 #EXTINF:-1 tvg-id="ESPN.us" tvg-name="ESPN" group-title="NFL" tvg-language="eng" tvg-quality="720p",ESPN
 http://85.237.89.160:9590/usa-s/ESPN-HD/index.m3u8
 #EXTINF:-1 tvg-id="ESPN2.us" tvg-name="ESPN 2" group-title="NFL" tvg-language="eng" tvg-quality="720p",ESPN 2
@@ -108,8 +106,6 @@ https://d3svnrf3rmq619.cloudfront.net/krgv-live/smil:krgv-live.smil/playlist.m3u
 https://amg01942-amg01942c2-stirr-us-10173.playouts.now.amagi.tv/playlist.m3u8
 #EXTINF:-1 tvg-id="ABC.us@KXXV" tvg-logo="https://i.imgur.com/pvXZ8DX.png" group-title="NFL",ABC KXXV (1080p)
 https://amg01438-amg01438c28-vizio-us-10893.playouts.now.amagi.tv/playlist.m3u8
-#EXTINF:-1 tvg-id="ABC.us@WBBJTV" tvg-logo="https://i.imgur.com/pvXZ8DX.png" group-title="NFL",ABC WBBJ-TV (432p)
-https://dai.google.com/linear/hls/event/HZ3JdLVcQ463l3b1BLXmmQ/master.m3u8
 #EXTINF:-1 tvg-id="ABC.us@WBRZTV" tvg-logo="https://i.imgur.com/n057TgX.png" group-title="NFL",ABC WBRZ-TV (480p)
 https://d2a6g6zgxepbwi.cloudfront.net/wbrz-edge/weather.stream_360p/playlist.m3u8
 #EXTINF:-1 tvg-id="ABC.us@WCPOTV" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/WCPO-TV_logo_2020.png/500px-WCPO-TV_logo_2020.png" group-title="NFL",ABC WCPO-TV (1080p)
@@ -118,8 +114,6 @@ https://amg01438-amg01438c29-vizio-us-10903.playouts.now.amagi.tv/playlist.m3u8
 https://amg01942-amg01942c3-stirr-us-10196.playouts.now.amagi.tv/playlist.m3u8
 #EXTINF:-1 tvg-id="ABC.us@WEWSTV" tvg-logo="https://i.imgur.com/sUonBr6.png" group-title="NFL",ABC WEWS-TV (1080p)
 https://amg01438-amg01438c1-vizio-us-10865.playouts.now.amagi.tv/playlist.m3u8
-#EXTINF:-1 tvg-id="ABC.us@WFTV" tvg-logo="https://i.imgur.com/pvXZ8DX.png" group-title="NFL",ABC WFTV (720p)
-https://amg00327-coxmediagroup-wftvbreaking-ono-hec7b.amagi.tv/playlist/amg00327-coxmediagroup-wftvbreaking-ono/playlist.m3u8
 #EXTINF:-1 tvg-id="ABC.us@WMARTV" tvg-logo="https://i.imgur.com/pvXZ8DX.png" group-title="NFL",ABC WMAR-TV (1080p)
 https://amg01438-amg01438c22-vizio-us-10908.playouts.now.amagi.tv/playlist.m3u8
 #EXTINF:-1 tvg-id="ABC.us@WSOCTV" tvg-logo="https://i.imgur.com/pvXZ8DX.png" group-title="NFL",ABC WSOC-TV (1080p)

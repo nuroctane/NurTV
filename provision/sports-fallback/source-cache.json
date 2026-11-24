@@ -130,7 +130,7 @@
     ]
   },
   "roku": {
-    "updated_utc": "2026-11-22T22:22:01.398476+00:00",
+    "updated_utc": "2026-11-24T03:12:29.349957+00:00",
     "entries": [
       [
         "#EXTINF:-1 channel-id=\"98cafb7f4b01848a967fda4bd2225bd7\" tvg-id=\"98cafb7f4b01848a967fda4bd2225bd7\" tvg-chno=\"1219\" tvg-name=\"Unbeaten Sports\" tvg-logo=\"https://images.sr.roku.com/idType/roku-trc/context/trc/id/98cafb7f4b01848a967fda4bd2225bd7/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1783443201350_unbeaten_sports_logo_hud.png\" group-title=\"3X3 Basketball\",Unbeaten Sports",
@@ -348,11 +348,6 @@
         "https://jmp2.uk/rok-8346cc0f3d415e39875fca80b67fd951.m3u8"
       ],
       [
-        "#EXTINF:-1 channel-id=\"35633f08c98857cb9e85c91eae17c0d5\" tvg-id=\"35633f08c98857cb9e85c91eae17c0d5\" tvg-chno=\"5044\" tvg-name=\"ViX Lo Mejor de Liga MX\" tvg-logo=\"https://images.sr.roku.com/idType/roku-trc/context/trc/id/35633f08c98857cb9e85c91eae17c0d5/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1749856192932_LoMejorDeLigaMX_HUD_ChannelLogo_260x147px.png\" group-title=\"Sports\",ViX Lo Mejor de Liga MX",
-        [],
-        "https://jmp2.uk/rok-35633f08c98857cb9e85c91eae17c0d5.m3u8"
-      ],
-      [
         "#EXTINF:-1 channel-id=\"11f70f2cc59750f4ad9a019d72ad17b1\" tvg-id=\"11f70f2cc59750f4ad9a019d72ad17b1\" tvg-chno=\"610\" tvg-name=\"Women's Sports Network\" tvg-logo=\"https://images.sr.roku.com/idType/roku-trc/context/trc/id/11f70f2cc59750f4ad9a019d72ad17b1/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1705940612752_WSNLogo_HUDCenter.png\" group-title=\"Sports\",Women's Sports Network",
         [],
         "https://jmp2.uk/rok-11f70f2cc59750f4ad9a019d72ad17b1.m3u8"
@@ -370,7 +365,7 @@
     ]
   },
   "atlas-eng-sports": {
-    "updated_utc": "2026-11-22T22:22:01.398476+00:00",
+    "updated_utc": "2026-11-24T03:12:29.349957+00:00",
     "entries": [
       [
         "#EXTINF:-1 tvg-id=\"30AGolfKingdom.us\" tvg-name=\"30A Golf Kingdom\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"720p\",30A Golf Kingdom",
@@ -641,22 +636,12 @@
         "http://103.253.74.210:7070/stream/122/index.m3u8"
       ],
       [
-        "#EXTINF:-1 tvg-id=\"Eurosport.in\" tvg-name=\"Eurosport\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"1080p\",Eurosport",
-        [],
-        "http://116.90.120.149:8000/play/a118/index.m3u8"
-      ],
-      [
-        "#EXTINF:-1 tvg-id=\"Eurosport.in\" tvg-name=\"Eurosport\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"1080p\",Eurosport",
-        [],
-        "https://livetv.shamon-cable.net:8443/Eurosport-HD/index.m3u8"
-      ],
-      [
         "#EXTINF:-1 tvg-id=\"Eurosport1.fr\" tvg-name=\"Eurosport 1\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"720p\",Eurosport 1",
         [],
         "https://r.eu.cdn-redge.media/livehls/oeu/mt/live/eurosport_1_en/live.livx/playlist.m3u8"
       ],
       [
-        "#EXTINF:-1 tvg-id=\"Eurosport2.fr\" tvg-name=\"Eurosport 2\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"576i\",Eurosport 2",
+        "#EXTINF:-1 tvg-id=\"Eurosport2.fr\" tvg-name=\"Eurosport 2\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"540p\",Eurosport 2",
         [],
         "https://r.eu.cdn-redge.media/livehls/oeu/mt/live/eurosport_2_en/live.livx/playlist.m3u8"
       ],
@@ -1010,7 +995,7 @@
         "http://31.148.48.15/M1_Global/index.m3u8"
       ],
       [
-        "#EXTINF:-1 tvg-id=\"MMATVcom.ru\" tvg-name=\"MMA-TV.com\" group-title=\"Sports\" tvg-language=\"eng;rus\" tvg-quality=\"576i\",MMA-TV.com",
+        "#EXTINF:-1 tvg-id=\"MMATVcom.ru\" tvg-name=\"MMA-TV.com\" group-title=\"Sports\" tvg-language=\"eng;rus\" tvg-quality=\"1080p\",MMA-TV.com",
         [],
         "https://stream8.cinerama.uz/1226/tracks-v1a1/mono.m3u8"
       ],
@@ -1632,26 +1617,6 @@
         "https://stream-us-east-1.getpublica.com/playlist.m3u8?network_id=2241"
       ],
       [
-        "#EXTINF:-1 tvg-id=\"SonySportsTen1.in\" tvg-name=\"Sony Sports Ten 1\" group-title=\"Sports\" tvg-language=\"eng;mal\" tvg-quality=\"1080p\",Sony Sports Ten 1",
-        [],
-        "http://116.90.120.149:8000/play/a11t/index.m3u8"
-      ],
-      [
-        "#EXTINF:-1 tvg-id=\"SonySportsTen1.in\" tvg-name=\"Sony Sports Ten 1\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"576p\",Sony Sports Ten 1",
-        [],
-        "http://116.90.120.149:8000/play/a126/index.m3u8"
-      ],
-      [
-        "#EXTINF:-1 tvg-id=\"SonySportsTen2.in\" tvg-name=\"Sony Sports Ten 2\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"1080p\",Sony Sports Ten 2",
-        [],
-        "http://116.90.120.149:8000/play/a137/index.m3u8"
-      ],
-      [
-        "#EXTINF:-1 tvg-id=\"SonySportsTen5.in\" tvg-name=\"Sony Sports Ten 5\" group-title=\"Sports\" tvg-language=\"ben;eng;mal\" tvg-quality=\"576p\",Sony Sports Ten 5",
-        [],
-        "http://116.90.120.149:8000/play/a117/index.m3u8"
-      ],
-      [
         "#EXTINF:-1 tvg-id=\"Sport.kg\" tvg-name=\"Sport\" group-title=\"Sports\" tvg-language=\"eng;kir;rus\" tvg-quality=\"480p\",Sport",
         [],
         "https://st2.mediabay.tv/KG_KTRK-Sport/index.m3u8"
@@ -1714,16 +1679,6 @@
         "#EXTINF:-1 tvg-id=\"Stadium.us\" tvg-name=\"Stadium\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"1080p\",Stadium",
         [],
         "https://wurl120sports.global.transmit.live/hls/6865b0ce3b41686108809e5a/v1/stadium_gracenote/vizio_us/latest/main/hls/playlist.m3u8"
-      ],
-      [
-        "#EXTINF:-1 tvg-id=\"StarSports1.in\" tvg-name=\"Star Sports 1\" group-title=\"Sports\" tvg-language=\"eng;kan\" tvg-quality=\"1080p\",Star Sports 1",
-        [],
-        "http://116.90.120.149:8000/play/a11x/index.m3u8"
-      ],
-      [
-        "#EXTINF:-1 tvg-id=\"StarSports2.in\" tvg-name=\"Star Sports 2\" group-title=\"Sports\" tvg-language=\"eng;hin;tam;tel\" tvg-quality=\"1080p\",Star Sports 2",
-        [],
-        "http://116.90.120.149:8000/play/a120/index.m3u8"
       ],
       [
         "#EXTINF:-1 tvg-id=\"Strongman.us\" tvg-name=\"Strongman\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"720p\",Strongman",
@@ -2035,11 +1990,6 @@
         "#EXTINF:-1 tvg-id=\"Unbeaten.us\" tvg-name=\"Unbeaten\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"1080p\",Unbeaten",
         [],
         "https://unbeaten-tcl.amagi.tv/playlist.m3u8"
-      ],
-      [
-        "#EXTINF:-1 tvg-id=\"Unite8Sports2.in\" tvg-name=\"Unite8 Sports 2\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"1080p\",Unite8 Sports 2",
-        [],
-        "http://116.90.120.149:8000/play/a129/index.m3u8"
       ],
       [
         "#EXTINF:-1 tvg-id=\"USANetwork.us\" tvg-name=\"USA Network\" group-title=\"Comedy;Movies;Series;Sports\" tvg-language=\"eng\" tvg-quality=\"720p\",USA Network",
