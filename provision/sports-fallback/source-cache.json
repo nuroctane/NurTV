@@ -130,7 +130,7 @@
     ]
   },
   "roku": {
-    "updated_utc": "2026-11-24T03:12:29.349957+00:00",
+    "updated_utc": "2026-11-25T01:18:02.251002+00:00",
     "entries": [
       [
         "#EXTINF:-1 channel-id=\"98cafb7f4b01848a967fda4bd2225bd7\" tvg-id=\"98cafb7f4b01848a967fda4bd2225bd7\" tvg-chno=\"1219\" tvg-name=\"Unbeaten Sports\" tvg-logo=\"https://images.sr.roku.com/idType/roku-trc/context/trc/id/98cafb7f4b01848a967fda4bd2225bd7/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1783443201350_unbeaten_sports_logo_hud.png\" group-title=\"3X3 Basketball\",Unbeaten Sports",
@@ -348,6 +348,11 @@
         "https://jmp2.uk/rok-8346cc0f3d415e39875fca80b67fd951.m3u8"
       ],
       [
+        "#EXTINF:-1 channel-id=\"35633f08c98857cb9e85c91eae17c0d5\" tvg-id=\"35633f08c98857cb9e85c91eae17c0d5\" tvg-chno=\"5044\" tvg-name=\"ViX Lo Mejor de Liga MX\" tvg-logo=\"https://images.sr.roku.com/idType/roku-trc/context/trc/id/35633f08c98857cb9e85c91eae17c0d5/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1749856192932_LoMejorDeLigaMX_HUD_ChannelLogo_260x147px.png\" group-title=\"Sports\",ViX Lo Mejor de Liga MX",
+        [],
+        "https://jmp2.uk/rok-35633f08c98857cb9e85c91eae17c0d5.m3u8"
+      ],
+      [
         "#EXTINF:-1 channel-id=\"11f70f2cc59750f4ad9a019d72ad17b1\" tvg-id=\"11f70f2cc59750f4ad9a019d72ad17b1\" tvg-chno=\"610\" tvg-name=\"Women's Sports Network\" tvg-logo=\"https://images.sr.roku.com/idType/roku-trc/context/trc/id/11f70f2cc59750f4ad9a019d72ad17b1/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1705940612752_WSNLogo_HUDCenter.png\" group-title=\"Sports\",Women's Sports Network",
         [],
         "https://jmp2.uk/rok-11f70f2cc59750f4ad9a019d72ad17b1.m3u8"
@@ -365,7 +370,7 @@
     ]
   },
   "atlas-eng-sports": {
-    "updated_utc": "2026-11-24T03:12:29.349957+00:00",
+    "updated_utc": "2026-11-25T01:18:02.251002+00:00",
     "entries": [
       [
         "#EXTINF:-1 tvg-id=\"30AGolfKingdom.us\" tvg-name=\"30A Golf Kingdom\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"720p\",30A Golf Kingdom",
@@ -803,14 +808,9 @@
         "https://amg02278-amg02278c1-flosports-worldwide-7592.playouts.now.amagi.tv/playlist.m3u8"
       ],
       [
-        "#EXTINF:-1 tvg-id=\"Formula1AntenaPlay.ro\" tvg-name=\"Formula 1 AntenaPlay\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"576i\",Formula 1 AntenaPlay",
+        "#EXTINF:-1 tvg-id=\"Formula1AntenaPlay.ro\" tvg-name=\"Formula 1 AntenaPlay\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"576p\",Formula 1 AntenaPlay",
         [],
-        "https://stream1.antenaplay.ro/promo/formula-1-las-vegas-20-2211/chunklist.m3u8"
-      ],
-      [
-        "#EXTINF:-1 tvg-id=\"FoxDeportes.us\" tvg-name=\"Fox Deportes\" group-title=\"Sports\" tvg-language=\"eng;spa\" tvg-quality=\"720p\",Fox Deportes",
-        [],
-        "http://23.237.104.106:8080/USA_FOX_DEPORTES/index.m3u8"
+        "https://stream1.antenaplay.ro/promo/formula-1-qatar-27-2911/chunklist.m3u8"
       ],
       [
         "#EXTINF:-1 tvg-id=\"FoxDeportes.us\" tvg-name=\"Fox Deportes\" group-title=\"Sports\" tvg-language=\"eng;spa\" tvg-quality=\"720p\",Fox Deportes",
@@ -985,11 +985,6 @@
         "https://pb-2y9ox4r1fy550.akamaized.net/playlist.m3u8"
       ],
       [
-        "#EXTINF:-1 tvg-id=\"MLBStrikeZone.us\" tvg-name=\"MLB Strike Zone\" group-title=\"Sports\" tvg-language=\"eng;spa\" tvg-quality=\"720p\",MLB Strike Zone",
-        [],
-        "http://23.237.104.106:8080/USA_MLB_STRIKE_ZONE/index.m3u8"
-      ],
-      [
         "#EXTINF:-1 tvg-id=\"MMATV.us\" tvg-name=\"MMA TV\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"576p\",MMA TV",
         [],
         "http://31.148.48.15/M1_Global/index.m3u8"
@@ -1040,11 +1035,6 @@
         "https://wurlspacemob.global.transmit.live/hls/6791101f0b2848c81efe74d7/v1/answermedia_monsterjam_1/vizio_us/latest/main/hls/playlist.m3u8"
       ],
       [
-        "#EXTINF:-1 tvg-id=\"MSG.us\" tvg-name=\"MSG\" group-title=\"Sports\" tvg-language=\"eng;spa\" tvg-quality=\"720p\",MSG",
-        [],
-        "http://23.237.104.106:8080/USA_MSG/index.m3u8"
-      ],
-      [
         "#EXTINF:-1 tvg-id=\"MUTV.uk\" tvg-name=\"MUTV\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"576i\",MUTV",
         [
           "#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
@@ -1070,11 +1060,6 @@
         "#EXTINF:-1 tvg-id=\"NauticalChannel.it\" tvg-name=\"Nautical Channel\" group-title=\"Sports\" tvg-language=\"eng;fra;ita\" tvg-quality=\"720p\",Nautical Channel",
         [],
         "https://streams2.sofast.tv/vglive-sk-231198/index.m3u8"
-      ],
-      [
-        "#EXTINF:-1 tvg-id=\"NBATV.us\" tvg-name=\"NBA TV\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"720p\",NBA TV",
-        [],
-        "http://198.58.104.90:8989/nba/index.m3u8"
       ],
       [
         "#EXTINF:-1 tvg-id=\"NBATV.us\" tvg-name=\"NBA TV\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"720p\",NBA TV",
@@ -1125,11 +1110,6 @@
         "#EXTINF:-1 tvg-id=\"NFLChannel.us\" tvg-name=\"NFL Channel\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"1080p\",NFL Channel",
         [],
         "https://pb-we3ltka9xobj6.akamaized.net/master.m3u8"
-      ],
-      [
-        "#EXTINF:-1 tvg-id=\"NFLNetwork.us\" tvg-name=\"NFL Network\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"720p\",NFL Network",
-        [],
-        "http://198.58.104.90:8989/nfl/index.m3u8"
       ],
       [
         "#EXTINF:-1 tvg-id=\"NFLNetwork.us\" tvg-name=\"NFL Network\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"576p\",NFL Network",
