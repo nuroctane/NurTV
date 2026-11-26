@@ -1,5 +1,5 @@
 #EXTM3U
-# Generated 2026-11-25 01:18 UTC — Sports fallback M3U
+# Generated 2026-11-26 00:52 UTC — Sports fallback M3U
 # Primary is the VM rebeliptv aggregator; use this only if the VM is down.
 # Open TV Atlas entries are unofficial restreams: they may carry live
 # games but die mid-game. Tubi/Roku entries are FAST shoulder programming.
@@ -446,8 +446,8 @@ https://d4whmvwm0rdvi.cloudfront.net/10007/99993008/hls/master.m3u8?ads.xumo_cha
 https://jmp2.uk/plu-6549306c83595c000815a696.m3u8
 #EXTINF:-1 tvg-id="NBCSportsNOW.us" tvg-name="NBC Sports NOW" group-title="Sports" tvg-language="eng" tvg-quality="1080p",NBC Sports NOW
 https://xumo-xumoent-vc-122-sjv70.fast.nbcuni.com/live/master.m3u8
-#EXTINF:-1 tvg-id="NHLAntenaPlay.ro" tvg-name="NHL AntenaPlay" group-title="Sports" tvg-language="eng" tvg-quality="576i",NHL AntenaPlay
-https://stream1.antenaplay.ro/promo/nhl-12-1411/chunklist.m3u8
+#EXTINF:-1 tvg-id="NHLAntenaPlay.ro" tvg-name="NHL AntenaPlay" group-title="Sports" tvg-language="eng" tvg-quality="576p",NHL AntenaPlay
+https://stream1.antenaplay.ro/promo/nhl-2911/chunklist.m3u8
 #EXTINF:-1 tvg-id="NHLNetwork.us" tvg-name="NHL Network" group-title="Sports" tvg-language="eng" tvg-quality="1080p",NHL Network
 https://aegis-cloudfront-1.tubi.video/1f4cbb33-cb23-40ab-b54b-2965cc551b32/playlist.m3u8
 #EXTINF:-1 tvg-id="NHLNetwork.us" tvg-name="NHL Network" group-title="Sports" tvg-language="eng" tvg-quality="1080p",NHL Network

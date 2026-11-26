@@ -130,7 +130,7 @@
     ]
   },
   "roku": {
-    "updated_utc": "2026-11-25T01:18:02.251002+00:00",
+    "updated_utc": "2026-11-26T00:52:58.265299+00:00",
     "entries": [
       [
         "#EXTINF:-1 channel-id=\"98cafb7f4b01848a967fda4bd2225bd7\" tvg-id=\"98cafb7f4b01848a967fda4bd2225bd7\" tvg-chno=\"1219\" tvg-name=\"Unbeaten Sports\" tvg-logo=\"https://images.sr.roku.com/idType/roku-trc/context/trc/id/98cafb7f4b01848a967fda4bd2225bd7/https%3A%2F%2Fimage.roku.com%2Fbh-uploads%2Fproduction%2FinfoHUDLogo%2F1783443201350_unbeaten_sports_logo_hud.png\" group-title=\"3X3 Basketball\",Unbeaten Sports",
@@ -370,7 +370,7 @@
     ]
   },
   "atlas-eng-sports": {
-    "updated_utc": "2026-11-25T01:18:02.251002+00:00",
+    "updated_utc": "2026-11-26T00:52:58.265299+00:00",
     "entries": [
       [
         "#EXTINF:-1 tvg-id=\"30AGolfKingdom.us\" tvg-name=\"30A Golf Kingdom\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"720p\",30A Golf Kingdom",
@@ -1117,9 +1117,9 @@
         "https://tvsen6.aynaott.com/nfl/index.m3u8"
       ],
       [
-        "#EXTINF:-1 tvg-id=\"NHLAntenaPlay.ro\" tvg-name=\"NHL AntenaPlay\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"576i\",NHL AntenaPlay",
+        "#EXTINF:-1 tvg-id=\"NHLAntenaPlay.ro\" tvg-name=\"NHL AntenaPlay\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"576p\",NHL AntenaPlay",
         [],
-        "https://stream1.antenaplay.ro/promo/nhl-12-1411/chunklist.m3u8"
+        "https://stream1.antenaplay.ro/promo/nhl-2911/chunklist.m3u8"
       ],
       [
         "#EXTINF:-1 tvg-id=\"NHLNetwork.us\" tvg-name=\"NHL Network\" group-title=\"Sports\" tvg-language=\"eng\" tvg-quality=\"1080p\",NHL Network",
