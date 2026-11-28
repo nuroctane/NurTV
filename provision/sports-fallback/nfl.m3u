@@ -1,7 +1,9 @@
 #EXTM3U
-# Generated 2026-11-27 00:58 UTC: NFL-capable public channels that were streaming at build time.
+# Generated 2026-11-28 00:25 UTC: NFL-capable public channels that were streaming at build time.
 # National carriers first (NFL Network, ESPN, ESPN2, FS1, FOX Deportes), then local FOX/CBS/NBC/ABC.
 # Local stations' web streams can black out network games.
+#EXTINF:-1 tvg-id="ESPN.us" tvg-name="ESPN" group-title="NFL" tvg-language="eng" tvg-quality="720p",ESPN
+http://212.5.144.156:8080/espn/index.m3u8
 #EXTINF:-1 tvg-id="ESPN.us" tvg-name="ESPN" group-title="NFL" tvg-language="eng" tvg-quality="720p",ESPN
 http://85.237.89.160:9590/usa-s/ESPN-HD/index.m3u8
 #EXTINF:-1 tvg-id="ESPN2.us" tvg-name="ESPN 2" group-title="NFL" tvg-language="eng" tvg-quality="720p",ESPN 2
@@ -14,6 +16,8 @@ https://live-manifest.production-public.tubi.io/live/d906efca-1302-4e29-b0d9-9a1
 https://live-manifest.production-public.tubi.io/live/79123cfa-756c-4d5e-9f66-26755a4cd5c8/playlist.m3u8
 #EXTINF:-1 tvg-id="NFLChannel.us" tvg-name="NFL Channel" group-title="NFL" tvg-language="eng" tvg-quality="720p",NFL Channel
 https://jmp2.uk/plu-5ced7d5df64be98e07ed47b6.m3u8
+#EXTINF:-1 tvg-id="689473" tvg-logo="https://canvas-lb.tubitv.com/opts/7u12jTpbUtjcYA==/572073ab-5145-412f-b9d0-6711c73ab661/CHgQeDoFMS4xLjlAAQ==" group-title="NFL",CBS 6 Richmond WTVR
+https://live-manifest.production-public.tubi.io/live/41feddbe-795f-4294-bb8c-32fcb26a7d54/playlist.m3u8
 #EXTINF:-1 tvg-id="CBS.us@KBZK" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/7/71/KBZK_7_logo.png?utm_source=en.wikipedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="NFL",CBS KBZK (1080p)
 https://amg01438-amg01438c32-vizio-us-10898.playouts.now.amagi.tv/playlist.m3u8
 #EXTINF:-1 tvg-id="CBS.us@KIROTV" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/CBS_logo_%282020%29.svg/960px-CBS_logo_%282020%29.svg.png" group-title="NFL",CBS KIRO-TV (1080p)
